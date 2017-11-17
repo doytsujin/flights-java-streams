@@ -18,7 +18,7 @@ some flight records, there is no tailNum field.
 
 The structure of the project can be seen in the following picture.
 
-![Eclipse Project File Structure](https://i.imgur.com/vKDH8uT.gif)
+![Eclipse Project File Structure](https://i.imgur.com/NlidbKU.gif)
 
 I supplemented the plane data above with 
 [additional data](http://registry.faa.gov/aircraftrenewal_reports/CanceledReg_Inquiry.aspx "Canceled Plane Data") 
