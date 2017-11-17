@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.left;
 import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.apache.commons.lang3.StringUtils.splitByCharacterTypeCamelCase;
 
@@ -50,36 +51,6 @@ public class FlightReportsApp {
 		} else {
 			System.exit(0);
 		}
-	}
-
-	private static int getReportOption(List<Method> printMethods, TextIO io) {
-		TextTerminal<?> terminal = io.getTextTerminal();
-		terminal.println("Program options:\n");
-		String format = "%2d  %s\n";
-		terminal.printf(format, 0, "Exit program");
-		int n = 0;
-		for(Method m : printMethods) {
-			terminal.printf(format, ++n, getReportDescription(m));
-		}
-		return io.newIntInputReader()
-				 .withDefaultValue(0)
-				 .withMinVal(0)
-				 .withMaxVal(printMethods.size())
-				 .read("\nOption");
-	}
-
-	private static String getReportDescription(Method method) {
-		String name = method.getName().substring(REPORT_METHOD_NAME_PREFIX.length());
-		String[] words = splitByCharacterTypeCamelCase(name);
-		return Arrays.stream(words).collect(joining(" "));
-					 
-	}
-
-	private static Stream<Method> getPrintMethodStream() {
-		return Arrays.stream(FlightReportsApp.class.getDeclaredMethods())
-					 .filter(m -> m.getName().startsWith(REPORT_METHOD_NAME_PREFIX) && 
-							 	  m.getParameterTypes().length == REPORT_METHOD_PARAMETER_COUNT &&
-							 	  m.getReturnType().equals(REPORT_METHOD_RETURN_TYPE));
 	}
 
 	public void reportTotalFlightsFromOrigin(Stream<Flight> source, TextIO io) {
@@ -245,12 +216,8 @@ public class FlightReportsApp {
 			  .stream()
 			  .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
 			  .limit(limit)
-			  .forEachOrdered(e -> terminal.printf("%-24s\t%,8d\n", 
+			  .forEachOrdered(e -> terminal.printf("%-24s\t%,8d\n",
 					  								left(e.getKey(), 24), e.getValue()));
-	}
-
-	private String left(String input, int size) {
-		return input != null && input.length() > size ? input.substring(0, size) : input;
 	}
 
 	public void reportVariousCarrierStatistics(Stream<Flight> source, TextIO io) {
@@ -443,5 +410,35 @@ public class FlightReportsApp {
 			  							 count,
 			  							 count.floatValue() / 365);
 			  }).forEachOrdered(s -> terminal.println(s));
+	}
+
+	private static int getReportOption(List<Method> printMethods, TextIO io) {
+		TextTerminal<?> terminal = io.getTextTerminal();
+		terminal.println("Program options:\n");
+		String format = "%2d  %s\n";
+		int n = 0;
+		terminal.printf(format, n, "Exit program");
+		for(Method m : printMethods) {
+			terminal.printf(format, ++n, getReportDescription(m));
+		}
+		return io.newIntInputReader()
+				 .withDefaultValue(0)
+				 .withMinVal(0)
+				 .withMaxVal(printMethods.size())
+				 .read("\nOption");
+	}
+
+	private static String getReportDescription(Method method) {
+		String name = method.getName().substring(REPORT_METHOD_NAME_PREFIX.length());
+		String[] words = splitByCharacterTypeCamelCase(name);
+		return Arrays.stream(words).collect(joining(" "));
+					 
+	}
+
+	private static Stream<Method> getPrintMethodStream() {
+		return Arrays.stream(FlightReportsApp.class.getDeclaredMethods())
+					 .filter(m -> m.getName().startsWith(REPORT_METHOD_NAME_PREFIX) && 
+							 	  m.getParameterTypes().length == REPORT_METHOD_PARAMETER_COUNT &&
+							 	  m.getReturnType().equals(REPORT_METHOD_RETURN_TYPE));
 	}
 }
