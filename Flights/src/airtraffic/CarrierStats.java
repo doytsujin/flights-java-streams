@@ -16,6 +16,7 @@ public class CarrierStats {
 	private int totalFlights;
 	private Set<String> airports = new HashSet<String>();
 	private int totalCancelled;
+	private int totalDiverted;
 
 	public CarrierStats(Carrier carrier) {
 		this.carrier = carrier;
@@ -30,6 +31,9 @@ public class CarrierStats {
 		if(flight.cancelled()) {
 			++totalCancelled;
 		}
+		if(flight.diverted()) {
+			++totalDiverted;
+		}
 		airports.add(flight.getOrigin().getIATA());
 		airports.add(flight.getDestination().getIATA());
 	}
@@ -41,18 +45,10 @@ public class CarrierStats {
 		CarrierStats result = new CarrierStats(stats1.carrier);
 		result.totalFlights = stats1.totalFlights + stats2.totalFlights;
 		result.totalCancelled = stats1.totalCancelled + stats2.totalCancelled;
+		result.totalDiverted = stats1.totalDiverted + stats2.totalDiverted;
 		result.airports.addAll(stats1.airports);
 		result.airports.addAll(stats2.airports);
 		return result;
-	}
-
-	public void add(CarrierStats other) {
-		if(!this.carrier.equals(other.carrier)) {
-			throw new IllegalArgumentException("Wrong carrier");
-		}
-		this.totalFlights += other.totalFlights;
-		this.totalCancelled += other.totalCancelled;
-		this.airports.addAll(other.airports);
 	}
 
 	public Carrier getCarrier() {
@@ -65,6 +61,10 @@ public class CarrierStats {
 
 	public int getTotalCancelled() {
 		return totalCancelled;
+	}
+
+	public int getTotalDiverted() {
+		return totalDiverted;
 	}
 
 	public Set<String> getAirports() {
