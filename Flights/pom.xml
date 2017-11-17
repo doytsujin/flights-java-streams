@@ -1,0 +1,136 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>piazzaconsulting</groupId>
+	<artifactId>flightdata-java8</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Flight Data - Java 8</name>
+	<description>Example code using Java 8 streams</description>
+	<developers>
+		<developer>
+			<name>Tony Piazza</name>
+			<email>tony@piazzaconsulting.com</email>
+			<organization>Piazza Software Consulting</organization>
+		</developer>
+	</developers>
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.simpleflatmapper</groupId>
+			<artifactId>sfm-csv</artifactId>
+			<version>3.13.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.beryx</groupId>
+			<artifactId>text-io</artifactId>
+			<version>2.8.0</version>
+		</dependency>
+	</dependencies>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<data.dir>${project.basedir}/data</data.dir>
+	</properties>
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.7.0</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.6.0</version>
+				<executions>
+					<execution>
+						<id>Download the airport reference data</id>
+						<phase>install</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>curl</executable>
+							<arguments>
+								<argument>-s</argument>
+								<argument>-S</argument>
+								<argument>-o</argument>
+								<argument>${data.dir}/airports.csv</argument>
+								<argument>http://stat-computing.org/dataexpo/2009/airports.csv</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>Download the carrier reference data</id>
+						<phase>install</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>curl</executable>
+							<arguments>
+								<argument>-s</argument>
+								<argument>-S</argument>
+								<argument>-o</argument>
+								<argument>${data.dir}/carriers.csv</argument>
+								<argument>http://stat-computing.org/dataexpo/2009/carriers.csv</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>Download the plane reference data</id>
+						<phase>install</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>curl</executable>
+							<arguments>
+								<argument>-s</argument>
+								<argument>-S</argument>
+								<argument>-o</argument>
+								<argument>${data.dir}/planes.csv</argument>
+								<argument>http://stat-computing.org/dataexpo/2009/plane-data.csv</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>Download the 2008 flight data data</id>
+						<phase>install</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>curl</executable>
+							<arguments>
+								<argument>-o</argument>
+								<argument>${data.dir}/flights-2008.csv.bz2</argument>
+								<argument>http://stat-computing.org/dataexpo/2009/2008.csv.bz2</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>Extract the 2008 flight data data</id>
+						<phase>install</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>bunzip2</executable>
+							<arguments>
+								<argument>${data.dir}/flights-2008.csv.bz2</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
