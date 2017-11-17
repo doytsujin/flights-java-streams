@@ -10,6 +10,7 @@ import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.apache.commons.lang3.StringUtils.splitByCharacterTypeCamelCase;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -34,13 +35,11 @@ public class FlightReportsApp {
 	private static final Class<?> REPORT_METHOD_RETURN_TYPE = Void.TYPE;
 
 	public static void main(String[] args) throws Exception {
-		List<Method> printMethods = 
-			getPrintMethodStream().sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
-								  .collect(toList());
+		List<Method> reportMethods = getReportMethods();
 		TextIO io = TextIoFactory.getTextIO();
-		int optionNum = getReportOption(printMethods, io);
+		int optionNum = getReportOption(reportMethods, io);
 		if(optionNum > 0) {
-			Method method = printMethods.get(optionNum-1);
+			Method method = reportMethods.get(optionNum-1);
 			io.getTextTerminal().println(getReportDescription(method));
 			FlightReportsApp stats = new FlightReportsApp();
 			ReferenceData reference = new ReferenceData();
@@ -435,10 +434,13 @@ public class FlightReportsApp {
 					 
 	}
 
-	private static Stream<Method> getPrintMethodStream() {
+	private static List<Method> getReportMethods() {
 		return Arrays.stream(FlightReportsApp.class.getDeclaredMethods())
-					 .filter(m -> m.getName().startsWith(REPORT_METHOD_NAME_PREFIX) && 
+					 .filter(m -> Modifier.isPublic(m.getModifiers()) &&
+							 	  m.getName().startsWith(REPORT_METHOD_NAME_PREFIX) &&
 							 	  m.getParameterTypes().length == REPORT_METHOD_PARAMETER_COUNT &&
-							 	  m.getReturnType().equals(REPORT_METHOD_RETURN_TYPE));
+							 	  m.getReturnType().equals(REPORT_METHOD_RETURN_TYPE))
+					 .sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+					 .collect(toList());
 	}
 }
