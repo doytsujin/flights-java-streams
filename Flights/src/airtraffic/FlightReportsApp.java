@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.beryx.textio.TextIO;
 import org.beryx.textio.TextIoFactory;
 import org.beryx.textio.TextTerminal;
@@ -38,18 +39,17 @@ public class FlightReportsApp {
 		List<Method> reportMethods = getReportMethods();
 		TextIO io = TextIoFactory.getTextIO();
 		int optionNum = getReportOption(reportMethods, io);
-		if(optionNum > 0) {
-			Method method = reportMethods.get(optionNum-1);
-			io.getTextTerminal().println(getReportDescription(method));
-			FlightReportsApp stats = new FlightReportsApp();
-			ReferenceData reference = new ReferenceData();
-			Stream<Flight> source = Files.lines(Paths.get("data/flights-2008.csv"))
-										.skip(1)	// skip header
-										.map(s -> new Flight(s, reference));
-			method.invoke(stats, source, io);
-		} else {
+		if(optionNum == 0) {
 			System.exit(0);
 		}
+		Method method = reportMethods.get(optionNum-1);
+		io.getTextTerminal().println(getReportDescription(method));
+		FlightReportsApp stats = new FlightReportsApp();
+		ReferenceData reference = new ReferenceData();
+		Stream<Flight> source = Files.lines(Paths.get("data/flights-2008.csv"))
+									 .skip(1)	// skip header
+									 .map(s -> new Flight(s, reference));
+		method.invoke(stats, source, io);
 	}
 
 	public void reportTotalFlightsFromOrigin(Stream<Flight> source, TextIO io) {
@@ -125,10 +125,10 @@ public class FlightReportsApp {
 
 	public void reportMostPopularRoutes(Stream<Flight> source, TextIO io) {
 		int limit = io.newIntInputReader()
-				  .withDefaultValue(10)
-				  .withMinVal(1)
-				  .withMaxVal(100)
-				  .read("Limit");
+					  .withDefaultValue(10)
+					  .withMinVal(1)
+					  .withMaxVal(100)
+					  .read("Limit");
 		TextTerminal<?> terminal = io.getTextTerminal();
 		terminal.println("Route\t\t    Count");
 		terminal.println("---------------------------");
@@ -201,10 +201,10 @@ public class FlightReportsApp {
 
 	public void reportMostCancelledFlightsByCarrier(Stream<Flight> source, TextIO io) {
 		int limit = io.newIntInputReader()
-				  .withDefaultValue(10)
-				  .withMinVal(1)
-				  .withMaxVal(100)
-				  .read("Limit");
+					  .withDefaultValue(10)
+					  .withMinVal(1)
+					  .withMaxVal(100)
+					  .read("Limit");
 		TextTerminal<?> terminal = io.getTextTerminal();
 		terminal.println("Carrier\t\t\t\t Count");
 		terminal.println("-----------------------------------------");
@@ -245,23 +245,23 @@ public class FlightReportsApp {
 			};
 
 		TextTerminal<?> terminal = io.getTextTerminal();
-		terminal.println("IATA    Carrier Name                      Total        Cancelled     %    Airports");
-		terminal.println("-----------------------------------------------------------------------------------");
+		terminal.println("IATA    Carrier Name                        Total        Cancelled %   Diverted %    Airports");
+		terminal.println(StringUtils.repeat("-", 94));
 		source.collect(HashMap::new, accumulator, combiner)
 			  .entrySet()
 			  .stream()
-			  .sorted((e1, e2) -> e2.getValue().getTotalFlights() - e1.getValue().getTotalFlights())
+			  .sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
 			  .forEach(e -> {
-				  CarrierMetrics stats = e.getValue();
-				  Carrier carrier = stats.getCarrier();
+				  CarrierMetrics metrics = e.getValue();
+				  Carrier carrier = metrics.getCarrier();
 				  String carrierName = carrier.getName();
-				  terminal.printf(" %2s     %-30s     %,9d   %,8d  %6.1f   %,5d\n", 
+				  terminal.printf(" %2s     %-30s     %,9d    %6.1f        %6.1f         %,5d\n", 
 						  		  carrier.getCode(),
 						  		  carrierName.substring(0, Math.min(carrierName.length(), 29)),
-						  		  stats.getTotalFlights(),
-						  		  stats.getTotalCancelled(),
-						  		  stats.getTotalCancelled() * 100.0 / stats.getTotalFlights(),
-						  		  stats.getAirports().size()
+						  		  metrics.getTotalFlights(),
+						  		  metrics.getTotalCancelled() * 100.0 / metrics.getTotalFlights(),
+						  		  metrics.getTotalDiverted() * 100.0 / metrics.getTotalFlights(),
+						  		  metrics.getAirports().size()
 				  );
 			  });
 	}

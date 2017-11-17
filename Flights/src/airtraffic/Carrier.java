@@ -13,7 +13,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author tony@piazzaconsulting.com
  */
-public class Carrier {
+public class Carrier implements Comparable<Carrier> {
 	private String code;
 	private String name;
 
@@ -46,5 +46,10 @@ public class Carrier {
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
+	}
+
+	@Override
+	public int compareTo(Carrier other) {
+		return this.code.compareTo(other.code);
 	}
 }
