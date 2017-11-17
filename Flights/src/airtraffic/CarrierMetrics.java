@@ -11,14 +11,14 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author tony@piazzaconsulting.com
  */
-public class CarrierStats {
+public class CarrierMetrics {
 	private Carrier carrier;
 	private int totalFlights;
 	private Set<String> airports = new HashSet<String>();
 	private int totalCancelled;
 	private int totalDiverted;
 
-	public CarrierStats(Carrier carrier) {
+	public CarrierMetrics(Carrier carrier) {
 		this.carrier = carrier;
 	}
 
@@ -38,11 +38,11 @@ public class CarrierStats {
 		airports.add(flight.getDestination().getIATA());
 	}
 
-	public static CarrierStats combine(CarrierStats stats1, CarrierStats stats2) {
+	public static CarrierMetrics combine(CarrierMetrics stats1, CarrierMetrics stats2) {
 		if(!stats1.carrier.equals(stats2.carrier)) {
 			throw new IllegalArgumentException("Wrong carrier");
 		}
-		CarrierStats result = new CarrierStats(stats1.carrier);
+		CarrierMetrics result = new CarrierMetrics(stats1.carrier);
 		result.totalFlights = stats1.totalFlights + stats2.totalFlights;
 		result.totalCancelled = stats1.totalCancelled + stats2.totalCancelled;
 		result.totalDiverted = stats1.totalDiverted + stats2.totalDiverted;

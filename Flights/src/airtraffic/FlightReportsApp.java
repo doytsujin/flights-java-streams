@@ -220,26 +220,26 @@ public class FlightReportsApp {
 	}
 
 	public void reportVariousCarrierStatistics(Stream<Flight> source, TextIO io) {
-		BiConsumer<Map<String, CarrierStats>, Flight> accumulator = 
+		BiConsumer<Map<String, CarrierMetrics>, Flight> accumulator = 
 			(map, flight) -> {
 				Carrier carrier = flight.getCarrier();
-				CarrierStats stats = map.get(carrier.getCode());
+				CarrierMetrics stats = map.get(carrier.getCode());
 				if(stats == null) {
-					stats = new CarrierStats(carrier);
+					stats = new CarrierMetrics(carrier);
 					map.put(carrier.getCode(), stats);
 				}
 				stats.addFlight(flight);
 			};
 
-		BiConsumer<Map<String, CarrierStats>, Map<String, CarrierStats>> combiner =
+		BiConsumer<Map<String, CarrierMetrics>, Map<String, CarrierMetrics>> combiner =
 			(map1, map2) -> {
 				map1.entrySet()
 				.stream()
 				.forEach(e -> {
 					String carrier = e.getKey();
-					CarrierStats stats = map2.get(carrier);
+					CarrierMetrics stats = map2.get(carrier);
 					if(stats != null) {
-						map1.merge(carrier, stats, CarrierStats::combine);
+						map1.merge(carrier, stats, CarrierMetrics::combine);
 					}
 				});
 			};
@@ -252,7 +252,7 @@ public class FlightReportsApp {
 			  .stream()
 			  .sorted((e1, e2) -> e2.getValue().getTotalFlights() - e1.getValue().getTotalFlights())
 			  .forEach(e -> {
-				  CarrierStats stats = e.getValue();
+				  CarrierMetrics stats = e.getValue();
 				  Carrier carrier = stats.getCarrier();
 				  String carrierName = carrier.getName();
 				  terminal.printf(" %2s     %-30s     %,9d   %,8d  %6.1f   %,5d\n", 
