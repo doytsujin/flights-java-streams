@@ -245,7 +245,8 @@ public class FlightReportsApp {
 			};
 
 		TextTerminal<?> terminal = io.getTextTerminal();
-		terminal.println("IATA    Carrier Name                        Total        Cancelled %   Diverted %    Airports");
+		terminal.print("IATA    Carrier Name                        ");
+		terminal.println("Total        Cancelled %   Diverted %    Airports");
 		terminal.println(StringUtils.repeat("-", 94));
 		source.collect(HashMap::new, accumulator, combiner)
 			  .entrySet()
@@ -413,7 +414,7 @@ public class FlightReportsApp {
 
 	private static int getReportOption(List<Method> printMethods, TextIO io) {
 		TextTerminal<?> terminal = io.getTextTerminal();
-		terminal.println("Program options:\n");
+		terminal.println("\nProgram options:\n");
 		String format = "%2d  %s\n";
 		int n = 0;
 		terminal.printf(format, n, "Exit program");
