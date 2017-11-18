@@ -24,7 +24,7 @@ for planes whose registrations have been cancelled. If you want to include this 
 
 The structure of the project can be seen in the following picture.
 
-![Eclipse Project File Structure](https://i.imgur.com/KKGk0r4.gif)
+![Eclipse Project File Structure](https://i.imgur.com/ydbL2aT.gif)
 
 The project makes extensive using of the following domain classes:
 
@@ -49,3 +49,6 @@ of the following classes:
 * AirportReportsApp
 * FlightReportsApp
 * PlaneReportsApp
+
+All of the code in this project is licensed under the MIT License. See the 
+LICENSE file for details.
