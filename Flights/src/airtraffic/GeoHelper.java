@@ -1,11 +1,12 @@
 package airtraffic;
 
+import static airtraffic.GeoLocation.Units.MILES;
 import static java.lang.Math.PI;
 import static java.lang.Math.acos;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
-import static airtraffic.GeoLocation.Units.MILES;
+import java.util.Comparator;
 
 /**
  * GeoLocation helper methods. 
@@ -13,6 +14,10 @@ import static airtraffic.GeoLocation.Units.MILES;
  * @author tony@piazzaconsulting.com
  */
 public final class GeoHelper {
+	public static Comparator<GeoLocation> distanceComparator(GeoLocation refLoc, GeoLocation.Units units) {
+		return (loc1, loc2) -> (int)(getDistance(loc1, refLoc, units) - getDistance(loc2, refLoc, units));
+	}
+
 	public static double getDistance(GeoLocation loc1, GeoLocation loc2, GeoLocation.Units units) {
 		double theta = loc1.getLongitude() - loc2.getLongitude();
 		double dist = sin(deg2rad(loc1.getLatitude())) * sin(deg2rad(loc2.getLatitude())) + 

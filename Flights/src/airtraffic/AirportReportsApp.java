@@ -1,5 +1,9 @@
 package airtraffic;
 
+import static airtraffic.GeoHelper.distanceComparator;
+import static airtraffic.GeoHelper.getDistance;
+import static airtraffic.GeoLocation.Units.MILES;
+
 import java.util.stream.Stream;
 
 public class AirportReportsApp extends AbstractReportsApp {
@@ -26,11 +30,15 @@ public class AirportReportsApp extends AbstractReportsApp {
 			@Override public double getLongitude()	{ return longitude;	}
 		};
 		int distance = readInt("Distance (miles)", 1, 1000);
-		println("\nIATA\tAirport Name\t\t\t\t\tState\tCity");
-		println(repeat("-", 85));
-		source.filter(a -> GeoHelper.getDistance(a, loc, GeoLocation.Units.MILES) <= distance)
-			  .sorted()
-			  .forEach(a -> printf(" %3s\t%-40s\t %2s\t%-20s\n", 
-					  				a.getIATA(), a.getName(), a.getState(), a.getCity()));
+		println("\nIATA\tAirport Name\t\t\t\t\tState\tCity\t\tDistance");
+		println(repeat("-", 89));
+		source.filter(a -> getDistance(a, loc, MILES) <= distance)
+			  .sorted(distanceComparator(loc, MILES))
+			  .forEach(a -> printf(" %3s\t%-40s\t %2s\t%-15s    %,4.0f\n", 
+					  				a.getIATA(), 
+					  				a.getName(), 
+					  				a.getState(), 
+					  				left(a.getCity(), 15),
+					  				getDistance(a, loc, MILES)));
 	}
 }
