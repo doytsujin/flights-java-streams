@@ -1,5 +1,6 @@
 package airtraffic;
 
+import static java.util.Comparator.comparingInt;
 import static java.util.Comparator.reverseOrder;
 import static java.util.Map.Entry.comparingByKey;
 import static java.util.Map.Entry.comparingByValue;
@@ -9,6 +10,7 @@ import static java.util.stream.Collectors.groupingBy;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -314,5 +316,29 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  							 count,
 			  							 count.floatValue() / 365);
 			  }).forEachOrdered(s -> println(s));
+	}
+
+	public void reportLongestFlights(Stream<Flight> source) {
+		byDistance(source, comparingInt(Flight::getDistance).reversed());
+	}
+
+	public void reportShortestFlights(Stream<Flight> source) {
+		byDistance(source, comparingInt(f -> f.getDistance()));
+	}
+
+	private void byDistance(Stream<Flight> source, Comparator<Flight> comparator) {
+		int limit = readLimit(10, 1, 100);
+		println("Flight #     Date\tOrigin\tDestination\tDistance");
+		println(repeat("-", 57));
+		source.filter(f -> f.notCancelled())
+			  .sorted(comparator)
+			  .limit(limit)
+			  .map(flight -> String.format("%-8s  %10s\t %3s\t    %3s\t\t%4d",
+											flight.getFlightNumber(),
+											formatDate(flight.getDate()),
+											flight.getOrigin().getIATA(),
+  											flight.getDestination().getIATA(),
+					  						flight.getDistance()))
+			  .forEachOrdered(s -> println(s));
 	}
 }

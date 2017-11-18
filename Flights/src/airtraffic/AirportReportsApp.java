@@ -1,11 +1,16 @@
 package airtraffic;
 
-import static airtraffic.GeoHelper.distanceComparator;
+import static airtraffic.GeoHelper.distanceFromReferenceComparator;
 import static airtraffic.GeoHelper.getDistance;
 import static airtraffic.GeoLocation.Units.MILES;
 
 import java.util.stream.Stream;
 
+/**
+ * Generate various airport statistics using Java 8 streams.
+ * 
+ * @author tony@piazzaconsulting.com
+ */
 public class AirportReportsApp extends AbstractReportsApp {
 	public static void main(String[] args) throws Exception {
 		Stream<Airport> source = new ReferenceData().getAirportStream();
@@ -33,7 +38,7 @@ public class AirportReportsApp extends AbstractReportsApp {
 		println("\nIATA\tAirport Name\t\t\t\t\tState\tCity\t\tDistance");
 		println(repeat("-", 89));
 		source.filter(a -> getDistance(a, loc, MILES) <= distance)
-			  .sorted(distanceComparator(loc, MILES))
+			  .sorted(distanceFromReferenceComparator(loc, MILES))
 			  .forEach(a -> printf(" %3s\t%-40s\t %2s\t%-15s    %,4.0f\n", 
 					  				a.getIATA(), 
 					  				a.getName(), 

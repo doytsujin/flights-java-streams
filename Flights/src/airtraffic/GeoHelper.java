@@ -14,7 +14,7 @@ import java.util.Comparator;
  * @author tony@piazzaconsulting.com
  */
 public final class GeoHelper {
-	public static Comparator<GeoLocation> distanceComparator(GeoLocation refLoc, GeoLocation.Units units) {
+	public static Comparator<GeoLocation> distanceFromReferenceComparator(GeoLocation refLoc, GeoLocation.Units units) {
 		return (loc1, loc2) -> (int)(getDistance(loc1, refLoc, units) - getDistance(loc2, refLoc, units));
 	}
 

@@ -1,6 +1,10 @@
 package airtraffic;
 
 import static java.lang.Integer.parseInt;
+//import static airtraffic.GeoHelper.getDistance;
+
+import java.util.Calendar;
+import java.util.Date;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -66,7 +70,8 @@ public class Flight {
 	private int _lateAircraftDelay;				// in minutes
 
 	private Plane plane;
-	private final Route route;
+	private Route route;
+	private Date date;
 
 	public Flight(String input, ReferenceData ref) {
 		String[] source = input.split(",");
@@ -106,6 +111,9 @@ public class Flight {
 			plane.setTailNumber(_tailNumber);
 		}
 		route = new Route(_origin.getIATA(), _destination.getIATA());
+		Calendar cal = Calendar.getInstance();
+		cal.set(_year, _month, _dayOfMonth);
+		date = cal.getTime();
 	}
 
 	public String describeRoute() {
@@ -118,6 +126,10 @@ public class Flight {
 
 	public Route getRoute() {
 		return route;
+	}
+
+	public Date getDate() {
+		return date;
 	}
 
 	public int getYear() {
