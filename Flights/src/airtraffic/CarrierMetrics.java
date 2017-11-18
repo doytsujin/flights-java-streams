@@ -7,7 +7,7 @@ import java.util.Set;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * Class used to aggregate statistics for an airline carrier. 
+ * Aggregate statistics for an airline carrier. 
  *
  * @author tony@piazzaconsulting.com
  */
@@ -38,16 +38,16 @@ public class CarrierMetrics {
 		airports.add(flight.getDestination().getIATA());
 	}
 
-	public static CarrierMetrics combine(CarrierMetrics stats1, CarrierMetrics stats2) {
-		if(!stats1.carrier.equals(stats2.carrier)) {
+	public static CarrierMetrics combine(CarrierMetrics metrics1, CarrierMetrics metrics2) {
+		if(!metrics1.carrier.equals(metrics2.carrier)) {
 			throw new IllegalArgumentException("Wrong carrier");
 		}
-		CarrierMetrics result = new CarrierMetrics(stats1.carrier);
-		result.totalFlights = stats1.totalFlights + stats2.totalFlights;
-		result.totalCancelled = stats1.totalCancelled + stats2.totalCancelled;
-		result.totalDiverted = stats1.totalDiverted + stats2.totalDiverted;
-		result.airports.addAll(stats1.airports);
-		result.airports.addAll(stats2.airports);
+		CarrierMetrics result = new CarrierMetrics(metrics1.carrier);
+		result.totalFlights = metrics1.totalFlights + metrics2.totalFlights;
+		result.totalCancelled = metrics1.totalCancelled + metrics2.totalCancelled;
+		result.totalDiverted = metrics1.totalDiverted + metrics2.totalDiverted;
+		result.airports.addAll(metrics1.airports);
+		result.airports.addAll(metrics2.airports);
 		return result;
 	}
 

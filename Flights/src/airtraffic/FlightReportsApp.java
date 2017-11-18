@@ -163,32 +163,32 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .forEachOrdered(e -> printf("%-24s\t%,8d\n", left(e.getKey(), 24), e.getValue()));
 	}
 
-	public void reportVariousCarrierStatistics(Stream<Flight> source) {
+	public void reportCarrierMetrics(Stream<Flight> source) {
 		BiConsumer<Map<String, CarrierMetrics>, Flight> accumulator = 
 			(map, flight) -> {
 				Carrier carrier = flight.getCarrier();
-				CarrierMetrics stats = map.get(carrier.getCode());
-				if(stats == null) {
-					stats = new CarrierMetrics(carrier);
-					map.put(carrier.getCode(), stats);
+				CarrierMetrics metrics = map.get(carrier.getCode());
+				if(metrics == null) {
+					metrics = new CarrierMetrics(carrier);
+					map.put(carrier.getCode(), metrics);
 				}
-				stats.addFlight(flight);
+				metrics.addFlight(flight);
 			};
 
 		BiConsumer<Map<String, CarrierMetrics>, Map<String, CarrierMetrics>> combiner =
 			(map1, map2) -> {
 				map1.entrySet()
-				.stream()
-				.forEach(e -> {
-					String carrier = e.getKey();
-					CarrierMetrics stats = map2.get(carrier);
-					if(stats != null) {
-						map1.merge(carrier, stats, CarrierMetrics::combine);
-					}
-				});
+					.stream()
+					.forEach(e -> {
+						String carrier = e.getKey();
+						CarrierMetrics metrics = map2.get(carrier);
+						if(metrics != null) {
+							map1.merge(carrier, metrics, CarrierMetrics::combine);
+						}
+					});
 			};
 
-		print("IATA    Carrier Name                        ");
+		print("Code    Carrier Name                        ");
 		println("Total        Cancelled %   Diverted %    Airports");
 		println(repeat("-", 94));
 		source.collect(HashMap::new, accumulator, combiner)
@@ -394,5 +394,58 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .forEach(e -> printf("%-10s       %,3d\n", 
 					  				formatDate(e.getKey()), 
 					  				e.getValue()));
+	}
+
+	public void reportAirportMetrics(Stream<Flight> source) {
+		BiConsumer<Map<String, AirportMetrics>, Flight> accumulator = 
+			(map, flight) -> {
+				Airport origin = flight.getOrigin();
+				AirportMetrics metrics1 = map.get(origin.getIATA());
+				if(metrics1 == null) {
+					metrics1 = new AirportMetrics(origin);
+					map.put(origin.getIATA(), metrics1);
+				}
+				metrics1.addFlight(flight);
+				Airport destination = flight.getDestination();
+				AirportMetrics metrics2 = map.get(destination.getIATA());
+				if(metrics2 == null) {
+					metrics2 = new AirportMetrics(destination);
+					map.put(destination.getIATA(), metrics2);
+				}
+				metrics2.addFlight(flight);
+			};
+
+		BiConsumer<Map<String, AirportMetrics>, Map<String, AirportMetrics>> combiner =
+			(map1, map2) -> {
+				map1.entrySet()
+					.stream()
+					.forEach(e -> {
+						String airport = e.getKey();
+						AirportMetrics metrics = map2.get(airport);
+						if(metrics != null) {
+							map1.merge(airport, metrics, AirportMetrics::combine);
+						}
+					});
+			};
+
+		print("IATA    Airport Name                        ");
+		println("Total        Cancelled %   Diverted %");
+		println(repeat("-", 82));
+		source.collect(HashMap::new, accumulator, combiner)
+		  .entrySet()
+		  .stream()
+		  .sorted(comparingByKey())
+		  .forEach(e -> {
+			  AirportMetrics metrics = e.getValue();
+			  Airport airport = metrics.getAirport();
+			  String airportName = airport.getName();
+			  printf(" %3s    %-30s     %,9d    %6.1f        %6.1f\n", 
+			  		  airport.getIATA(),
+			  		  airportName.substring(0, Math.min(airportName.length(), 29)),
+			  		  metrics.getTotalFlights(),
+			  		  metrics.getTotalCancelled() * 100.0 / metrics.getTotalFlights(),
+			  		  metrics.getTotalDiverted() * 100.0 / metrics.getTotalFlights()
+			  );
+		  });
 	}
 }
