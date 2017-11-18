@@ -99,11 +99,12 @@ public abstract class AbstractReportsApp {
 		terminal.println(getReportDescription(method));
 		terminal.println();
 		method.invoke(this, source);
+		terminal.println("\n=== Report complete ===");
 	}
 
 	protected int getReportOption(List<Method> printMethods) {
 		TextTerminal<?> terminal = io.getTextTerminal();
-		terminal.println("\nProgram options:\n");
+		terminal.println("\nReport options:\n");
 		String format = "%2d  %s\n";
 		int n = 0;
 		terminal.printf(format, n, "Exit program");
