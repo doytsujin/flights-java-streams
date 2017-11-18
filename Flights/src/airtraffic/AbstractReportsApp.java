@@ -27,7 +27,7 @@ public abstract class AbstractReportsApp {
 	private static final String REPORT_METHOD_NAME_PREFIX = "report";
 	private static final int REPORT_METHOD_PARAMETER_COUNT = 1;
 	private static final Class<?> REPORT_METHOD_RETURN_TYPE = Void.TYPE;
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-mm-dd");
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
 	private TextIO io = TextIoFactory.getTextIO();
 	private TextTerminal<?> terminal = io.getTextTerminal();

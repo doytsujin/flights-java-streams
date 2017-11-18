@@ -12,9 +12,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -369,5 +371,28 @@ public class FlightReportsApp extends AbstractReportsApp {
 								   .filter(r -> r.contains(f.getDistance()))
 								   .findAny()
 								   .get();
+	}
+
+	public void reportDaysWithLeastCancellations(Stream<Flight> source) {
+		byDaysWithCancellations(source, comparingByValue());
+	}
+
+	public void reportDaysWithMostCancellations(Stream<Flight> source) {
+		byDaysWithCancellations(source, comparingByValue(reverseOrder()));
+	}
+
+	private void byDaysWithCancellations(Stream<Flight> source, Comparator<Entry<Date, Long>> comparator) {
+		int limit = readLimit(10, 1, 100);
+		println("Date\t\tCount");
+		println(repeat("-", 24));
+		source.filter(f -> f.cancelled())
+			  .collect(groupingBy(Flight::getDate, counting()))
+			  .entrySet()
+			  .stream()
+			  .sorted(comparator)
+			  .limit(limit)
+			  .forEach(e -> printf("%-10s       %,3d\n", 
+					  				formatDate(e.getKey()), 
+					  				e.getValue()));
 	}
 }
