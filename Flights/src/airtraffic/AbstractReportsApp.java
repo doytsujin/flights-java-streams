@@ -95,7 +95,9 @@ public abstract class AbstractReportsApp {
 			System.exit(0);
 		}
 		Method method = reportMethods.get(optionNum-1);
+		terminal.println();
 		terminal.println(getReportDescription(method));
+		terminal.println();
 		method.invoke(this, source);
 	}
 
@@ -108,11 +110,12 @@ public abstract class AbstractReportsApp {
 		for(Method m : printMethods) {
 			terminal.printf(format, ++n, getReportDescription(m));
 		}
+		terminal.println();
 		return io.newIntInputReader()
 				 .withDefaultValue(0)
 				 .withMinVal(0)
 				 .withMaxVal(printMethods.size())
-				 .read("\nOption");
+				 .read("Option");
 	}
 
 	protected String getReportDescription(Method method) {

@@ -10,10 +10,13 @@ import static java.util.stream.Collectors.groupingBy;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -22,6 +25,14 @@ import java.util.stream.Stream;
  * @author tony@piazzaconsulting.com
  */
 public class FlightReportsApp extends AbstractReportsApp {
+	private static final List<DistanceRange> DISTANCE_RANGES =
+		Arrays.asList(DistanceRange.between(0, 100), 
+					  DistanceRange.between(101, 250),
+					  DistanceRange.between(251, 500),
+					  DistanceRange.between(501, 1000),
+					  DistanceRange.between(1001, 2500),
+					  DistanceRange.between(2501, 5000));
+
 	public static void main(String[] args) throws Exception {
 		ReferenceData reference = new ReferenceData();
 		Stream<Flight> source = Files.lines(Paths.get("data/flights-2008.csv"))
@@ -340,5 +351,23 @@ public class FlightReportsApp extends AbstractReportsApp {
   											flight.getDestination().getIATA(),
 					  						flight.getDistance()))
 			  .forEachOrdered(s -> println(s));
+	}
+
+	public void reportFlightsByDistanceRange(Stream<Flight> source) {
+		println("Range\t\tCount");
+		println(repeat("-", 27));
+		source.filter(f -> f.notCancelled())
+			  .collect(groupingBy(rangeClassifier(), counting()))
+			  .entrySet()
+			  .stream()
+			  .sorted(comparingByKey())
+			  .forEach(e -> printf("%-10s\t%,10d\n", e.getKey(), e.getValue()));
+	}
+
+	private static Function<Flight, DistanceRange> rangeClassifier() {
+		return f -> DISTANCE_RANGES.stream()
+								   .filter(r -> r.contains(f.getDistance()))
+								   .findAny()
+								   .get();
 	}
 }
