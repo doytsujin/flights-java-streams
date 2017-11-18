@@ -1,5 +1,8 @@
 package airtraffic;
 
+import static java.util.Comparator.reverseOrder;
+import static java.util.Map.Entry.comparingByKey;
+import static java.util.Map.Entry.comparingByValue;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
 
@@ -23,7 +26,7 @@ public class PlaneReportsApp extends AbstractReportsApp {
 		source.collect(groupingBy(Plane::getManufacturer, counting()))
 			  .entrySet()
 			  .stream()
-			  .sorted(mapValueReverseOrder())
+			  .sorted(comparingByValue(reverseOrder()))
 			  .forEach(e -> printf("%-25s\t%5d\n", e.getKey(), e.getValue()));
 	}
 
@@ -34,7 +37,7 @@ public class PlaneReportsApp extends AbstractReportsApp {
 			  .collect(groupingBy(Plane::getYear, counting()))
 			  .entrySet()
 			  .stream()
-			  .sorted(mapKeyReverseOrder())
+			  .sorted(comparingByKey(reverseOrder()))
 			  .forEach(e -> printf("%4d\t%5d\n", e.getKey(), e.getValue()));
 	}
 
@@ -44,7 +47,7 @@ public class PlaneReportsApp extends AbstractReportsApp {
 		source.collect(groupingBy(Plane::getAircraftType, counting()))
 			  .entrySet()
 			  .stream()
-			  .sorted(mapValueReverseOrder())
+			  .sorted(comparingByValue(reverseOrder()))
 			  .forEach(e -> printf("%-25s\t%5d\n", e.getKey(), e.getValue()));
 	}
 
@@ -54,7 +57,7 @@ public class PlaneReportsApp extends AbstractReportsApp {
 		source.collect(groupingBy(Plane::getEngineType, counting()))
 			  .entrySet()
 			  .stream()
-			  .sorted(mapValueReverseOrder())
+			  .sorted(comparingByValue(reverseOrder()))
 			  .forEach(e -> printf("%-25s\t%5d\n", e.getKey(), e.getValue()));
 	}
 }

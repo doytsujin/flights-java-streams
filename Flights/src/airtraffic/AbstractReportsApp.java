@@ -7,9 +7,7 @@ import static org.apache.commons.lang3.StringUtils.splitByCharacterTypeCamelCase
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,14 +27,6 @@ public abstract class AbstractReportsApp {
 
 	private TextIO io = TextIoFactory.getTextIO();
 	private TextTerminal<?> terminal = io.getTextTerminal();
-
-	public static <K,V extends Comparable<? super V>> Comparator<Map.Entry<K,V>> mapValueReverseOrder() {
-		return Map.Entry.comparingByValue((v1, v2) -> v2.compareTo(v1));
-	}
-
-	public static <K extends Comparable<? super K>,V> Comparator<Map.Entry<K,V>> mapKeyReverseOrder() {
-		return Map.Entry.comparingByKey((v1, v2) -> v2.compareTo(v1));
-	}
 
 	protected List<Method> getReportMethods() {
 		return Arrays.stream(this.getClass().getDeclaredMethods())

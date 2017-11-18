@@ -1,10 +1,11 @@
 package airtraffic;
 
+import static java.util.Comparator.reverseOrder;
+import static java.util.Map.Entry.comparingByKey;
+import static java.util.Map.Entry.comparingByValue;
 import static java.util.stream.Collectors.averagingInt;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
-
-import static java.util.Map.Entry.comparingByKey;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -62,7 +63,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .collect(groupingBy(Flight::getOrigin, counting()))
 			  .entrySet()
 			  .stream()
-			  .sorted(mapValueReverseOrder())
+			  .sorted(comparingByValue(reverseOrder()))
 			  .limit(limit)
 			  .forEachOrdered(e -> printf("%3s\t%d\n", e.getKey().getIATA(), e.getValue()));
 	}
@@ -76,7 +77,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .collect(groupingBy(Flight::getDestination, counting()))
 			  .entrySet()
 			  .stream()
-			  .sorted(mapValueReverseOrder())
+			  .sorted(comparingByValue(reverseOrder()))
 			  .limit(limit)
 			  .forEachOrdered(e -> printf(" %3s\t\t%,10d\n", e.getKey().getIATA(), e.getValue()));
 	}
@@ -89,7 +90,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .collect(groupingBy(Flight::getRoute, counting()))
 			  .entrySet()
 			  .stream()
-			  .sorted(mapValueReverseOrder())
+			  .sorted(comparingByValue(reverseOrder()))
 			  .limit(limit)
 			  .forEachOrdered(e -> printf("%s\t%,10d\n", e.getKey(), e.getValue().intValue()));
 	}
@@ -102,7 +103,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .collect(groupingBy(Flight::getOrigin, averagingInt(f -> f.getDepartureDelay())))
 			  .entrySet()
 			  .stream()
-			  .sorted(mapValueReverseOrder())
+			  .sorted(comparingByValue(reverseOrder()))
 			  .limit(limit)
 			  .forEachOrdered(e -> printf(" %3s\t\t%.0f\n", e.getKey().getIATA(), e.getValue()));
 	}
@@ -115,7 +116,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .collect(groupingBy(Flight::getDestination, averagingInt(f -> f.getArrivalDelay())))
 			  .entrySet()
 			  .stream()
-			  .sorted(mapValueReverseOrder())
+			  .sorted(comparingByValue(reverseOrder()))
 			  .limit(limit)
 			  .forEachOrdered(e -> printf(" %3s\t\t\t%.0f\n", e.getKey().getIATA(), e.getValue()));
 	}
@@ -128,7 +129,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .collect(groupingBy(Flight::getOrigin, counting()))
 			  .entrySet()
 			  .stream()
-			  .sorted(mapValueReverseOrder())
+			  .sorted(comparingByValue(reverseOrder()))
 			  .limit(limit)
 			  .forEachOrdered(e -> printf(" %3s\t\t%,8d\n", e.getKey().getIATA(), e.getValue()));
 	}
@@ -142,7 +143,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .collect(groupingBy(Carrier::getName, counting()))
 			  .entrySet()
 			  .stream()
-			  .sorted(mapValueReverseOrder())
+			  .sorted(comparingByValue(reverseOrder()))
 			  .limit(limit)
 			  .forEachOrdered(e -> printf("%-24s\t%,8d\n", left(e.getKey(), 24), e.getValue()));
 	}
@@ -202,7 +203,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .collect(groupingBy(Plane::getAircraftType, counting()))
 			  .entrySet()
 			  .stream()
-			  .sorted(mapValueReverseOrder())
+			  .sorted(comparingByValue(reverseOrder()))
 			  .forEachOrdered(e -> printf("%-25s\t%,10d\n", e.getKey(), e.getValue()));
 	}
 
@@ -214,7 +215,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .collect(groupingBy(Plane::getEngineType, counting()))
 			  .entrySet()
 			  .stream()
-			  .sorted(mapValueReverseOrder())
+			  .sorted(comparingByValue(reverseOrder()))
 			  .forEachOrdered(e -> printf("%-25s\t%,10d\n", e.getKey(), e.getValue()));
 	}
 
@@ -226,7 +227,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .collect(groupingBy(Plane::getManufacturer, counting()))
 			  .entrySet()
 			  .stream()
-			  .sorted(mapValueReverseOrder())
+			  .sorted(comparingByValue(reverseOrder()))
 			  .forEachOrdered(e -> printf("%-25s\t%,10d\n", e.getKey(), e.getValue()));
 	}
 
@@ -238,7 +239,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .collect(groupingBy(Plane::getYear, counting()))
 			  .entrySet()
 			  .stream()
-			  .sorted(mapValueReverseOrder())
+			  .sorted(comparingByValue(reverseOrder()))
 			  .forEachOrdered(e -> printf("%4s\t%,10d\n", 
 					  						e.getKey().longValue() == 0 ? "????" : e.getKey(), 
 					  						e.getValue()));
@@ -253,7 +254,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .collect(groupingBy(Airport::getState, counting()))
 			  .entrySet()
 			  .stream()
-			  .sorted(mapValueReverseOrder())
+			  .sorted(comparingByValue(reverseOrder()))
 			  .limit(limit)
 			  .forEachOrdered(e -> printf("%2s\t%,10d\n", e.getKey(), e.getValue()));
 	}
@@ -267,7 +268,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .collect(groupingBy(Airport::getState, counting()))
 			  .entrySet()
 			  .stream()
-			  .sorted(mapValueReverseOrder())
+			  .sorted(comparingByValue(reverseOrder()))
 			  .limit(limit)
 			  .forEachOrdered(e -> printf("%2s\t%,10d\n", e.getKey(), e.getValue()));
 	}
@@ -280,7 +281,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .collect(groupingBy(Flight::getPlane, counting()))
 			  .entrySet()
 			  .stream()
-			  .sorted(mapValueReverseOrder())
+			  .sorted(comparingByValue(reverseOrder()))
 			  .limit(limit)
 			  .forEachOrdered(e -> {
 				  Plane plane = e.getKey();
@@ -302,7 +303,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .collect(groupingBy(Plane::getModel, counting()))
 			  .entrySet()
 			  .stream()
-			  .sorted(mapValueReverseOrder())
+			  .sorted(comparingByValue(reverseOrder()))
 			  .limit(limit)
 			  .map(e -> {
 				  	PlaneModel model = e.getKey();
