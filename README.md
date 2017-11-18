@@ -43,8 +43,9 @@ mvn install
 ~~~
 *This may take some time depending on your Internet download speed.*
 
-Once the data files have been downloaded and extracted, you can execute either 
+Once the data files have been downloaded and extracted, you can execute any 
 of the following classes:
 
+* AirportReportsApp
 * FlightReportsApp
 * PlaneReportsApp

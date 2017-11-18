@@ -12,7 +12,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author tony@piazzaconsulting.com
  */
-public class Airport {
+public class Airport implements Comparable<Airport> {
 	private String iata;
 	private String name;
 	private String city;
@@ -75,6 +75,11 @@ public class Airport {
 
 	public void setLongitude(double longitude) {
 		this.longitude = longitude;
+	}
+
+	@Override
+	public int compareTo(Airport other) {
+		return this.iata.compareTo(other.iata);
 	}
 
 	@Override
