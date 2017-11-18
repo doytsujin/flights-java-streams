@@ -15,9 +15,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -164,48 +162,24 @@ public class FlightReportsApp extends AbstractReportsApp {
 	}
 
 	public void reportCarrierMetrics(Stream<Flight> source) {
-		BiConsumer<Map<String, CarrierMetrics>, Flight> accumulator = 
-			(map, flight) -> {
-				Carrier carrier = flight.getCarrier();
-				CarrierMetrics metrics = map.get(carrier.getCode());
-				if(metrics == null) {
-					metrics = new CarrierMetrics(carrier);
-					map.put(carrier.getCode(), metrics);
-				}
-				metrics.addFlight(flight);
-			};
-
-		BiConsumer<Map<String, CarrierMetrics>, Map<String, CarrierMetrics>> combiner =
-			(map1, map2) -> {
-				map1.entrySet()
-					.stream()
-					.forEach(e -> {
-						String carrier = e.getKey();
-						CarrierMetrics metrics = map2.get(carrier);
-						if(metrics != null) {
-							map1.merge(carrier, metrics, CarrierMetrics::combine);
-						}
-					});
-			};
-
 		print("Code    Carrier Name                        ");
 		println("Total        Cancelled %   Diverted %    Airports");
 		println(repeat("-", 94));
-		source.collect(HashMap::new, accumulator, combiner)
+		source.collect(HashMap::new, CarrierMetrics.accumulator(), CarrierMetrics.combiner())
 			  .entrySet()
 			  .stream()
 			  .sorted(comparingByKey())
 			  .forEach(e -> {
 				  CarrierMetrics metrics = e.getValue();
-				  Carrier carrier = metrics.getCarrier();
+				  Carrier carrier = metrics.getSubject();
 				  String carrierName = carrier.getName();
 				  printf(" %2s     %-30s     %,9d    %6.1f        %6.1f         %,5d\n", 
-						  		  carrier.getCode(),
-						  		  carrierName.substring(0, Math.min(carrierName.length(), 29)),
-						  		  metrics.getTotalFlights(),
-						  		  metrics.getTotalCancelled() * 100.0 / metrics.getTotalFlights(),
-						  		  metrics.getTotalDiverted() * 100.0 / metrics.getTotalFlights(),
-						  		  metrics.getAirports().size()
+				  		  carrier.getCode(),
+				  		  carrierName.substring(0, Math.min(carrierName.length(), 29)),
+				  		  metrics.getTotalFlights(),
+				  		  metrics.getTotalCancelled() * 100.0 / metrics.getTotalFlights(),
+				  		  metrics.getTotalDiverted() * 100.0 / metrics.getTotalFlights(),
+				  		  metrics.getAirports().size()
 				  );
 			  });
 	}
@@ -381,7 +355,8 @@ public class FlightReportsApp extends AbstractReportsApp {
 		byDaysWithCancellations(source, comparingByValue(reverseOrder()));
 	}
 
-	private void byDaysWithCancellations(Stream<Flight> source, Comparator<Entry<Date, Long>> comparator) {
+	private void byDaysWithCancellations(Stream<Flight> source, 
+		Comparator<Entry<Date, Long>> comparator) {
 		int limit = readLimit(10, 1, 100);
 		println("Date\t\tCount");
 		println(repeat("-", 24));
@@ -397,47 +372,16 @@ public class FlightReportsApp extends AbstractReportsApp {
 	}
 
 	public void reportAirportMetrics(Stream<Flight> source) {
-		BiConsumer<Map<String, AirportMetrics>, Flight> accumulator = 
-			(map, flight) -> {
-				Airport origin = flight.getOrigin();
-				AirportMetrics metrics1 = map.get(origin.getIATA());
-				if(metrics1 == null) {
-					metrics1 = new AirportMetrics(origin);
-					map.put(origin.getIATA(), metrics1);
-				}
-				metrics1.addFlight(flight);
-				Airport destination = flight.getDestination();
-				AirportMetrics metrics2 = map.get(destination.getIATA());
-				if(metrics2 == null) {
-					metrics2 = new AirportMetrics(destination);
-					map.put(destination.getIATA(), metrics2);
-				}
-				metrics2.addFlight(flight);
-			};
-
-		BiConsumer<Map<String, AirportMetrics>, Map<String, AirportMetrics>> combiner =
-			(map1, map2) -> {
-				map1.entrySet()
-					.stream()
-					.forEach(e -> {
-						String airport = e.getKey();
-						AirportMetrics metrics = map2.get(airport);
-						if(metrics != null) {
-							map1.merge(airport, metrics, AirportMetrics::combine);
-						}
-					});
-			};
-
 		print("IATA    Airport Name                        ");
 		println("Total        Cancelled %   Diverted %");
 		println(repeat("-", 82));
-		source.collect(HashMap::new, accumulator, combiner)
+		source.collect(HashMap::new, AirportMetrics.accumulator(), AirportMetrics.combiner())
 		  .entrySet()
 		  .stream()
 		  .sorted(comparingByKey())
 		  .forEach(e -> {
 			  AirportMetrics metrics = e.getValue();
-			  Airport airport = metrics.getAirport();
+			  Airport airport = metrics.getSubject();
 			  String airportName = airport.getName();
 			  printf(" %3s    %-30s     %,9d    %6.1f        %6.1f\n", 
 			  		  airport.getIATA(),

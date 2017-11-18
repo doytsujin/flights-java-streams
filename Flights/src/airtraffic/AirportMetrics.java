@@ -1,6 +1,7 @@
 package airtraffic;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import java.util.Map;
+import java.util.function.BiConsumer;
 
 import airtraffic.Flight.CancellationCode;
 
@@ -9,22 +10,18 @@ import airtraffic.Flight.CancellationCode;
  *
  * @author tony@piazzaconsulting.com
  */
-public class AirportMetrics {
-	private Airport airport;
-	private int totalFlights;
-	private int totalCancelled;
+public class AirportMetrics extends FlightBasedMetrics<Airport> {
 	private int totalCancelledCarrier;
 	private int totalCancelledWeather;
 	private int totalCancelledNAS;
 	private int totalCancelledSecurity;
-	private int totalDiverted;
 
 	public AirportMetrics(Airport airport) {
-		this.airport = airport;
+		super(airport);
 	}
 
 	public void addFlight(Flight flight) {
-		if(flight.getOrigin().equals(airport)) {
+		if(flight.getOrigin().equals(getSubject())) {
 			// cancellations are counted only for the origin airport
 			if(flight.cancelled()) {
 				++totalCancelled;
@@ -35,7 +32,7 @@ public class AirportMetrics {
 					case SECURITY:	++totalCancelledSecurity;	break;
 				}
 			}
-		} else if(flight.getDestination().equals(airport)) {
+		} else if(flight.getDestination().equals(getSubject())) {
 			// diversions are counted only for the destination airport
 			if(flight.diverted()) {
 				++totalDiverted;
@@ -48,26 +45,14 @@ public class AirportMetrics {
 	}
 
 	public static AirportMetrics combine(AirportMetrics metrics1, AirportMetrics metrics2) {
-		if(!metrics1.airport.equals(metrics2.airport)) {
+		if(!metrics1.getSubject().equals(metrics2.getSubject())) {
 			throw new IllegalArgumentException("Wrong carrier");
 		}
-		AirportMetrics result = new AirportMetrics(metrics1.airport);
+		AirportMetrics result = new AirportMetrics(metrics1.getSubject());
 		result.totalFlights = metrics1.totalFlights + metrics2.totalFlights;
 		result.totalCancelled = metrics1.totalCancelled + metrics2.totalCancelled;
 		result.totalDiverted = metrics1.totalDiverted + metrics2.totalDiverted;
 		return result;
-	}
-
-	public Airport getAirport() {
-		return airport;
-	}
-
-	public int getTotalFlights() {
-		return totalFlights;
-	}
-
-	public int getTotalCancelled() {
-		return totalCancelled;
 	}
 
 	public int getTotalCancelledByCode(CancellationCode code) {
@@ -80,12 +65,36 @@ public class AirportMetrics {
 		}
 	}
 
-	public int getTotalDiverted() {
-		return totalDiverted;
+	public static BiConsumer<Map<String, AirportMetrics>, Flight> accumulator() { 
+		return (map, flight) -> {
+			Airport origin = flight.getOrigin();
+			AirportMetrics metrics1 = map.get(origin.getIATA());
+			if(metrics1 == null) {
+				metrics1 = new AirportMetrics(origin);
+				map.put(origin.getIATA(), metrics1);
+			}
+			metrics1.addFlight(flight);
+			Airport destination = flight.getDestination();
+			AirportMetrics metrics2 = map.get(destination.getIATA());
+			if(metrics2 == null) {
+				metrics2 = new AirportMetrics(destination);
+				map.put(destination.getIATA(), metrics2);
+			}
+			metrics2.addFlight(flight);
+		};
 	}
 
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+	public static BiConsumer<Map<String, AirportMetrics>, Map<String, AirportMetrics>> combiner() {
+		return (map1, map2) -> {
+			map1.entrySet()
+				.stream()
+				.forEach(e -> {
+					String airport = e.getKey();
+					AirportMetrics metrics = map2.get(airport);
+					if(metrics != null) {
+						map1.merge(airport, metrics, AirportMetrics::combine);
+					}
+				});
+		};
 	}
 }

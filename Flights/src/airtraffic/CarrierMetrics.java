@@ -2,31 +2,28 @@ package airtraffic;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
-
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import java.util.function.BiConsumer;
 
 /**
  * Aggregate statistics for an airline carrier. 
  *
  * @author tony@piazzaconsulting.com
  */
-public class CarrierMetrics {
-	private Carrier carrier;
-	private int totalFlights;
-	private Set<String> airports = new HashSet<String>();
-	private int totalCancelled;
-	private int totalDiverted;
+public class CarrierMetrics extends FlightBasedMetrics<Carrier> {
+	Set<String> airports = new HashSet<String>();
 
 	public CarrierMetrics(Carrier carrier) {
-		this.carrier = carrier;
+		super(carrier);
 	}
 
+	@Override
 	public void addFlight(Flight flight) {
-		if(!flight.getCarrier().equals(carrier)) {
+		if(!flight.getCarrier().equals(getSubject())) {
 			throw new IllegalArgumentException("Wrong carrier");
 		}
-
+	
 		++totalFlights;
 		if(flight.cancelled()) {
 			++totalCancelled;
@@ -39,10 +36,10 @@ public class CarrierMetrics {
 	}
 
 	public static CarrierMetrics combine(CarrierMetrics metrics1, CarrierMetrics metrics2) {
-		if(!metrics1.carrier.equals(metrics2.carrier)) {
+		if(!metrics1.getSubject().equals(metrics2.getSubject())) {
 			throw new IllegalArgumentException("Wrong carrier");
 		}
-		CarrierMetrics result = new CarrierMetrics(metrics1.carrier);
+		CarrierMetrics result = new CarrierMetrics(metrics1.getSubject());
 		result.totalFlights = metrics1.totalFlights + metrics2.totalFlights;
 		result.totalCancelled = metrics1.totalCancelled + metrics2.totalCancelled;
 		result.totalDiverted = metrics1.totalDiverted + metrics2.totalDiverted;
@@ -51,28 +48,33 @@ public class CarrierMetrics {
 		return result;
 	}
 
-	public Carrier getCarrier() {
-		return carrier;
-	}
-
-	public int getTotalFlights() {
-		return totalFlights;
-	}
-
-	public int getTotalCancelled() {
-		return totalCancelled;
-	}
-
-	public int getTotalDiverted() {
-		return totalDiverted;
-	}
-
 	public Set<String> getAirports() {
 		return Collections.unmodifiableSet(airports);
 	}
 
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+	public static BiConsumer<Map<String, CarrierMetrics>, Flight> accumulator() { 
+		return (map, flight) -> {
+			Carrier carrier = flight.getCarrier();
+			CarrierMetrics metrics = map.get(carrier.getCode());
+			if(metrics == null) {
+				metrics = new CarrierMetrics(carrier);
+				map.put(carrier.getCode(), metrics);
+			}
+			metrics.addFlight(flight);
+		};
+	}
+
+	public static BiConsumer<Map<String, CarrierMetrics>, Map<String, CarrierMetrics>> combiner() {
+		return (map1, map2) -> {
+			map1.entrySet()
+				.stream()
+				.forEach(e -> {
+					String carrier = e.getKey();
+					CarrierMetrics metrics = map2.get(carrier);
+					if(metrics != null) {
+						map1.merge(carrier, metrics, CarrierMetrics::combine);
+					}
+				});
+		};
 	}
 }
