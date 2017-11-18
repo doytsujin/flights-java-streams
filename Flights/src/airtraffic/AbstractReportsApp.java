@@ -62,6 +62,20 @@ public abstract class AbstractReportsApp {
 		return io.newStringInputReader().read(prompt);
 	}
 
+	protected double readDouble(String prompt, double min, double max) {
+		return io.newDoubleInputReader()
+				 .withMinVal(min)
+				 .withMaxVal(max)
+				 .read(prompt);
+	}
+
+	protected int readInt(String prompt, int min, int max) {
+		return io.newIntInputReader()
+				 .withMinVal(min)
+				 .withMaxVal(max)
+				 .read(prompt);
+	}
+
 	protected int readLimit(int defaultValue, int min, int max) {
 		return io.newIntInputReader()
 				 .withDefaultValue(defaultValue)

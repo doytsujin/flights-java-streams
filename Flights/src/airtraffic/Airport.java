@@ -12,7 +12,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  * @author tony@piazzaconsulting.com
  */
-public class Airport implements Comparable<Airport> {
+public class Airport implements Comparable<Airport>, GeoLocation {
 	private String iata;
 	private String name;
 	private String city;
