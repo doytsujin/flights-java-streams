@@ -24,7 +24,7 @@ for planes whose registrations have been cancelled. If you want to include this 
 
 The structure of the project can be seen in the following picture.
 
-![Eclipse Project File Structure](https://i.imgur.com/NlidbKU.gif)
+![Eclipse Project File Structure](https://i.imgur.com/KKGk0r4.gif)
 
 The project makes extensive using of the following domain classes:
 
