@@ -1,5 +1,7 @@
 package airtraffic;
 
+import java.util.Comparator;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -23,6 +25,14 @@ public abstract class FlightBasedMetrics<T> {
 
 	public T getSubject() {
 		return subject;
+	}
+
+	public static Comparator<AirportMetrics> highestCancellationRateComparator() {
+		return (m1, m2) -> Double.compare(m2.getCancellationRate(), m1.getCancellationRate());
+	}
+
+	public static Comparator<AirportMetrics> highestTotalFlightsComparator() {
+		return (m1, m2) -> Integer.compare(m2.getTotalFlights(), m1.getTotalFlights());
 	}
 
 	public int getTotalFlights() {

@@ -1,6 +1,5 @@
 package airtraffic;
 
-import java.util.Comparator;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
@@ -53,10 +52,6 @@ public class AirportMetrics extends FlightBasedMetrics<Airport> {
 			case SECURITY:	return totalCancelledSecurity;
 			default:			return 0;
 		}
-	}
-
-	public static Comparator<AirportMetrics> highestCancellationRateComparator() {
-		return (m1, m2) -> Double.compare(m2.getCancellationRate(), m1.getCancellationRate());
 	}
 
 	public static BiConsumer<Map<String, AirportMetrics>, Flight> accumulator() { 

@@ -1,5 +1,6 @@
 package airtraffic;
 
+import static airtraffic.FlightBasedMetrics.highestCancellationRateComparator;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.comparingInt;
 import static java.util.Comparator.reverseOrder;
@@ -399,7 +400,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .values()
 			  .stream()
 			  .filter(metrics -> metrics.getTotalCancelled() > 0)
-			  .sorted(AirportMetrics.highestCancellationRateComparator())
+			  .sorted(highestCancellationRateComparator())
 			  .limit(limit)
 			  .map(metrics -> {
 				  Airport airport = metrics.getSubject();
