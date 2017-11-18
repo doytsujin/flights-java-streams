@@ -23,7 +23,7 @@ public class PlaneReportsApp extends AbstractReportsApp {
 		source.collect(groupingBy(Plane::getManufacturer, counting()))
 			  .entrySet()
 			  .stream()
-			  .sorted((e1, e2) -> e2.getValue().intValue() - e1.getValue().intValue())
+			  .sorted(mapValueReverseOrder())
 			  .forEach(e -> printf("%-25s\t%5d\n", e.getKey(), e.getValue()));
 	}
 
@@ -34,7 +34,7 @@ public class PlaneReportsApp extends AbstractReportsApp {
 			  .collect(groupingBy(Plane::getYear, counting()))
 			  .entrySet()
 			  .stream()
-			  .sorted((e1, e2) -> e2.getKey().intValue() - e1.getKey().intValue())
+			  .sorted(mapKeyReverseOrder())
 			  .forEach(e -> printf("%4d\t%5d\n", e.getKey(), e.getValue()));
 	}
 
@@ -44,7 +44,7 @@ public class PlaneReportsApp extends AbstractReportsApp {
 		source.collect(groupingBy(Plane::getAircraftType, counting()))
 			  .entrySet()
 			  .stream()
-			  .sorted((e1, e2) -> e2.getValue().intValue() - e1.getValue().intValue())
+			  .sorted(mapValueReverseOrder())
 			  .forEach(e -> printf("%-25s\t%5d\n", e.getKey(), e.getValue()));
 	}
 
@@ -54,7 +54,7 @@ public class PlaneReportsApp extends AbstractReportsApp {
 		source.collect(groupingBy(Plane::getEngineType, counting()))
 			  .entrySet()
 			  .stream()
-			  .sorted((e1, e2) -> e2.getValue().intValue() - e1.getValue().intValue())
+			  .sorted(mapValueReverseOrder())
 			  .forEach(e -> printf("%-25s\t%5d\n", e.getKey(), e.getValue()));
 	}
 }
