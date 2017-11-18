@@ -1,5 +1,6 @@
 package airtraffic;
 
+import java.util.Comparator;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
@@ -54,6 +55,10 @@ public class AirportMetrics extends FlightBasedMetrics<Airport> {
 		}
 	}
 
+	public static Comparator<AirportMetrics> highestCancellationRateComparator() {
+		return (m1, m2) -> Double.compare(m2.getCancellationRate(), m1.getCancellationRate());
+	}
+
 	public static BiConsumer<Map<String, AirportMetrics>, Flight> accumulator() { 
 		return (map, flight) -> {
 			Airport origin = flight.getOrigin();
@@ -63,6 +68,7 @@ public class AirportMetrics extends FlightBasedMetrics<Airport> {
 				map.put(origin.getIATA(), metrics1);
 			}
 			metrics1.addFlight(flight);
+
 			Airport destination = flight.getDestination();
 			AirportMetrics metrics2 = map.get(destination.getIATA());
 			if(metrics2 == null) {

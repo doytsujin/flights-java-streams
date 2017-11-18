@@ -1,5 +1,6 @@
 package airtraffic;
 
+import static java.util.Comparator.comparing;
 import static java.util.Comparator.comparingInt;
 import static java.util.Comparator.reverseOrder;
 import static java.util.Map.Entry.comparingByKey;
@@ -166,11 +167,10 @@ public class FlightReportsApp extends AbstractReportsApp {
 		println("Total        Cancelled %   Diverted %    Airports");
 		println(repeat("-", 94));
 		source.collect(HashMap::new, CarrierMetrics.accumulator(), CarrierMetrics.combiner())
-			  .entrySet()
+			  .values()
 			  .stream()
-			  .sorted(comparingByKey())
-			  .forEach(e -> {
-				  CarrierMetrics metrics = e.getValue();
+			  .sorted(comparing(CarrierMetrics::getSubject))
+			  .forEach(metrics -> {
 				  Carrier carrier = metrics.getSubject();
 				  String carrierName = carrier.getName();
 				  printf(" %2s     %-30s     %,9d    %6.1f        %6.1f         %,5d\n", 
@@ -264,7 +264,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 
 	public void reportMostFlightsByPlane(Stream<Flight> source) {
 		int limit = readLimit(10, 1, 100);
-		println("Tail #\t  Manufacturer\t\tModel #\t\tCount\t Daily Avg");
+		println("Tail #\t  Manufacturer\t\tModel #\t\tCount");
 		println(repeat("-", 67));
 		source.filter(f -> f.notCancelled())
 			  .collect(groupingBy(Flight::getPlane, counting()))
@@ -274,12 +274,12 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .limit(limit)
 			  .forEachOrdered(e -> {
 				  Plane plane = e.getKey();
-				  printf("%-8s  %-20s  %-10s  %,10d\t  %6.1f\n", 
+				  printf("%-8s  %-20s  %-10s  %,10d\n", 
 						  plane.getTailNumber(), 
 						  left(plane.getManufacturer(), 20),
 						  left(plane.getModel().getModelNumber(), 10),
-						  e.getValue(),
-						  e.getValue().floatValue() / 365);  
+						  e.getValue()
+				  );
 			  });
 	}
 
@@ -376,20 +376,36 @@ public class FlightReportsApp extends AbstractReportsApp {
 		println("Total        Cancelled %   Diverted %");
 		println(repeat("-", 82));
 		source.collect(HashMap::new, AirportMetrics.accumulator(), AirportMetrics.combiner())
-		  .entrySet()
-		  .stream()
-		  .sorted(comparingByKey())
-		  .forEach(e -> {
-			  AirportMetrics metrics = e.getValue();
-			  Airport airport = metrics.getSubject();
-			  String airportName = airport.getName();
-			  printf(" %3s    %-30s     %,9d    %6.1f        %6.1f\n", 
-			  		  airport.getIATA(),
-			  		  airportName.substring(0, Math.min(airportName.length(), 29)),
-			  		  metrics.getTotalFlights(),
-			  		  metrics.getTotalCancelled() * 100.0 / metrics.getTotalFlights(),
-			  		  metrics.getTotalDiverted() * 100.0 / metrics.getTotalFlights()
-			  );
-		  });
+			  .values()
+			  .stream()
+			  .sorted(comparing(AirportMetrics::getSubject))
+			  .forEach(metrics -> {
+				  Airport airport = metrics.getSubject();
+				  String airportName = airport.getName();
+				  printf(" %3s    %-30s     %,9d    %6.1f        %6.1f\n", 
+				  		  airport.getIATA(),
+				  		  airportName.substring(0, Math.min(airportName.length(), 29)),
+				  		  metrics.getTotalFlights(),
+				  		  metrics.getCancellationRate() * 100.0,
+				  		  metrics.getDiversionRate() * 100.0);
+			  });
+	}
+
+	public void reportAirportsWithHighestCancellationRate(Stream<Flight> source) {
+		int limit = readLimit(10, 1, 100);
+		println("IATA\tRate");
+		println("---------------");
+		source.collect(HashMap::new, AirportMetrics.accumulator(), AirportMetrics.combiner())
+			  .values()
+			  .stream()
+			  .filter(metrics -> metrics.getTotalCancelled() > 0)
+			  .sorted(AirportMetrics.highestCancellationRateComparator())
+			  .limit(limit)
+			  .map(metrics -> {
+				  Airport airport = metrics.getSubject();
+				  return String.format(" %3s\t%6.1f", 
+						  				airport.getIATA(),
+						  				metrics.getCancellationRate() * 100.0);
+			  }).forEachOrdered(s -> println(s));
 	}
 }
