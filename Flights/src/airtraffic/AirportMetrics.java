@@ -44,17 +44,6 @@ public class AirportMetrics extends FlightBasedMetrics<Airport> {
 		++totalFlights;
 	}
 
-	public static AirportMetrics combine(AirportMetrics metrics1, AirportMetrics metrics2) {
-		if(!metrics1.getSubject().equals(metrics2.getSubject())) {
-			throw new IllegalArgumentException("Wrong carrier");
-		}
-		AirportMetrics result = new AirportMetrics(metrics1.getSubject());
-		result.totalFlights = metrics1.totalFlights + metrics2.totalFlights;
-		result.totalCancelled = metrics1.totalCancelled + metrics2.totalCancelled;
-		result.totalDiverted = metrics1.totalDiverted + metrics2.totalDiverted;
-		return result;
-	}
-
 	public int getTotalCancelledByCode(CancellationCode code) {
 		switch(code) {
 			case CARRIER:	return totalCancelledCarrier;
@@ -92,7 +81,16 @@ public class AirportMetrics extends FlightBasedMetrics<Airport> {
 					String airport = e.getKey();
 					AirportMetrics metrics = map2.get(airport);
 					if(metrics != null) {
-						map1.merge(airport, metrics, AirportMetrics::combine);
+						map1.merge(airport, metrics, (metrics1, metrics2) -> {
+							if(!metrics1.getSubject().equals(metrics2.getSubject())) {
+								throw new IllegalArgumentException("Wrong carrier");
+							}
+							AirportMetrics result = new AirportMetrics(metrics1.getSubject());
+							result.totalFlights = metrics1.totalFlights + metrics2.totalFlights;
+							result.totalCancelled = metrics1.totalCancelled + metrics2.totalCancelled;
+							result.totalDiverted = metrics1.totalDiverted + metrics2.totalDiverted;
+							return result;
+						});
 					}
 				});
 		};

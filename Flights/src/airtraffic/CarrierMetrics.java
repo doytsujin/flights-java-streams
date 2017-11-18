@@ -35,19 +35,6 @@ public class CarrierMetrics extends FlightBasedMetrics<Carrier> {
 		airports.add(flight.getDestination().getIATA());
 	}
 
-	public static CarrierMetrics combine(CarrierMetrics metrics1, CarrierMetrics metrics2) {
-		if(!metrics1.getSubject().equals(metrics2.getSubject())) {
-			throw new IllegalArgumentException("Wrong carrier");
-		}
-		CarrierMetrics result = new CarrierMetrics(metrics1.getSubject());
-		result.totalFlights = metrics1.totalFlights + metrics2.totalFlights;
-		result.totalCancelled = metrics1.totalCancelled + metrics2.totalCancelled;
-		result.totalDiverted = metrics1.totalDiverted + metrics2.totalDiverted;
-		result.airports.addAll(metrics1.airports);
-		result.airports.addAll(metrics2.airports);
-		return result;
-	}
-
 	public Set<String> getAirports() {
 		return Collections.unmodifiableSet(airports);
 	}
@@ -72,7 +59,18 @@ public class CarrierMetrics extends FlightBasedMetrics<Carrier> {
 					String carrier = e.getKey();
 					CarrierMetrics metrics = map2.get(carrier);
 					if(metrics != null) {
-						map1.merge(carrier, metrics, CarrierMetrics::combine);
+						map1.merge(carrier, metrics, (metrics1, metrics2) -> {
+							if(!metrics1.getSubject().equals(metrics2.getSubject())) {
+								throw new IllegalArgumentException("Wrong carrier");
+							}
+							CarrierMetrics result = new CarrierMetrics(metrics1.getSubject());
+							result.totalFlights = metrics1.totalFlights + metrics2.totalFlights;
+							result.totalCancelled = metrics1.totalCancelled + metrics2.totalCancelled;
+							result.totalDiverted = metrics1.totalDiverted + metrics2.totalDiverted;
+							result.airports.addAll(metrics1.airports);
+							result.airports.addAll(metrics2.airports);
+							return result;
+						});
 					}
 				});
 		};
