@@ -27,11 +27,11 @@ public abstract class FlightBasedMetrics<T> {
 		return subject;
 	}
 
-	public static Comparator<AirportMetrics> highestCancellationRateComparator() {
+	public static Comparator<FlightBasedMetrics<?>> highestCancellationRateComparator() {
 		return (m1, m2) -> Double.compare(m2.getCancellationRate(), m1.getCancellationRate());
 	}
 
-	public static Comparator<AirportMetrics> highestTotalFlightsComparator() {
+	public static Comparator<FlightBasedMetrics<?>> highestTotalFlightsComparator() {
 		return (m1, m2) -> Integer.compare(m2.getTotalFlights(), m1.getTotalFlights());
 	}
 
