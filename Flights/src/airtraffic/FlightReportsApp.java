@@ -402,7 +402,6 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  }).forEachOrdered(s -> println(s));
 	}
 
-
 	public void reportCarriersWithHighestCancellationRate(Stream<Flight> source) {
 		int limit = readLimit(10, 1, 100);
 		println("Carrier                           Rate");
@@ -419,5 +418,20 @@ public class FlightReportsApp extends AbstractReportsApp {
 						  				carrier.getName(),
 						  				metrics.getCancellationRate() * 100.0);
 			  }).forEachOrdered(s -> println(s));
+	}
+
+	public void reportPlanesWithMostCancellations(Stream<Flight> source) {
+		int limit = readLimit(10, 1, 100);
+		println("Tail #\t\tCount");
+		println("-----------------------");
+		source.filter(f -> f.cancelled())
+			  .collect(groupingBy(Flight::getTailNumber, counting()))
+			  .entrySet()
+			  .stream()
+			  .sorted(comparingByValue(reverseOrder()))
+			  .limit(limit)
+			  .forEach(e -> printf("%-8s\t%,6d\n", 
+					  		e.getKey().length() > 0 ? e.getKey() : "UNKNOWN", 
+					  		e.getValue()));
 	}
 }
