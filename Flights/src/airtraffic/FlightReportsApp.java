@@ -409,4 +409,23 @@ public class FlightReportsApp extends AbstractReportsApp {
 						  				metrics.getCancellationRate() * 100.0);
 			  }).forEachOrdered(s -> println(s));
 	}
+
+
+	public void reportCarriersWithHighestCancellationRate(Stream<Flight> source) {
+		int limit = readLimit(10, 1, 100);
+		println("Carrier                           Rate");
+		println("---------------------------------------");
+		source.collect(HashMap::new, CarrierMetrics.accumulator(), CarrierMetrics.combiner())
+			  .values()
+			  .stream()
+			  .filter(metrics -> metrics.getTotalCancelled() > 0)
+			  .sorted(highestCancellationRateComparator())
+			  .limit(limit)
+			  .map(metrics -> {
+				  Carrier carrier = metrics.getSubject();
+				  return String.format("%-30s\t%6.1f", 
+						  				carrier.getName(),
+						  				metrics.getCancellationRate() * 100.0);
+			  }).forEachOrdered(s -> println(s));
+	}
 }
