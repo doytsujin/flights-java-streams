@@ -18,7 +18,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -334,18 +333,11 @@ public class FlightReportsApp extends AbstractReportsApp {
 		println("Range\t\tCount");
 		println(repeat("-", 27));
 		source.filter(f -> f.notCancelled())
-			  .collect(groupingBy(rangeClassifier(), counting()))
+			  .collect(groupingBy(DistanceRange.classifier(DISTANCE_RANGES), counting()))
 			  .entrySet()
 			  .stream()
 			  .sorted(comparingByKey())
 			  .forEach(e -> printf("%-10s\t%,10d\n", e.getKey(), e.getValue()));
-	}
-
-	private static Function<Flight, DistanceRange> rangeClassifier() {
-		return f -> DISTANCE_RANGES.stream()
-								   .filter(r -> r.contains(f.getDistance()))
-								   .findAny()
-								   .get();
 	}
 
 	public void reportDaysWithLeastCancellations(Stream<Flight> source) {

@@ -1,5 +1,8 @@
 package airtraffic;
 
+import java.util.List;
+import java.util.function.Function;
+
 import org.apache.commons.lang3.Range;
 
 /**
@@ -20,6 +23,13 @@ public class DistanceRange implements Comparable<DistanceRange> {
 
 	public boolean contains(int value) {
 		return range.contains(value);
+	}
+
+	public static Function<Flight, DistanceRange> classifier(List<DistanceRange> ranges) {
+		return f -> ranges.stream()
+						  .filter(r -> r.contains(f.getDistance()))
+						  .findAny()
+						  .get();
 	}
 
 	@Override
