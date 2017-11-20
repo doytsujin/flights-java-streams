@@ -14,13 +14,8 @@ based on data they received from the Bureau of Transportation Statistics (a divi
 of the U.S. Department of Transportation). 
 
 You may notice that the above data does have missing data. For example, for 
-some flight records, there is no tailNum field. There is not much you can do in
-that case.
-
-I supplemented the data above with 
-[additional data](http://registry.faa.gov/aircraftrenewal_reports/CanceledReg_Inquiry.aspx "Canceled Plane Data") 
-for planes whose registrations have been cancelled. If you want to include this data, download it yourself to the 
-*data* folder with the name *cancelled-planes.csv*.
+some flight records, there is no tailNum field. This obviously limits what you
+can do with the data in those cases.
 
 The structure of the project can be seen in the following picture.
 
