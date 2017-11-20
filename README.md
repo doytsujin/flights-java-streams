@@ -3,8 +3,8 @@ Processing Flight Data using Java 8 Streams
 
 I started this project to share some examples of working with the **Java 8** 
 Stream API. I don't claim to be an expert on stream programming. This is just
-a way for me to share my understanding of how you can use Java apps that 
-leverage the Stream API. In particular, I hope to highlight the different style
+a way for me to share my understanding of how to build Java apps that leverage 
+the Stream API. In particular, I hope to highlight the different programming style
 encouraged by this API. As you will see, there is heavy use of Lambda expressions
 throughout this code. That is intentional and strongly encouraged.
 
