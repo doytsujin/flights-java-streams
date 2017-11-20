@@ -10,22 +10,22 @@ import org.apache.commons.lang3.Range;
  *
  * @author tony@piazzaconsulting.com
  */
-public class DistanceRange implements Comparable<DistanceRange> {
+public class IntRange implements Comparable<IntRange> {
 	private Range<Integer> range;
 
-	private DistanceRange(int start, int end) {
+	private IntRange(int start, int end) {
 		this.range = Range.between(start, end);
 	}
 
-	public static DistanceRange between(int start, int end) {
-		return new DistanceRange(start, end);
+	public static IntRange between(int start, int end) {
+		return new IntRange(start, end);
 	}
 
 	public boolean contains(int value) {
 		return range.contains(value);
 	}
 
-	public static Function<Flight, DistanceRange> classifier(List<DistanceRange> ranges) {
+	public static Function<Flight, IntRange> classifier(List<IntRange> ranges) {
 		return f -> ranges.stream()
 						  .filter(r -> r.contains(f.getDistance()))
 						  .findAny()
@@ -33,7 +33,7 @@ public class DistanceRange implements Comparable<DistanceRange> {
 	}
 
 	@Override
-	public int compareTo(DistanceRange other) {
+	public int compareTo(IntRange other) {
 		return this.range.getMaximum() - other.range.getMinimum(); 
 	}
 

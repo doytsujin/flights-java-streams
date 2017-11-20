@@ -26,13 +26,13 @@ import java.util.stream.Stream;
  * @author tony@piazzaconsulting.com
  */
 public class FlightReportsApp extends AbstractReportsApp {
-	private static final List<DistanceRange> DISTANCE_RANGES =
-		Arrays.asList(DistanceRange.between(0, 100), 
-					  DistanceRange.between(101, 250),
-					  DistanceRange.between(251, 500),
-					  DistanceRange.between(501, 1000),
-					  DistanceRange.between(1001, 2500),
-					  DistanceRange.between(2501, 5000));
+	private static final List<IntRange> DISTANCE_RANGES =
+		Arrays.asList(IntRange.between(0, 100), 
+					  IntRange.between(101, 250),
+					  IntRange.between(251, 500),
+					  IntRange.between(501, 1000),
+					  IntRange.between(1001, 2500),
+					  IntRange.between(2501, 5000));
 
 	public static void main(String[] args) throws Exception {
 		ReferenceData reference = new ReferenceData();
@@ -333,7 +333,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 		println("Range\t\tCount");
 		println(repeat("-", 27));
 		source.filter(f -> f.notCancelled())
-			  .collect(groupingBy(DistanceRange.classifier(DISTANCE_RANGES), counting()))
+			  .collect(groupingBy(IntRange.classifier(DISTANCE_RANGES), counting()))
 			  .entrySet()
 			  .stream()
 			  .sorted(comparingByKey())
