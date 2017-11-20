@@ -21,10 +21,9 @@ public final class GeoHelper {
 	public static double getDistance(GeoLocation loc1, GeoLocation loc2, GeoLocation.Units units) {
 		double theta = loc1.getLongitude() - loc2.getLongitude();
 		double dist = sin(deg2rad(loc1.getLatitude())) * sin(deg2rad(loc2.getLatitude())) + 
-					  cos(deg2rad(loc1.getLatitude())) * cos(deg2rad(loc2.getLatitude())) * cos(deg2rad(theta));
-		dist = acos(dist);
-		dist = rad2deg(dist) * 60 * 1.1515;
-
+					  cos(deg2rad(loc1.getLatitude())) * cos(deg2rad(loc2.getLatitude())) * 
+					  cos(deg2rad(theta));
+		dist = rad2deg(acos(dist)) * 69.09;
 		return units.equals(MILES) ? dist * 0.8684 : dist * 1.609344;
 	}
 
