@@ -48,7 +48,7 @@ you will notice there are data files for each year from 1987 to 2008.
 The install phase will only download the 2008 flight data file. If you want to 
 execute the above classes using flight data from earlier years, you can 
 download and extract any of the other available files. Then you can add them to 
-the configuration file like this:
+the configuration file (*config.yaml*) like this:
 
 ![YAML File](https://i.imgur.com/YJjsU6w.gif) 
 
