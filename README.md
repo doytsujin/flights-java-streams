@@ -43,6 +43,15 @@ of the following classes:
 * FlightReportsApp
 * PlaneReportsApp
 
+If you visit the [source data link](http://stat-computing.org/dataexpo/2009/the-data.html "Flight Data"), 
+you will notice there are data files for each year from 1987 to 2008. 
+The install phase will only download the 2008 flight data file. If you want to 
+execute the above classes using flight data from earlier years, you can 
+download and extract any of the other available files. Then you can add them to 
+the configuration file like this:
+
+![YAML File](https://i.imgur.com/YJjsU6w.gif) 
+
 The project includes a logging.properties file that can be used to configure
 JDK logging. To enable it, add the following VM arguments when you launch the 
 above application classes:
