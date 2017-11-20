@@ -13,9 +13,9 @@ import java.util.stream.Stream;
  */
 public class AirportReportsApp extends AbstractReportsApp {
 	public static void main(String[] args) throws Exception {
-		Stream<Airport> source = new ReferenceData().getAirportStream();
+		Repository repository = new Repository();
 		AirportReportsApp app = new AirportReportsApp();
-		app.executeSelectedReport(source);
+		app.executeSelectedReport(repository.getAirportStream());
 	}
 
 	public void reportAirportsForState(Stream<Airport> source) {

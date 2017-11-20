@@ -10,8 +10,6 @@ import static java.util.stream.Collectors.averagingInt;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
@@ -35,12 +33,9 @@ public class FlightReportsApp extends AbstractReportsApp {
 					  IntRange.between(2501, 5000));
 
 	public static void main(String[] args) throws Exception {
-		ReferenceData reference = new ReferenceData();
-		Stream<Flight> source = Files.lines(Paths.get("data/flights-2008.csv"))
-									 .skip(1)	// skip header
-									 .map(s -> new Flight(s, reference));
+		Repository repository = new Repository();
 		FlightReportsApp app = new FlightReportsApp();
-		app.executeSelectedReport(source);
+		app.executeSelectedReport(repository.getFlightStream());
 	}
 
 	public void reportTotalFlightsFromOrigin(Stream<Flight> source) {
@@ -71,15 +66,15 @@ public class FlightReportsApp extends AbstractReportsApp {
 
 	public void reportMostFlightsByOrigin(Stream<Flight> source) {
 		int limit = readLimit(10, 1, 100);
-		println("\nOrigin\tCount");
-		println("---------------");
+		println("\nOrigin\t\tCount");
+		println("---------------------------");
 		source.filter(f -> f.notCancelled())
 			  .collect(groupingBy(Flight::getOrigin, counting()))
 			  .entrySet()
 			  .stream()
 			  .sorted(comparingByValue(reverseOrder()))
 			  .limit(limit)
-			  .forEachOrdered(e -> printf("%3s\t%d\n", e.getKey().getIATA(), e.getValue()));
+			  .forEachOrdered(e -> printf(" %3s\t\t%,10d\n", e.getKey().getIATA(), e.getValue()));
 	}
 
 	public void reportTopDestinationsFromOrigin(Stream<Flight> source) {

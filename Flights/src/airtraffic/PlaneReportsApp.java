@@ -15,9 +15,9 @@ import java.util.stream.Stream;
  */
 public class PlaneReportsApp extends AbstractReportsApp {
 	public static void main(String[] args) throws Exception {
-		Stream<Plane> source = new ReferenceData().getPlaneStream();
+		Repository repository = new Repository();
 		PlaneReportsApp app = new PlaneReportsApp();
-		app.executeSelectedReport(source);
+		app.executeSelectedReport(repository.getPlaneStream());
 	}
 
 	public void reportPlaneCountsByManfacturer(Stream<Plane> source) {
