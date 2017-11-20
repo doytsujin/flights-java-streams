@@ -1,0 +1,6 @@
+airportPath: data/airports.csv
+carrierPath: data/carriers.csv
+planePath: data/planes.csv
+flightPaths: {
+   2008: data/flights-2008.csv
+}

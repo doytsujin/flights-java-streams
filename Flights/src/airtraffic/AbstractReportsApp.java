@@ -88,6 +88,14 @@ public abstract class AbstractReportsApp {
 				 .read("Limit");
 	}
 
+	protected int readYear(int min, int max) {
+		return io.newIntInputReader()
+				 .withDefaultValue(max)
+				 .withMinVal(min)
+				 .withMaxVal(max)
+				 .read("Year");
+	}
+
 	protected void executeSelectedReport(Stream<?> source) throws Exception {
 		List<Method> reportMethods = getReportMethods();
 		int optionNum = getReportOption(reportMethods);

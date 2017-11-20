@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -33,9 +34,21 @@ public class FlightReportsApp extends AbstractReportsApp {
 					  IntRange.between(2501, 5000));
 
 	public static void main(String[] args) throws Exception {
-		Repository repository = new Repository();
 		FlightReportsApp app = new FlightReportsApp();
-		app.executeSelectedReport(repository.getFlightStream());
+		Repository repository = new Repository();
+
+		Set<Integer> years = repository.getFlightYears();
+		int year = years.stream().reduce(Integer::max).get();
+		int minYear = years.stream().reduce(Integer::min).get();
+		if(years.size() > 1) {
+			app.println("There is flight data for the following years:");
+			app.println(years.toString());
+			year = app.readYear(minYear, year);
+		} else {
+			app.println("There is flight data for the year " + year);
+		}
+
+		app.executeSelectedReport(repository.getFlightStream(year));
 	}
 
 	public void reportTotalFlightsFromOrigin(Stream<Flight> source) {

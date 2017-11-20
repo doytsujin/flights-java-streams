@@ -3,8 +3,10 @@ package airtraffic;
 import static java.util.stream.Collectors.toMap;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,7 +14,10 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -20,11 +25,20 @@ import org.simpleflatmapper.csv.CellValueReader;
 import org.simpleflatmapper.csv.CsvMapper;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.CsvParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
 
 import airtraffic.Plane.AircraftType;
 import airtraffic.Plane.EngineType;
 import airtraffic.Plane.OwnershipType;
 
+/**
+ * Provides access to the data used by the application classes.
+ *
+ * @author tony@piazzaconsulting.com
+ */
 public final class Repository {
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("mm/dd/yyyy");
 	private static final CellValueReader<Date> DATE_VALUE_READER =
@@ -69,22 +83,41 @@ public final class Repository {
 						.addMapping("engineType")
 						.addMapping("year")
 						.mapper();
+	private final Logger logger = LoggerFactory.getLogger(Repository.class);
 	private final Path airportPath;
 	private final Path carrierPath;
 	private final Path planePath;
-	private final Path flightPath;
-	private final int flightYear;
+	private final Map<Integer, Path> flightPaths;
 	private Map<String, Airport> airportMap;
 	private Map<String, Carrier> carrierMap;
 	private Map<String, Plane> planeMap;
 
 	public Repository() {
-		// TODO: Move these to a YAML file
-		airportPath = Paths.get("data/airports.csv");
-		carrierPath = Paths.get("data/carriers.csv");
-		planePath = Paths.get("data/planes.csv");
-		flightPath = Paths.get("data/flights-2008.csv");
-		flightYear = 2008;
+		Reader reader;
+		try {
+			reader = new FileReader("config.yaml");
+		} catch (FileNotFoundException e) {
+			throw new RepositoryException(e);
+		}
+		Yaml yaml = new Yaml(new Constructor(Config.class));
+		Config config = yaml.load(reader);
+		Map<Integer, String> pathMap = config.getFlightPaths();
+		this.flightPaths = new HashMap<>();
+		Path path;
+		for(Entry<Integer, String> e: pathMap.entrySet()) {
+			path = Paths.get(e.getValue());
+			if(Files.exists(path)) {
+				this.flightPaths.put(e.getKey(), path);
+			} else {
+				logger.warn("Invalid path: {}", path);
+			}
+		}
+		if(this.flightPaths.isEmpty()) {
+			throw new IllegalStateException("No flight data found");
+		}
+		this.airportPath = getAndValidatePath(config.getAirportPath());
+		this.carrierPath = getAndValidatePath(config.getCarrierPath());
+		this.planePath = getAndValidatePath(config.getPlanePath());
 	}
 
 	public Stream<Airport> getAirportStream() {
@@ -122,9 +155,13 @@ public final class Repository {
 		return carrierMap;
 	}
 
-	public Stream<Flight> getFlightStream() {
+	public Stream<Flight> getFlightStream(int year) {
+		Path path = flightPaths.get(year);
+		if(path == null) {
+			throw new IllegalArgumentException("No flight data for year " + year);
+		}
 		try {
-			return Files.lines(flightPath)
+			return Files.lines(path)
 						.skip(1)				// skip header
 						.map(s -> new Flight(s, this));
 		} catch (IOException e) {
@@ -149,11 +186,19 @@ public final class Repository {
 		return planeMap;
 	}
 
-	public int getFlightYear() {
-		return flightYear;
+	public Set<Integer> getFlightYears() {
+		return flightPaths.keySet();
 	}
 
 	private BufferedReader getReader(Path path) throws IOException {
 		return new BufferedReader(new FileReader(path.toFile()));
+	}
+
+	private Path getAndValidatePath(String path) {
+		Path result = Paths.get(path);
+		if(Files.notExists(result)) {
+			throw new IllegalStateException("Invalid path: " + path);
+		}
+		return result;
 	}
 }
