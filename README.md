@@ -11,15 +11,13 @@ throughout this code. That is intentional and strongly encouraged.
 The [source data](http://stat-computing.org/dataexpo/2009/the-data.html "Flight Data") 
 for this project is published in CSV format by the *American Statistical Association* 
 based on data they received from the Bureau of Transportation Statistics (a division 
-of the U.S. Department of Transportation). 
-
-You may notice that the above data does have missing data. For example, for 
-some flight records, there is no tailNum field. This obviously limits what you
-can do with the data in those cases.
+of the U.S. Department of Transportation). You may notice that the data does have 
+missing fields. For example, for some flight records, there is no tailNum field. This 
+obviously limits what you can do with the data in those cases.
 
 The structure of the project can be seen in the following picture.
 
-![Eclipse Project File Structure](https://i.imgur.com/ydbL2aT.gif)
+![Eclipse Project File Structure](https://i.imgur.com/MCXEizd.gif)
 
 The project makes extensive using of the following domain classes:
 
@@ -44,6 +42,14 @@ of the following classes:
 * AirportReportsApp
 * FlightReportsApp
 * PlaneReportsApp
+
+The project includes a logging.properties file that can be used to configure
+JDK logging. To enable it, add the following VM arguments when you launch the 
+above application classes:
+
+~~~
+-Djava.util.logging.config.file=logging.properties
+~~~
 
 All of the code in this project is licensed under the MIT License. See the 
 LICENSE file for details.
