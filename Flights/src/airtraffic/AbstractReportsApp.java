@@ -17,6 +17,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.beryx.textio.TextIO;
 import org.beryx.textio.TextIoFactory;
 import org.beryx.textio.TextTerminal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Parent class for reporting apps.
@@ -29,8 +31,9 @@ public abstract class AbstractReportsApp {
 	private static final Class<?> REPORT_METHOD_RETURN_TYPE = Void.TYPE;
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
-	private TextIO io = TextIoFactory.getTextIO();
-	private TextTerminal<?> terminal = io.getTextTerminal();
+	private final Logger logger = LoggerFactory.getLogger(AbstractReportsApp.class);
+	private final TextIO io = TextIoFactory.getTextIO();
+	private final TextTerminal<?> terminal = io.getTextTerminal();
 
 	protected List<Method> getReportMethods() {
 		return Arrays.stream(this.getClass().getDeclaredMethods())
@@ -103,6 +106,7 @@ public abstract class AbstractReportsApp {
 			System.exit(0);
 		}
 		Method method = reportMethods.get(optionNum-1);
+		logger.debug("User requested invocation of method {}", method.getName());
 		terminal.println();
 		terminal.println(getReportDescription(method));
 		terminal.println();
@@ -118,6 +122,7 @@ public abstract class AbstractReportsApp {
 		terminal.printf(format, n, "Exit program");
 		for(Method m : printMethods) {
 			terminal.printf(format, ++n, getReportDescription(m));
+			logger.debug("Found report method {}", m.getName());
 		}
 		terminal.println();
 		return io.newIntInputReader()

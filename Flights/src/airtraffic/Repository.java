@@ -108,6 +108,7 @@ public final class Repository {
 			path = Paths.get(e.getValue());
 			if(Files.exists(path)) {
 				this.flightPaths.put(e.getKey(), path);
+				logger.debug("Found valid path: {}", path);
 			} else {
 				logger.warn("Invalid path: {}", path);
 			}
@@ -199,6 +200,7 @@ public final class Repository {
 		if(Files.notExists(result)) {
 			throw new IllegalStateException("Invalid path: " + path);
 		}
+		logger.debug("Found valid path: {}", path);
 		return result;
 	}
 }
