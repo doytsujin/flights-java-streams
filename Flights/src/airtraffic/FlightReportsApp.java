@@ -266,7 +266,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 		int limit = readLimit(10, 1, 100);
 		println("Tail #\t  Manufacturer\t\tModel #\t\tCount");
 		println(repeat("-", 67));
-		source.filter(f -> f.notCancelled())
+		source.filter(f -> f.notCancelled() && f.validTailNumber())
 			  .collect(groupingBy(Flight::getPlane, counting()))
 			  .entrySet()
 			  .stream()
@@ -424,14 +424,14 @@ public class FlightReportsApp extends AbstractReportsApp {
 		int limit = readLimit(10, 1, 100);
 		println("Tail #\t\tCount");
 		println("-----------------------");
-		source.filter(f -> f.cancelled())
+		source.filter(f -> f.cancelled() && f.validTailNumber())
 			  .collect(groupingBy(Flight::getTailNumber, counting()))
 			  .entrySet()
 			  .stream()
 			  .sorted(comparingByValue(reverseOrder()))
 			  .limit(limit)
 			  .forEach(e -> printf("%-8s\t%,6d\n", 
-					  		e.getKey().length() > 0 ? e.getKey() : "UNKNOWN", 
+					  		e.getKey(), 
 					  		e.getValue()));
 	}
 }

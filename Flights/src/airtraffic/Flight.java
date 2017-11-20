@@ -1,7 +1,7 @@
 package airtraffic;
 
 import static java.lang.Integer.parseInt;
-//import static airtraffic.GeoHelper.getDistance;
+import static org.apache.commons.lang3.StringUtils.length;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -9,6 +9,7 @@ import java.util.Date;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+
 
 /**
  * Domain class that represents a scheduled event for flying an aircraft 
@@ -85,7 +86,9 @@ public class Flight {
 		_CRSArrivalTime = parseInt(source[7]);
 		_carrier = ref.getCarrierMap().get(source[8]);
 		_flightNumber = parseInt(source[9]);
-		_tailNumber = source[10];
+		if(length(source[10]) > 0) {
+			_tailNumber = source[10];
+		}
 		_actualElapsedTime = "NA".equals(source[11]) ? 0 : parseInt(source[11]);
 		_CRSElapsedTime = "NA".equals(source[12]) ? 0 : parseInt(source[12]);
 		_airTime = "NA".equals(source[13]) ? 0 : parseInt(source[13]);
@@ -130,6 +133,10 @@ public class Flight {
 
 	public Date getDate() {
 		return date;
+	}
+
+	public boolean validTailNumber() {
+		return _tailNumber != null;
 	}
 
 	public int getYear() {
