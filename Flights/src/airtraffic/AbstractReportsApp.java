@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -97,6 +98,19 @@ public abstract class AbstractReportsApp {
 				 .withMinVal(min)
 				 .withMaxVal(max)
 				 .read("Year");
+	}
+
+	protected int selectYear(Set<Integer> years) {
+		int min = years.stream().reduce(Integer::min).get();
+		int year = years.stream().reduce(Integer::max).get();
+		if(years.size() > 1) {
+			println("There is flight data for the following years:");
+			println(years.toString());
+			year = readYear(min, year);
+		} else {
+			println("There is flight data for the year " + year);
+		}
+		return year;
 	}
 
 	protected void executeSelectedReport(Stream<?> source) throws Exception {
