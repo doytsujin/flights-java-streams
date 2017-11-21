@@ -24,13 +24,13 @@ import java.util.stream.Stream;
  * @author tony@piazzaconsulting.com
  */
 public class FlightReportsApp extends AbstractReportsApp {
-	private static final List<IntRange> DISTANCE_RANGES =
-		Arrays.asList(IntRange.between(0, 100), 
-					  IntRange.between(101, 250),
-					  IntRange.between(251, 500),
-					  IntRange.between(501, 1000),
-					  IntRange.between(1001, 2500),
-					  IntRange.between(2501, 5000));
+	private static final List<FlightDistanceRange> DISTANCE_RANGES =
+		Arrays.asList(FlightDistanceRange.between(   0,  100), 
+					  FlightDistanceRange.between( 101,  250),
+					  FlightDistanceRange.between( 251,  500),
+					  FlightDistanceRange.between( 501, 1000),
+					  FlightDistanceRange.between(1001, 2500),
+					  FlightDistanceRange.between(2501, 5000));
 
 	public static void main(String[] args) throws Exception {
 		FlightReportsApp app = new FlightReportsApp();
@@ -329,7 +329,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 		println("Range\t\tCount");
 		println(repeat("-", 27));
 		source.filter(f -> f.notCancelled())
-			  .collect(groupingBy(IntRange.classifier(DISTANCE_RANGES), counting()))
+			  .collect(groupingBy(FlightDistanceRange.classifier(DISTANCE_RANGES), counting()))
 			  .entrySet()
 			  .stream()
 			  .sorted(comparingByKey())
@@ -429,5 +429,16 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .forEach(e -> printf("%-8s\t%,6d\n", 
 					  		e.getKey(), 
 					  		e.getValue()));
+	}
+
+	public void reportTotalMonthlyFlights(Stream<Flight> source) {
+		println("Month\t\tCount");
+		println("---------------------------");
+		source.filter(f -> f.notCancelled())
+			  .collect(groupingBy(Flight::getYearMonth, counting()))
+			  .entrySet()
+			  .stream()
+			  .sorted(comparingByKey())
+			  .forEach(e -> printf("%s\t\t%,10d\n", e.getKey(), e.getValue()));
 	}
 }

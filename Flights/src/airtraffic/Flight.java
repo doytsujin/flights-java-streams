@@ -4,6 +4,7 @@ import static java.lang.Integer.parseInt;
 import static org.apache.commons.lang3.StringUtils.length;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -118,6 +119,10 @@ public class Flight {
 
 	public String describeRoute() {
 		return _origin + " to " + _destination;
+	}
+
+	public YearMonth getYearMonth() {
+		return YearMonth.from(date);
 	}
 
 	public Plane getPlane() {
