@@ -10,10 +10,9 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -40,13 +39,13 @@ import airtraffic.Plane.OwnershipType;
  * @author tony@piazzaconsulting.com
  */
 public final class Repository {
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("mm/dd/yyyy");
-	private static final CellValueReader<Date> DATE_VALUE_READER =
+	private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("mm/dd/yyyy");
+	private static final CellValueReader<LocalDate> DATE_VALUE_READER =
 		(chars, offset, length, ctx) -> {
-			Date result = null;
+			LocalDate result = null;
 			try {
-				result = DATE_FORMAT.parse(String.valueOf(chars, offset, length));
-			} catch (ParseException e) {
+				result = LocalDate.parse(String.valueOf(chars, offset, length), DATE_FORMAT);
+			} catch (DateTimeParseException e) {
 				/* eat it */
 			}
 			return result;

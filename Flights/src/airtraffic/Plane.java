@@ -1,6 +1,6 @@
 package airtraffic;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -85,23 +85,13 @@ public class Plane implements Comparable<Plane> {
 
 	private String tailNumber;
 	private OwnershipType ownershipType = OwnershipType.UNKNOWN;
-	private Date issueDate;
+	private LocalDate issueDate;
 	private String manufacturer = "UNKNOWN";
 	private String modelNumber = "UNKNOWN";
 	private String status = "UNKNOWN";
 	private AircraftType aircraftType = AircraftType.UNKNOWN;
 	private EngineType engineType = EngineType.UNKNOWN;
 	private int year;
-
-	// The following variables were added to support planes with cancelled registrations
-	private Date cancelDate;
-	@SuppressWarnings("unused") private String serialNumber = "UNKNOWN";
-	@SuppressWarnings("unused") private String mmsCode = "UNKNOWN";
-	@SuppressWarnings("unused") private String name;
-	@SuppressWarnings("unused") private String street;
-	@SuppressWarnings("unused") private String city;
-	@SuppressWarnings("unused") private String state;
-	@SuppressWarnings("unused") private String zipCode;
 
 	public String getTailNumber() {
 		return tailNumber;
@@ -127,11 +117,11 @@ public class Plane implements Comparable<Plane> {
 		this.manufacturer = manufacturer;
 	}
 
-	public Date getIssueDate() {
+	public LocalDate getIssueDate() {
 		return issueDate;
 	}
 
-	public void setIssueDate(Date issueDate) {
+	public void setIssueDate(LocalDate issueDate) {
 		this.issueDate = issueDate;
 	}
 
@@ -173,42 +163,6 @@ public class Plane implements Comparable<Plane> {
 
 	public void setYear(int year) {
 		this.year = year;
-	}
-
-	public void setSerialNumber(String serialNumber) {
-		this.serialNumber = serialNumber;
-	}
-
-	public void setMMSCode(String mmsCode) {
-		this.mmsCode = mmsCode;
-	}
-
-	public Date getCancelDate() {
-		return cancelDate;
-	}
-
-	public void setCancelDate(Date cancelDate) {
-		this.cancelDate = cancelDate;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setStreet(String street) {
-		this.street = street;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode;
 	}
 
 	public PlaneModel getModel() {

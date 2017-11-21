@@ -10,9 +10,9 @@ import static java.util.stream.Collectors.averagingInt;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -318,7 +318,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .limit(limit)
 			  .map(flight -> String.format("%-8s  %10s\t %3s\t    %3s\t\t%4d",
 											flight.getFlightNumber(),
-											formatDate(flight.getDate()),
+											flight.getDate(),
 											flight.getOrigin().getIATA(),
   											flight.getDestination().getIATA(),
 					  						flight.getDistance()))
@@ -345,7 +345,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 	}
 
 	private void byDaysWithCancellations(Stream<Flight> source, 
-		Comparator<Entry<Date, Long>> comparator) {
+		Comparator<Entry<LocalDate, Long>> comparator) {
 		int limit = readLimit(10, 1, 100);
 		println("Date\t\tCount");
 		println(repeat("-", 24));
@@ -356,7 +356,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .sorted(comparator)
 			  .limit(limit)
 			  .forEach(e -> printf("%-10s       %,3d\n", 
-					  				formatDate(e.getKey()), 
+					  				e.getKey(), 
 					  				e.getValue()));
 	}
 

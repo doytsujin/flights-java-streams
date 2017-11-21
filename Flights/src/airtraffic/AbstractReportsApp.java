@@ -6,10 +6,7 @@ import static org.apache.commons.lang3.StringUtils.splitByCharacterTypeCamelCase
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -30,7 +27,6 @@ public abstract class AbstractReportsApp {
 	private static final String REPORT_METHOD_NAME_PREFIX = "report";
 	private static final int REPORT_METHOD_PARAMETER_COUNT = 1;
 	private static final Class<?> REPORT_METHOD_RETURN_TYPE = Void.TYPE;
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
 	private final Logger logger = LoggerFactory.getLogger(AbstractReportsApp.class);
 	private final TextIO io = TextIoFactory.getTextIO();
@@ -150,9 +146,5 @@ public abstract class AbstractReportsApp {
 		String name = method.getName().substring(REPORT_METHOD_NAME_PREFIX.length());
 		String[] words = splitByCharacterTypeCamelCase(name);
 		return Arrays.stream(words).collect(joining(" "));
-	}
-
-	protected String formatDate(Date date) {
-		return DATE_FORMAT.format(date);
 	}
 }

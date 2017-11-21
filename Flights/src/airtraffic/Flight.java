@@ -3,8 +3,7 @@ package airtraffic;
 import static java.lang.Integer.parseInt;
 import static org.apache.commons.lang3.StringUtils.length;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -72,7 +71,7 @@ public class Flight {
 
 	private Plane plane;
 	private Route route;
-	private Date date;
+	private LocalDate date;
 
 	public Flight(String input, Repository repository) {
 		String[] source = input.split(",");
@@ -114,9 +113,7 @@ public class Flight {
 			plane.setTailNumber(_tailNumber);
 		}
 		route = new Route(_origin.getIATA(), _destination.getIATA());
-		Calendar cal = Calendar.getInstance();
-		cal.set(_year, _month, _dayOfMonth);
-		date = cal.getTime();
+		date = LocalDate.of(_year, _month, _dayOfMonth);
 	}
 
 	public String describeRoute() {
@@ -131,7 +128,7 @@ public class Flight {
 		return route;
 	}
 
-	public Date getDate() {
+	public LocalDate getDate() {
 		return date;
 	}
 
