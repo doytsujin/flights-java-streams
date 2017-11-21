@@ -6,6 +6,8 @@ import static org.apache.commons.lang3.StringUtils.splitByCharacterTypeCamelCase
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +29,7 @@ public abstract class AbstractReportsApp {
 	private static final String REPORT_METHOD_NAME_PREFIX = "report";
 	private static final int REPORT_METHOD_PARAMETER_COUNT = 1;
 	private static final Class<?> REPORT_METHOD_RETURN_TYPE = Void.TYPE;
+	private static final DateTimeFormatter YEAR_MONTH_FORMAT = DateTimeFormatter.ofPattern("MMM yyyy");
 
 	private final Logger logger = LoggerFactory.getLogger(AbstractReportsApp.class);
 	private final TextIO io = TextIoFactory.getTextIO();
@@ -146,5 +149,9 @@ public abstract class AbstractReportsApp {
 		String name = method.getName().substring(REPORT_METHOD_NAME_PREFIX.length());
 		String[] words = splitByCharacterTypeCamelCase(name);
 		return Arrays.stream(words).collect(joining(" "));
+	}
+
+	protected String formatYearMonth(YearMonth value) {
+		return YEAR_MONTH_FORMAT.format(value);
 	}
 }

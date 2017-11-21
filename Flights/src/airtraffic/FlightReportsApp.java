@@ -439,6 +439,19 @@ public class FlightReportsApp extends AbstractReportsApp {
 			  .entrySet()
 			  .stream()
 			  .sorted(comparingByKey())
-			  .forEach(e -> printf("%s\t\t%,10d\n", e.getKey(), e.getValue()));
+			  .forEach(e -> printf("%s\t%,10d\n", 
+					  			   formatYearMonth(e.getKey()), 
+					  			   e.getValue()));
+	}
+
+	public void reportTotalDailyFlights(Stream<Flight> source) {
+		println("Day\t\t   Count");
+		println("---------------------------");
+		source.filter(f -> f.notCancelled())
+			  .collect(groupingBy(Flight::getDate, counting()))
+			  .entrySet()
+			  .stream()
+			  .sorted(comparingByKey())
+			  .forEach(e -> printf("%s\t%,10d\n", e.getKey(), e.getValue()));
 	}
 }
