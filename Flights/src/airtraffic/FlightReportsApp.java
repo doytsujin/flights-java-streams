@@ -39,33 +39,38 @@ public class FlightReportsApp extends AbstractReportsApp {
    public void reportTotalFlightsFromOrigin(Repository repository) {
       int year = selectYear();
       Stream<Flight> source = repository.getFlightStream(year);
-      String iata = readString("Origin");
+      Airport origin = readAirport("Origin");
       long count = source.filter(f -> f.notCancelled() && 
-                                 f.getOrigin().getIATA().equals(iata))
+                                 f.getOrigin().equals(origin))
                          .count();
-      printf("Total flights from %s is %,d\n", iata, count);
+      printf("Total flights from %s is %,d\n", origin.getName(), count);
    }
 
    public void reportTotalFlightsToDestination(Repository repository) {
       int year = selectYear();
       Stream<Flight> source = repository.getFlightStream(year);
-      String iata = readString("Destination");
+      Airport destination = readAirport("Destination");
       long count = source.filter(f -> f.notCancelled() && 
-                                      f.getDestination().getIATA().equals(iata))
+                                      f.getDestination().equals(destination))
                          .count();
-      printf("Total flights to %s is %,d\n", iata, count);
+      printf("Total flights to %s is %,d\n", destination.getName(), count);
    }
 
    public void reportTotalFlightsFromOriginToDestination(Repository repository) {
       int year = selectYear();
       Stream<Flight> source = repository.getFlightStream(year);
-      String origIATA = readString("Origin");
-      String destIATA = readString("Destination");
+      Airport origin = readAirport("Origin");
+      Airport destination = readAirport("Destination");
       long count = source.filter(f -> f.notCancelled() && 
-                                      f.getOrigin().getIATA().equals(origIATA) &&
-                                      f.getDestination().getIATA().equals(destIATA))
+                                      f.getOrigin().equals(origin) &&
+                                      f.getDestination().equals(destination))
                          .count();
-      printf("Total flights from %s to %s is %,d\n", origIATA, destIATA, count);
+      printf("Total flights from %s (%s)\nto %s (%s) is %,d\n", 
+             origin.getName().trim(), 
+             origin.getIATA(), 
+             destination.getName().trim(), 
+             destination.getIATA(), 
+             count);
    }
 
    public void reportMostFlightsByOrigin(Repository repository) {
@@ -86,11 +91,12 @@ public class FlightReportsApp extends AbstractReportsApp {
    public void reportTopDestinationsFromOrigin(Repository repository) {
       int year = selectYear();
       Stream<Flight> source = repository.getFlightStream(year);
-      String iata = readString("Origin");
+      Airport origin = readAirport("Origin");
       int limit = readLimit(10, 1, 100);
-      println("\nDestination\t   Count");
+      printf("Top destinations from %s\n\n", origin.getName());
+      println("Destination\t   Count");
       println("------------------------------");
-      source.filter(f -> f.notCancelled() && f.getOrigin().getIATA().equals(iata))
+      source.filter(f -> f.notCancelled() && f.getOrigin().equals(origin))
             .collect(groupingBy(Flight::getDestination, counting()))
             .entrySet()
             .stream()

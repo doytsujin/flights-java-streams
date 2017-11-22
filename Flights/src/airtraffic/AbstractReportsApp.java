@@ -9,6 +9,7 @@ import java.lang.reflect.Modifier;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -97,6 +98,17 @@ public abstract class AbstractReportsApp {
                .withMinVal(min)
                .withMaxVal(max)
                .read("Year");
+   }
+
+   protected Airport readAirport(String prompt) {
+      String iata = io.newStringInputReader()
+                      .withValueChecker((val, item) -> 
+                         repository.getAirport(val.toUpperCase()) == null ? 
+                            Arrays.asList("Unknown airport specified") :
+                            Collections.emptyList()
+                      )
+                      .read(prompt);
+      return repository.getAirport(iata.toUpperCase());
    }
 
    protected int selectYear() {
