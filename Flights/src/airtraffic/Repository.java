@@ -134,11 +134,15 @@ public final class Repository {
       }
    }
 
-   public Map<String, Airport> getAirportMap() {
+   private Map<String, Airport> getAirportMap() {
       if(airportMap == null) {
          airportMap = getAirportStream().collect(toMap(Airport::getIATA, Function.identity()));
       }
       return airportMap;
+   }
+
+   public Airport getAirport(String iata) {
+      return getAirportMap().get(iata);
    }
 
    public Stream<Carrier> getCarrierStream() {
@@ -152,11 +156,15 @@ public final class Repository {
       }
    }
 
-   public Map<String, Carrier> getCarrierMap() {
+   private Map<String, Carrier> getCarrierMap() {
       if(carrierMap == null) {
          carrierMap = getCarrierStream().collect(toMap(Carrier::getCode, Function.identity()));
       }
       return carrierMap;
+   }
+
+   public Carrier getCarrier(String code) {
+      return getCarrierMap().get(code);
    }
 
    public Stream<Flight> getFlightStream(int year) {
@@ -183,11 +191,15 @@ public final class Repository {
       }
    }
 
-   public Map<String, Plane> getPlaneMap() {
+   private Map<String, Plane> getPlaneMap() {
       if(planeMap == null) {
          planeMap = getPlaneStream().collect(toMap(Plane::getTailNumber, Function.identity()));
       }
       return planeMap;
+   }
+
+   public Plane getPlane(String tailNumber) {
+      return getPlaneMap().get(tailNumber);
    }
 
    public Set<Integer> getFlightYears() {

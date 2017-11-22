@@ -84,7 +84,7 @@ public class Flight {
       _CRSDepartureTime = parseInt(source[5]);
       _arrivalTime = "NA".equals(source[6]) ? 0 : parseInt(source[6]);
       _CRSArrivalTime = parseInt(source[7]);
-      _carrier = repository.getCarrierMap().get(source[8]);
+      _carrier = repository.getCarrier(source[8]);
       _flightNumber = parseInt(source[9]);
       if(length(source[10]) > 0) {
          _tailNumber = source[10];
@@ -94,8 +94,8 @@ public class Flight {
       _airTime = "NA".equals(source[13]) ? 0 : parseInt(source[13]);
       _arrivalDelay = "NA".equals(source[14]) ? 0 : parseInt(source[14]);
       _departureDelay = "NA".equals(source[15]) ? 0 : parseInt(source[15]);
-      _origin = repository.getAirportMap().get(source[16]);
-      _destination = repository.getAirportMap().get(source[17]);
+      _origin = repository.getAirport(source[16]);
+      _destination = repository.getAirport(source[17]);
       _distance = parseInt(source[18]);
       _taxiIn = "NA".equals(source[19]) ? 0 : parseInt(source[19]);
       _taxiOut = "NA".equals(source[20]) ? 0 : parseInt(source[20]);
@@ -108,7 +108,7 @@ public class Flight {
       _securityDelay = "NA".equals(source[27]) ? 0 : parseInt(source[27]);
       _lateAircraftDelay = "NA".equals(source[28]) ? 0 : parseInt(source[28]);
 
-      plane = repository.getPlaneMap().get(_tailNumber);
+      plane = repository.getPlane(_tailNumber);
       if(plane == null) {
          plane = new Plane();
          plane.setTailNumber(_tailNumber);
