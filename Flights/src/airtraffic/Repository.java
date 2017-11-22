@@ -40,6 +40,9 @@ import airtraffic.Plane.OwnershipType;
  */
 public final class Repository {
 	private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("mm/dd/yyyy");
+	private static final String[] AIRPORT_HEADERS = 
+		{ "IATA", "name", "city", "state", "country", "latitude", "longitude" };
+	private static final String[] CARRIER_HEADERS = { "code", "name" };
 	private static final CellValueReader<LocalDate> DATE_VALUE_READER =
 		(chars, offset, length, ctx) -> {
 			LocalDate result = null;
@@ -124,7 +127,7 @@ public final class Repository {
 		try {
 			return CsvParser.skip(1)			// skip header
 							.mapTo(Airport.class)
-							.headers("IATA", "name", "city", "state", "country", "latitude", "longitude")
+							.headers(AIRPORT_HEADERS)
 							.stream(getReader(airportPath));
 		} catch (IOException e) {
 			throw new RepositoryException(e);
@@ -141,7 +144,8 @@ public final class Repository {
 	public Stream<Carrier> getCarrierStream() {
 		try {
 			return CsvParser.skip(1)			// skip header
-							.mapTo(Carrier.class).headers("code", "name")
+							.mapTo(Carrier.class)
+							.headers(CARRIER_HEADERS)
 							.stream(getReader(carrierPath));
 		} catch (IOException e) {
 			throw new RepositoryException(e);
