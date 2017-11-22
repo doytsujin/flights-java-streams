@@ -48,7 +48,7 @@ public class Flight {
    private int _CRSDepartureTime;                // scheduled departure time (local, hhmm)
    private int _arrivalTime;                     // actual arrival time (local, hhmm)
    private int _CRSArrivalTime;                  // scheduled arrival time (local, hhmm)
-   private Carrier _carrier   ;                  // unique carrier code, mapped to instance of Carrier
+   private Carrier _carrier;                     // unique carrier code, mapped to instance of Carrier
    private int _flightNumber;                    // flight number
    private String _tailNumber;                   // plane tail number
    private int _actualElapsedTime;               // in minutes
