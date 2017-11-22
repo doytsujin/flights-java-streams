@@ -10,45 +10,45 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * @author tony@piazzaconsulting.com
  */
 public final class Config {
-	private String airportPath;
-	private String carrierPath;
-	private String planePath;
-	private Map<Integer, String> flightPaths;
+   private String airportPath;
+   private String carrierPath;
+   private String planePath;
+   private Map<Integer, String> flightPaths;
 
-	public String getAirportPath() {
-		return airportPath;
-	}
+   public String getAirportPath() {
+      return airportPath;
+   }
 
-	public void setAirportPath(String airportPath) {
-		this.airportPath = airportPath;
-	}
+   public void setAirportPath(String airportPath) {
+      this.airportPath = airportPath;
+   }
 
-	public String getCarrierPath() {
-		return carrierPath;
-	}
+   public String getCarrierPath() {
+      return carrierPath;
+   }
 
-	public void setCarrierPath(String carrierPath) {
-		this.carrierPath = carrierPath;
-	}
+   public void setCarrierPath(String carrierPath) {
+      this.carrierPath = carrierPath;
+   }
 
-	public String getPlanePath() {
-		return planePath;
-	}
+   public String getPlanePath() {
+      return planePath;
+   }
 
-	public void setPlanePath(String planePath) {
-		this.planePath = planePath;
-	}
+   public void setPlanePath(String planePath) {
+      this.planePath = planePath;
+   }
 
-	public Map<Integer, String> getFlightPaths() {
-		return flightPaths;
-	}
+   public Map<Integer, String> getFlightPaths() {
+      return flightPaths;
+   }
 
-	public void setFlightPaths(Map<Integer, String> flightPaths) {
-		this.flightPaths = flightPaths;
-	}
+   public void setFlightPaths(Map<Integer, String> flightPaths) {
+      this.flightPaths = flightPaths;
+   }
 
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
-	}
+   @Override
+   public String toString() {
+      return ToStringBuilder.reflectionToString(this);
+   }
 }

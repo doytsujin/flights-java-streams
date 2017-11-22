@@ -6,8 +6,8 @@ package airtraffic;
  * @author tony@piazzaconsulting.com
  */
 public interface GeoLocation {
-	public enum Units { MILES, KILOMETERS }
+   public enum Units { MILES, KILOMETERS }
 
-	double getLatitude();
-	double getLongitude();
+   double getLatitude();
+   double getLongitude();
 }

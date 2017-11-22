@@ -6,9 +6,9 @@ package airtraffic;
  * @author tony@piazzaconsulting.com
  */
 public class RepositoryException extends RuntimeException {
-	private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 1L;
 
-	public RepositoryException(Throwable t) {
-		super(t);
-	}
+   public RepositoryException(Throwable t) {
+      super(t);
+   }
 }
