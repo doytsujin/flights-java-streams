@@ -65,12 +65,13 @@ public class FlightReportsApp extends AbstractReportsApp {
                                       f.getOrigin().equals(origin) &&
                                       f.getDestination().equals(destination))
                          .count();
-      printf("Total flights from %s (%s)\nto %s (%s) is %,d\n", 
+      printf("Total of %,d flights from %s (%s)\nto %s (%s)\n", 
+             count,
              origin.getName().trim(), 
              origin.getIATA(), 
              destination.getName().trim(), 
-             destination.getIATA(), 
-             count);
+             destination.getIATA()
+      ); 
    }
 
    public void reportMostFlightsByOrigin(Repository repository) {
@@ -506,5 +507,19 @@ public class FlightReportsApp extends AbstractReportsApp {
             .stream()
             .sorted(comparingByKey())
             .forEach(e -> printf("%s\t%,10d\n", e.getKey(), e.getValue()));
+   }
+
+   public void reportTotalFlightsByDayOfWeek(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
+      println("Day of Week\t   Count");
+      println("---------------------------");
+      source.filter(f -> f.notCancelled())
+            .map(f -> f.getDate())
+            .collect(groupingBy(LocalDate::getDayOfWeek, counting()))
+            .entrySet()
+            .stream()
+            .sorted(comparingByKey())
+            .forEach(e -> printf("%10s\t%,10d\n", e.getKey(), e.getValue()));
    }
 }
