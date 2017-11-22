@@ -11,7 +11,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.beryx.textio.TextIO;
@@ -34,6 +33,7 @@ public abstract class AbstractReportsApp {
    private final Logger logger = LoggerFactory.getLogger(AbstractReportsApp.class);
    private final TextIO io = TextIoFactory.getTextIO();
    private final TextTerminal<?> terminal = io.getTextTerminal();
+   private final Repository repository = new Repository();
 
    protected List<Method> getReportMethods() {
       return Arrays.stream(this.getClass().getDeclaredMethods())
@@ -99,7 +99,8 @@ public abstract class AbstractReportsApp {
                .read("Year");
    }
 
-   protected int selectYear(Set<Integer> years) {
+   protected int selectYear() {
+      Set<Integer> years = repository.getFlightYears();
       int min = years.stream().reduce(Integer::min).get();
       int year = years.stream().reduce(Integer::max).get();
       if(years.size() > 1) {
@@ -112,7 +113,7 @@ public abstract class AbstractReportsApp {
       return year;
    }
 
-   protected void executeSelectedReport(Stream<?> source) throws Exception {
+   protected void executeSelectedReport() throws Exception {
       List<Method> reportMethods = getReportMethods();
       int optionNum = getReportOption(reportMethods);
       if(optionNum == 0) {
@@ -123,7 +124,7 @@ public abstract class AbstractReportsApp {
       terminal.println();
       terminal.println(getReportDescription(method));
       terminal.println();
-      method.invoke(this, source);
+      method.invoke(this, repository);
       terminal.println("\n=== Report complete ===");
    }
 

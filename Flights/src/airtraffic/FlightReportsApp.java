@@ -33,13 +33,12 @@ public class FlightReportsApp extends AbstractReportsApp {
                     FlightDistanceRange.between(2501, 5000));
 
    public static void main(String[] args) throws Exception {
-      FlightReportsApp app = new FlightReportsApp();
-      Repository repository = new Repository();
-      int year = app.selectYear(repository.getFlightYears());
-      app.executeSelectedReport(repository.getFlightStream(year));
+      new FlightReportsApp().executeSelectedReport();
    }
 
-   public void reportTotalFlightsFromOrigin(Stream<Flight> source) {
+   public void reportTotalFlightsFromOrigin(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       String iata = readString("Origin");
       long count = source.filter(f -> f.notCancelled() && 
                                  f.getOrigin().getIATA().equals(iata))
@@ -47,15 +46,19 @@ public class FlightReportsApp extends AbstractReportsApp {
       printf("Total flights from %s is %,d\n", iata, count);
    }
 
-   public void reportTotalFlightsToDestination(Stream<Flight> source) {
+   public void reportTotalFlightsToDestination(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       String iata = readString("Destination");
       long count = source.filter(f -> f.notCancelled() && 
-                                    f.getDestination().getIATA().equals(iata))
+                                      f.getDestination().getIATA().equals(iata))
                          .count();
       printf("Total flights to %s is %,d\n", iata, count);
    }
 
-   public void reportTotalFlightsFromOriginToDestination(Stream<Flight> source) {
+   public void reportTotalFlightsFromOriginToDestination(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       String origIATA = readString("Origin");
       String destIATA = readString("Destination");
       long count = source.filter(f -> f.notCancelled() && 
@@ -65,7 +68,9 @@ public class FlightReportsApp extends AbstractReportsApp {
       printf("Total flights from %s to %s is %,d\n", origIATA, destIATA, count);
    }
 
-   public void reportMostFlightsByOrigin(Stream<Flight> source) {
+   public void reportMostFlightsByOrigin(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("\nOrigin\t\tCount");
       println("---------------------------");
@@ -78,7 +83,9 @@ public class FlightReportsApp extends AbstractReportsApp {
             .forEachOrdered(e -> printf(" %3s\t\t%,10d\n", e.getKey().getIATA(), e.getValue()));
    }
 
-   public void reportTopDestinationsFromOrigin(Stream<Flight> source) {
+   public void reportTopDestinationsFromOrigin(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       String iata = readString("Origin");
       int limit = readLimit(10, 1, 100);
       println("\nDestination\t   Count");
@@ -92,7 +99,9 @@ public class FlightReportsApp extends AbstractReportsApp {
             .forEachOrdered(e -> printf(" %3s\t\t%,10d\n", e.getKey().getIATA(), e.getValue()));
    }
 
-   public void reportMostPopularRoutes(Stream<Flight> source) {
+   public void reportMostPopularRoutes(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("Route\t\t    Count");
       println("---------------------------");
@@ -105,7 +114,9 @@ public class FlightReportsApp extends AbstractReportsApp {
             .forEachOrdered(e -> printf("%s\t%,10d\n", e.getKey(), e.getValue().intValue()));
    }
 
-   public void reportWorstAverageDepartureDelayByOrigin(Stream<Flight> source) {
+   public void reportWorstAverageDepartureDelayByOrigin(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("Origin\tDelay (min)");
       println("----------------------");
@@ -118,7 +129,9 @@ public class FlightReportsApp extends AbstractReportsApp {
             .forEachOrdered(e -> printf(" %3s\t\t%.0f\n", e.getKey().getIATA(), e.getValue()));
    }
 
-   public void reportWorstAverageArrivalDelayByDestination(Stream<Flight> source) {
+   public void reportWorstAverageArrivalDelayByDestination(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("Destination\tDelay (min)");
       println("----------------------------");
@@ -131,7 +144,9 @@ public class FlightReportsApp extends AbstractReportsApp {
             .forEachOrdered(e -> printf(" %3s\t\t\t%.0f\n", e.getKey().getIATA(), e.getValue()));
    }
 
-   public void reportMostCancelledFlightsByOrigin(Stream<Flight> source) {
+   public void reportMostCancelledFlightsByOrigin(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("Origin\t\t  Count");
       println("---------------------------");
@@ -144,7 +159,9 @@ public class FlightReportsApp extends AbstractReportsApp {
             .forEachOrdered(e -> printf(" %3s\t\t%,8d\n", e.getKey().getIATA(), e.getValue()));
    }
 
-   public void reportMostCancelledFlightsByCarrier(Stream<Flight> source) {
+   public void reportMostCancelledFlightsByCarrier(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("Carrier\t\t\t\t Count");
       println("-----------------------------------------");
@@ -158,7 +175,9 @@ public class FlightReportsApp extends AbstractReportsApp {
             .forEachOrdered(e -> printf("%-24s\t%,8d\n", left(e.getKey(), 24), e.getValue()));
    }
 
-   public void reportCarrierMetrics(Stream<Flight> source) {
+   public void reportCarrierMetrics(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       print("Code    Carrier Name                        ");
       println("Total        Cancelled %   Diverted %    Airports");
       println(repeat("-", 94));
@@ -180,7 +199,9 @@ public class FlightReportsApp extends AbstractReportsApp {
             });
    }
 
-   public void reportFlightCountsByAircraftType(Stream<Flight> source) {
+   public void reportFlightCountsByAircraftType(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       println("Aircraft Type\t\t\tCount");
       println("-------------------------------------------");
       source.filter(f -> f.notCancelled())
@@ -192,7 +213,9 @@ public class FlightReportsApp extends AbstractReportsApp {
             .forEachOrdered(e -> printf("%-25s\t%,10d\n", e.getKey(), e.getValue()));
    }
 
-   public void reportFlightCountsByEngineType(Stream<Flight> source) {
+   public void reportFlightCountsByEngineType(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       println("Engine Type\t\t\tCount");
       println("-------------------------------------------");
       source.filter(f -> f.notCancelled())
@@ -204,7 +227,9 @@ public class FlightReportsApp extends AbstractReportsApp {
             .forEachOrdered(e -> printf("%-25s\t%,10d\n", e.getKey(), e.getValue()));
    }
 
-   public void reportFlightCountsByManufacturer(Stream<Flight> source) {
+   public void reportFlightCountsByManufacturer(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       println("Manufacturer\t\t\t Count");
       println("-------------------------------------------");
       source.filter(f -> f.notCancelled())
@@ -216,7 +241,9 @@ public class FlightReportsApp extends AbstractReportsApp {
             .forEachOrdered(e -> printf("%-25s\t%,10d\n", e.getKey(), e.getValue()));
    }
 
-   public void reportFlightCountsByPlaneYear(Stream<Flight> source) {
+   public void reportFlightCountsByPlaneYear(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       println("Year\t  Count");
       println("-------------------");
       source.filter(f -> f.notCancelled())
@@ -230,7 +257,9 @@ public class FlightReportsApp extends AbstractReportsApp {
                                         e.getValue()));
    }
 
-   public void reportMostFlightsByOriginState(Stream<Flight> source) {
+   public void reportMostFlightsByOriginState(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("State\t  Count");
       println("-------------------");
@@ -244,7 +273,9 @@ public class FlightReportsApp extends AbstractReportsApp {
             .forEachOrdered(e -> printf("%2s\t%,10d\n", e.getKey(), e.getValue()));
    }
 
-   public void reportMostFlightsByDestinationState(Stream<Flight> source) {
+   public void reportMostFlightsByDestinationState(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("State\tCount");
       println("-------------------");
@@ -258,7 +289,9 @@ public class FlightReportsApp extends AbstractReportsApp {
             .forEachOrdered(e -> printf("%2s\t%,10d\n", e.getKey(), e.getValue()));
    }
 
-   public void reportMostFlightsByPlane(Stream<Flight> source) {
+   public void reportMostFlightsByPlane(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("Tail #\t  Manufacturer\t\tModel #\t\tCount");
       println(repeat("-", 67));
@@ -279,7 +312,9 @@ public class FlightReportsApp extends AbstractReportsApp {
             });
    }
 
-   public void reportMostFlightsByPlaneModel(Stream<Flight> source) {
+   public void reportMostFlightsByPlaneModel(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("Manufacturer\t\t\tModel #\t\t\t  Count\t\tDaily Avg");
       println(repeat("-", 82));
@@ -301,15 +336,17 @@ public class FlightReportsApp extends AbstractReportsApp {
             }).forEachOrdered(s -> println(s));
    }
 
-   public void reportLongestFlights(Stream<Flight> source) {
-      byDistance(source, comparingInt(Flight::getDistance).reversed());
+   public void reportLongestFlights(Repository repository) {
+      byDistance(repository, comparingInt(Flight::getDistance).reversed());
    }
 
-   public void reportShortestFlights(Stream<Flight> source) {
-      byDistance(source, comparingInt(f -> f.getDistance()));
+   public void reportShortestFlights(Repository repository) {
+      byDistance(repository, comparingInt(f -> f.getDistance()));
    }
 
-   private void byDistance(Stream<Flight> source, Comparator<Flight> comparator) {
+   private void byDistance(Repository repository, Comparator<Flight> comparator) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("Flight #     Date\tOrigin\tDestination\tDistance");
       println(repeat("-", 57));
@@ -325,7 +362,9 @@ public class FlightReportsApp extends AbstractReportsApp {
             .forEachOrdered(s -> println(s));
    }
 
-   public void reportFlightsByDistanceRange(Stream<Flight> source) {
+   public void reportFlightsByDistanceRange(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       println("Range\t\tCount");
       println(repeat("-", 27));
       source.filter(f -> f.notCancelled())
@@ -336,16 +375,18 @@ public class FlightReportsApp extends AbstractReportsApp {
             .forEach(e -> printf("%-10s\t%,10d\n", e.getKey(), e.getValue()));
    }
 
-   public void reportDaysWithLeastCancellations(Stream<Flight> source) {
-      byDaysWithCancellations(source, comparingByValue());
+   public void reportDaysWithLeastCancellations(Repository repository) {
+      byDaysWithCancellations(repository, comparingByValue());
    }
 
-   public void reportDaysWithMostCancellations(Stream<Flight> source) {
-      byDaysWithCancellations(source, comparingByValue(reverseOrder()));
+   public void reportDaysWithMostCancellations(Repository repository) {
+      byDaysWithCancellations(repository, comparingByValue(reverseOrder()));
    }
 
-   private void byDaysWithCancellations(Stream<Flight> source, 
+   private void byDaysWithCancellations(Repository repository, 
       Comparator<Entry<LocalDate, Long>> comparator) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("Date\t\tCount");
       println(repeat("-", 24));
@@ -358,7 +399,9 @@ public class FlightReportsApp extends AbstractReportsApp {
             .forEach(e -> printf("%-10s       %,3d\n", e.getKey(), e.getValue()));
    }
 
-   public void reportAirportMetrics(Stream<Flight> source) {
+   public void reportAirportMetrics(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       print("IATA    Airport Name                        ");
       println("Total        Cancelled %   Diverted %");
       println(repeat("-", 82));
@@ -378,7 +421,9 @@ public class FlightReportsApp extends AbstractReportsApp {
             });
    }
 
-   public void reportAirportsWithHighestCancellationRate(Stream<Flight> source) {
+   public void reportAirportsWithHighestCancellationRate(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("IATA\tRate");
       println("---------------");
@@ -396,7 +441,9 @@ public class FlightReportsApp extends AbstractReportsApp {
             }).forEachOrdered(s -> println(s));
    }
 
-   public void reportCarriersWithHighestCancellationRate(Stream<Flight> source) {
+   public void reportCarriersWithHighestCancellationRate(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("Carrier                           Rate");
       println("---------------------------------------");
@@ -414,7 +461,9 @@ public class FlightReportsApp extends AbstractReportsApp {
             }).forEachOrdered(s -> println(s));
    }
 
-   public void reportPlanesWithMostCancellations(Stream<Flight> source) {
+   public void reportPlanesWithMostCancellations(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("Tail #\t\tCount");
       println("-----------------------");
@@ -427,7 +476,9 @@ public class FlightReportsApp extends AbstractReportsApp {
             .forEach(e -> printf("%-8s\t%,6d\n", e.getKey(), e.getValue()));
    }
 
-   public void reportTotalMonthlyFlights(Stream<Flight> source) {
+   public void reportTotalMonthlyFlights(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       println("Month\t\tCount");
       println("---------------------------");
       source.filter(f -> f.notCancelled())
@@ -438,7 +489,9 @@ public class FlightReportsApp extends AbstractReportsApp {
             .forEach(e -> printf("%s\t%,10d\n", formatYearMonth(e.getKey()), e.getValue()));
    }
 
-   public void reportTotalDailyFlights(Stream<Flight> source) {
+   public void reportTotalDailyFlights(Repository repository) {
+      int year = selectYear();
+      Stream<Flight> source = repository.getFlightStream(year);
       println("Day\t\t   Count");
       println("---------------------------");
       source.filter(f -> f.notCancelled())

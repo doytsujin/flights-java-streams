@@ -13,12 +13,11 @@ import java.util.stream.Stream;
  */
 public class AirportReportsApp extends AbstractReportsApp {
    public static void main(String[] args) throws Exception {
-      Repository repository = new Repository();
-      AirportReportsApp app = new AirportReportsApp();
-      app.executeSelectedReport(repository.getAirportStream());
+      new AirportReportsApp().executeSelectedReport();
    }
 
-   public void reportAirportsForState(Stream<Airport> source) {
+   public void reportAirportsForState(Repository repository) {
+      Stream<Airport> source = repository.getAirportStream();
       String state = readString("State");
       println("\nIATA\tAirport Name\t\t\t\t\tCity");
       println(repeat("-", 77));
@@ -27,7 +26,8 @@ public class AirportReportsApp extends AbstractReportsApp {
             .forEach(a -> printf(" %3s\t%-40s\t%-20s\n", a.getIATA(), a.getName(), a.getCity()));
    }
 
-   public void reportAirportsNearLocation(Stream<Airport> source) {
+   public void reportAirportsNearLocation(Repository repository) {
+      Stream<Airport> source = repository.getAirportStream();
       double latitude = readDouble("Latitude", -90.0, 90.0);
       double longitude = readDouble("Longitude", -180.0, 180.0);
       GeoLocation loc = new GeoLocation() {

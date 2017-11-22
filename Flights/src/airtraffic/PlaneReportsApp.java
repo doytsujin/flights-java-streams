@@ -15,12 +15,11 @@ import java.util.stream.Stream;
  */
 public class PlaneReportsApp extends AbstractReportsApp {
    public static void main(String[] args) throws Exception {
-      Repository repository = new Repository();
-      PlaneReportsApp app = new PlaneReportsApp();
-      app.executeSelectedReport(repository.getPlaneStream());
+      new PlaneReportsApp().executeSelectedReport();
    }
 
-   public void reportPlaneCountsByManfacturer(Stream<Plane> source) {
+   public void reportPlaneCountsByManfacturer(Repository repository) {
+      Stream<Plane> source = repository.getPlaneStream();
       println("Manufacturer\t\t\tCount");
       println("---------------------------------------");
       source.collect(groupingBy(Plane::getManufacturer, counting()))
@@ -30,7 +29,8 @@ public class PlaneReportsApp extends AbstractReportsApp {
             .forEach(e -> printf("%-25s\t%5d\n", e.getKey(), e.getValue()));
    }
 
-   public void reportPlaneCountsByYear(Stream<Plane> source) {
+   public void reportPlaneCountsByYear(Repository repository) {
+      Stream<Plane> source = repository.getPlaneStream();
       println("Year\tCount");
       println("------------------");
       source.filter(p -> p.getYear() > 0)
@@ -41,7 +41,8 @@ public class PlaneReportsApp extends AbstractReportsApp {
             .forEach(e -> printf("%4d\t%5d\n", e.getKey(), e.getValue()));
    }
 
-   public void reportPlaneCountsByAircraftType(Stream<Plane> source) {
+   public void reportPlaneCountsByAircraftType(Repository repository) {
+      Stream<Plane> source = repository.getPlaneStream();
       println("Aircraft Type\t\t\tCount");
       println("---------------------------------------");
       source.collect(groupingBy(Plane::getAircraftType, counting()))
@@ -51,7 +52,8 @@ public class PlaneReportsApp extends AbstractReportsApp {
             .forEach(e -> printf("%-25s\t%5d\n", e.getKey(), e.getValue()));
    }
 
-   public void reportPlaneCountsByEngineType(Stream<Plane> source) {
+   public void reportPlaneCountsByEngineType(Repository repository) {
+      Stream<Plane> source = repository.getPlaneStream();
       println("Engine Type\t\t\tCount");
       println("---------------------------------------");
       source.collect(groupingBy(Plane::getEngineType, counting()))
