@@ -51,6 +51,7 @@ public class FlightReportsApp extends AbstractReportsApp {
       Stream<Flight> source = repository.getFlightStream(year);
       Airport destination = readAirport("Destination");
       long count = source.filter(f -> f.notCancelled() && 
+                                      f.notDiverted() && 
                                       f.getDestination().equals(destination))
                          .count();
       printf("Total flights to %s is %,d\n", destination.getName(), count);
@@ -62,6 +63,7 @@ public class FlightReportsApp extends AbstractReportsApp {
       Airport origin = readAirport("Origin");
       Airport destination = readAirport("Destination");
       long count = source.filter(f -> f.notCancelled() && 
+                                      f.notDiverted() &&
                                       f.getOrigin().equals(origin) &&
                                       f.getDestination().equals(destination))
                          .count();
@@ -142,7 +144,7 @@ public class FlightReportsApp extends AbstractReportsApp {
       int limit = readLimit(10, 1, 100);
       println("Destination\tDelay (min)");
       println("----------------------------");
-      source.filter(f -> f.notCancelled())
+      source.filter(f -> f.notCancelled() && f.notDiverted())
             .collect(groupingBy(Flight::getDestination, averagingInt(f -> f.getArrivalDelay())))
             .entrySet()
             .stream()
@@ -286,7 +288,7 @@ public class FlightReportsApp extends AbstractReportsApp {
       int limit = readLimit(10, 1, 100);
       println("State\tCount");
       println("-------------------");
-      source.filter(f -> f.notCancelled())
+      source.filter(f -> f.notCancelled() && f.notDiverted())
             .map(f -> f.getDestination())
             .collect(groupingBy(Airport::getState, counting()))
             .entrySet()
@@ -357,7 +359,7 @@ public class FlightReportsApp extends AbstractReportsApp {
       int limit = readLimit(10, 1, 100);
       println("Flight #     Date\tOrigin\tDestination\tDistance");
       println(repeat("-", 57));
-      source.filter(f -> f.notCancelled())
+      source.filter(f -> f.notCancelled() && f.notDiverted())
             .sorted(comparator)
             .limit(limit)
             .map(flight -> String.format("%-8s  %10s\t %3s\t    %3s\t\t%4d",
@@ -374,7 +376,7 @@ public class FlightReportsApp extends AbstractReportsApp {
       Stream<Flight> source = repository.getFlightStream(year);
       println("Range\t\tCount");
       println(repeat("-", 27));
-      source.filter(f -> f.notCancelled())
+      source.filter(f -> f.notCancelled() && f.notDiverted())
             .collect(groupingBy(FlightDistanceRange.classifier(DISTANCE_RANGES), counting()))
             .entrySet()
             .stream()
