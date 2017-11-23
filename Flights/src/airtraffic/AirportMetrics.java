@@ -15,6 +15,8 @@ public class AirportMetrics extends FlightBasedMetrics<Airport> {
    private int totalCancelledWeather;
    private int totalCancelledNAS;
    private int totalCancelledSecurity;
+   private int totalOrigins;
+   private int totalDestinations;
 
    public AirportMetrics(Airport airport) {
       super(airport);
@@ -22,6 +24,7 @@ public class AirportMetrics extends FlightBasedMetrics<Airport> {
 
    public void addFlight(Flight flight) {
       if(flight.getOrigin().equals(getSubject())) {
+         ++totalOrigins;
          // cancellations are counted only for the origin airport
          if(flight.cancelled()) {
             ++totalCancelled;
@@ -33,6 +36,7 @@ public class AirportMetrics extends FlightBasedMetrics<Airport> {
             }
          }
       } else if(flight.getDestination().equals(getSubject())) {
+         ++totalDestinations;
          // diversions are counted only for the destination airport
          if(flight.diverted()) {
             ++totalDiverted;
@@ -42,6 +46,14 @@ public class AirportMetrics extends FlightBasedMetrics<Airport> {
       }
 
       ++totalFlights;
+   }
+
+   public int getTotalOrigins() {
+      return totalOrigins;
+   }
+
+   public int getTotalDestinations() {
+      return totalDestinations;
    }
 
    public int getTotalCancelledByCode(CancellationCode code) {

@@ -142,7 +142,12 @@ public final class Repository {
    }
 
    public Airport getAirport(String iata) {
-      return getAirportMap().get(iata);
+      return getAirportMap().get(iata.toUpperCase());
+   }
+
+   public boolean validAirport(String iata) {
+      return getAirportStream().anyMatch(airport ->  
+         airport.getIATA().equals(iata.toUpperCase()));
    }
 
    public Stream<Carrier> getCarrierStream() {
@@ -164,7 +169,12 @@ public final class Repository {
    }
 
    public Carrier getCarrier(String code) {
-      return getCarrierMap().get(code);
+      return getCarrierMap().get(code.toUpperCase());
+   }
+
+   public boolean validCarrier(String code) {
+      return getCarrierStream().anyMatch(carrier -> 
+         carrier.getCode().equals(code.toUpperCase()));
    }
 
    public Stream<Flight> getFlightStream(int year) {

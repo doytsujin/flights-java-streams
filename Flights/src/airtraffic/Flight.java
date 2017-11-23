@@ -138,7 +138,7 @@ public class Flight {
    }
 
    public boolean validTailNumber() {
-      return _tailNumber != null;
+      return _tailNumber != null && _tailNumber.length() > 0;
    }
 
    public int getYear() {

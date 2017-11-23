@@ -62,6 +62,10 @@ public abstract class AbstractReportsApp {
       terminal.println(message);
    }
 
+   protected void println() {
+      terminal.println();
+   }
+
    protected void printf(String format, Object... args) {
       terminal.printf(format, args);
    }
@@ -103,12 +107,21 @@ public abstract class AbstractReportsApp {
    protected Airport readAirport(String prompt) {
       String iata = io.newStringInputReader()
                       .withValueChecker((val, item) -> 
-                         repository.getAirport(val.toUpperCase()) == null ? 
-                            Arrays.asList("Unknown airport specified") :
-                            Collections.emptyList()
-                      )
-                      .read(prompt);
-      return repository.getAirport(iata.toUpperCase());
+                         repository.validAirport(val) ? 
+                               Collections.emptyList() : 
+                            Arrays.asList("Unknown airport specified") 
+                      ).read(prompt);
+      return repository.getAirport(iata);
+   }
+
+   protected Carrier readCarrier() {
+      String code = io.newStringInputReader()
+                      .withValueChecker((val, item) -> 
+                         repository.validCarrier(val) ? 
+                            Collections.emptyList() : 
+                            Arrays.asList("Unknown carrier specified")
+                      ).read("Carrier");
+      return repository.getCarrier(code);
    }
 
    protected int selectYear() {
@@ -142,7 +155,7 @@ public abstract class AbstractReportsApp {
 
    protected int getReportOption(List<Method> printMethods) {
       TextTerminal<?> terminal = io.getTextTerminal();
-      terminal.println("\nReport options:\n");
+      terminal.println("Report options:\n");
       String format = "%2d  %s\n";
       int n = 0;
       terminal.printf(format, n, "Exit program");

@@ -41,9 +41,9 @@ public class FlightReportsApp extends AbstractReportsApp {
       Stream<Flight> source = repository.getFlightStream(year);
       Airport origin = readAirport("Origin");
       long count = source.filter(f -> f.notCancelled() && 
-                                 f.getOrigin().equals(origin))
+                                      f.getOrigin().equals(origin))
                          .count();
-      printf("Total flights from %s is %,d\n", origin.getName(), count);
+      printf("Total flights from %s is %,d\n", origin.getName().trim(), count);
    }
 
    public void reportTotalFlightsToDestination(Repository repository) {
@@ -54,7 +54,7 @@ public class FlightReportsApp extends AbstractReportsApp {
                                       f.notDiverted() && 
                                       f.getDestination().equals(destination))
                          .count();
-      printf("Total flights to %s is %,d\n", destination.getName(), count);
+      printf("Total flights to %s is %,d\n", destination.getName().trim(), count);
    }
 
    public void reportTotalFlightsFromOriginToDestination(Repository repository) {
@@ -88,7 +88,8 @@ public class FlightReportsApp extends AbstractReportsApp {
             .stream()
             .sorted(comparingByValue(reverseOrder()))
             .limit(limit)
-            .forEachOrdered(e -> printf(" %3s\t\t%,10d\n", e.getKey().getIATA(), e.getValue()));
+            .forEachOrdered(e -> printf(" %3s\t\t%,10d\n", 
+                                        e.getKey().getIATA(), e.getValue()));
    }
 
    public void reportTopDestinationsFromOrigin(Repository repository) {
@@ -105,7 +106,8 @@ public class FlightReportsApp extends AbstractReportsApp {
             .stream()
             .sorted(comparingByValue(reverseOrder()))
             .limit(limit)
-            .forEachOrdered(e -> printf(" %3s\t\t%,10d\n", e.getKey().getIATA(), e.getValue()));
+            .forEachOrdered(e -> printf(" %3s\t\t%,10d\n", 
+                                        e.getKey().getIATA(), e.getValue()));
    }
 
    public void reportMostPopularRoutes(Repository repository) {
@@ -114,13 +116,13 @@ public class FlightReportsApp extends AbstractReportsApp {
       int limit = readLimit(10, 1, 100);
       println("Route\t\t    Count");
       println("---------------------------");
-      source.filter(f -> f.notCancelled())
-            .collect(groupingBy(Flight::getRoute, counting()))
+      source.collect(groupingBy(Flight::getRoute, counting()))
             .entrySet()
             .stream()
             .sorted(comparingByValue(reverseOrder()))
             .limit(limit)
-            .forEachOrdered(e -> printf("%s\t%,10d\n", e.getKey(), e.getValue().intValue()));
+            .forEachOrdered(e -> printf("%s\t%,10d\n", 
+                                        e.getKey(), e.getValue().intValue()));
    }
 
    public void reportWorstAverageDepartureDelayByOrigin(Repository repository) {
@@ -130,12 +132,14 @@ public class FlightReportsApp extends AbstractReportsApp {
       println("Origin\tDelay (min)");
       println("----------------------");
       source.filter(f -> f.notCancelled())
-            .collect(groupingBy(Flight::getOrigin, averagingInt(f -> f.getDepartureDelay())))
+            .collect(groupingBy(Flight::getOrigin, 
+                                averagingInt(f -> f.getDepartureDelay())))
             .entrySet()
             .stream()
             .sorted(comparingByValue(reverseOrder()))
             .limit(limit)
-            .forEachOrdered(e -> printf(" %3s\t\t%.0f\n", e.getKey().getIATA(), e.getValue()));
+            .forEachOrdered(e -> printf(" %3s\t\t%.0f\n", 
+                                        e.getKey().getIATA(), e.getValue()));
    }
 
    public void reportWorstAverageArrivalDelayByDestination(Repository repository) {
@@ -145,12 +149,14 @@ public class FlightReportsApp extends AbstractReportsApp {
       println("Destination\tDelay (min)");
       println("----------------------------");
       source.filter(f -> f.notCancelled() && f.notDiverted())
-            .collect(groupingBy(Flight::getDestination, averagingInt(f -> f.getArrivalDelay())))
+            .collect(groupingBy(Flight::getDestination, 
+                                averagingInt(f -> f.getArrivalDelay())))
             .entrySet()
             .stream()
             .sorted(comparingByValue(reverseOrder()))
             .limit(limit)
-            .forEachOrdered(e -> printf(" %3s\t\t\t%.0f\n", e.getKey().getIATA(), e.getValue()));
+            .forEachOrdered(e -> printf(" %3s\t\t\t%.0f\n", 
+                                        e.getKey().getIATA(), e.getValue()));
    }
 
    public void reportMostCancelledFlightsByOrigin(Repository repository) {
@@ -165,7 +171,8 @@ public class FlightReportsApp extends AbstractReportsApp {
             .stream()
             .sorted(comparingByValue(reverseOrder()))
             .limit(limit)
-            .forEachOrdered(e -> printf(" %3s\t\t%,8d\n", e.getKey().getIATA(), e.getValue()));
+            .forEachOrdered(e -> printf(" %3s\t\t%,8d\n", 
+                                        e.getKey().getIATA(), e.getValue()));
    }
 
    public void reportMostCancelledFlightsByCarrier(Repository repository) {
@@ -181,7 +188,8 @@ public class FlightReportsApp extends AbstractReportsApp {
             .stream()
             .sorted(comparingByValue(reverseOrder()))
             .limit(limit)
-            .forEachOrdered(e -> printf("%-24s\t%,8d\n", left(e.getKey(), 24), e.getValue()));
+            .forEachOrdered(e -> printf("%-24s\t%,8d\n", 
+                                        left(e.getKey(), 24), e.getValue()));
    }
 
    public void reportCarrierMetrics(Repository repository) {
@@ -190,7 +198,9 @@ public class FlightReportsApp extends AbstractReportsApp {
       print("Code    Carrier Name                        ");
       println("Total        Cancelled %   Diverted %    Airports");
       println(repeat("-", 94));
-      source.collect(HashMap::new, CarrierMetrics.accumulator(), CarrierMetrics.combiner())
+      source.collect(HashMap::new, 
+                     CarrierMetrics.accumulator(), 
+                     CarrierMetrics.combiner())
             .values()
             .stream()
             .sorted(comparing(CarrierMetrics::getSubject))
@@ -219,7 +229,8 @@ public class FlightReportsApp extends AbstractReportsApp {
             .entrySet()
             .stream()
             .sorted(comparingByValue(reverseOrder()))
-            .forEachOrdered(e -> printf("%-25s\t%,10d\n", e.getKey(), e.getValue()));
+            .forEachOrdered(e -> printf("%-25s\t%,10d\n", 
+                                        e.getKey(), e.getValue()));
    }
 
    public void reportFlightCountsByEngineType(Repository repository) {
@@ -233,7 +244,8 @@ public class FlightReportsApp extends AbstractReportsApp {
             .entrySet()
             .stream()
             .sorted(comparingByValue(reverseOrder()))
-            .forEachOrdered(e -> printf("%-25s\t%,10d\n", e.getKey(), e.getValue()));
+            .forEachOrdered(e -> printf("%-25s\t%,10d\n", 
+                                        e.getKey(), e.getValue()));
    }
 
    public void reportFlightCountsByManufacturer(Repository repository) {
@@ -247,7 +259,8 @@ public class FlightReportsApp extends AbstractReportsApp {
             .entrySet()
             .stream()
             .sorted(comparingByValue(reverseOrder()))
-            .forEachOrdered(e -> printf("%-25s\t%,10d\n", e.getKey(), e.getValue()));
+            .forEachOrdered(e -> printf("%-25s\t%,10d\n", 
+                                        e.getKey(), e.getValue()));
    }
 
    public void reportFlightCountsByPlaneYear(Repository repository) {
@@ -362,13 +375,13 @@ public class FlightReportsApp extends AbstractReportsApp {
       source.filter(f -> f.notCancelled() && f.notDiverted())
             .sorted(comparator)
             .limit(limit)
-            .map(flight -> String.format("%-8s  %10s\t %3s\t    %3s\t\t%4d",
-                                         flight.getFlightNumber(),
-                                         flight.getDate(),
-                                         flight.getOrigin().getIATA(),
-                                         flight.getDestination().getIATA(),
-                                         flight.getDistance()))
-            .forEachOrdered(s -> println(s));
+            .forEach(f -> printf("%-8s  %10s\t %3s\t    %3s\t\t%4d\n",
+                                 f.getFlightNumber(),
+                                 f.getDate(),
+                                 f.getOrigin().getIATA(),
+                                 f.getDestination().getIATA(),
+                                 f.getDistance())
+            );
    }
 
    public void reportFlightsByDistanceRange(Repository repository) {
@@ -377,7 +390,8 @@ public class FlightReportsApp extends AbstractReportsApp {
       println("Range\t\tCount");
       println(repeat("-", 27));
       source.filter(f -> f.notCancelled() && f.notDiverted())
-            .collect(groupingBy(FlightDistanceRange.classifier(DISTANCE_RANGES), counting()))
+            .collect(groupingBy(FlightDistanceRange.classifier(DISTANCE_RANGES), 
+                                counting()))
             .entrySet()
             .stream()
             .sorted(comparingByKey())
@@ -414,7 +428,9 @@ public class FlightReportsApp extends AbstractReportsApp {
       print("IATA    Airport Name                        ");
       println("Total        Cancelled %   Diverted %");
       println(repeat("-", 82));
-      source.collect(HashMap::new, AirportMetrics.accumulator(), AirportMetrics.combiner())
+      source.collect(HashMap::new, 
+                     AirportMetrics.accumulator(), 
+                     AirportMetrics.combiner())
             .values()
             .stream()
             .sorted(comparing(AirportMetrics::getSubject))
@@ -436,18 +452,18 @@ public class FlightReportsApp extends AbstractReportsApp {
       int limit = readLimit(10, 1, 100);
       println("IATA\tRate");
       println("---------------");
-      source.collect(HashMap::new, AirportMetrics.accumulator(), AirportMetrics.combiner())
+      source.collect(HashMap::new, 
+                     AirportMetrics.accumulator(), 
+                     AirportMetrics.combiner())
             .values()
             .stream()
             .filter(metrics -> metrics.getTotalCancelled() > 0)
             .sorted(highestCancellationRateComparator())
             .limit(limit)
-            .map(metrics -> {
-               Airport airport = metrics.getSubject();
-               return String.format(" %3s\t%6.1f", 
-                                    airport.getIATA(),
-                                    metrics.getCancellationRate() * 100.0);
-            }).forEachOrdered(s -> println(s));
+            .forEach(m -> printf(" %3s\t%6.1f\n", 
+                                 m.getSubject().getIATA(), 
+                                 m.getCancellationRate() * 100.0)
+            );
    }
 
    public void reportCarriersWithHighestCancellationRate(Repository repository) {
@@ -456,18 +472,18 @@ public class FlightReportsApp extends AbstractReportsApp {
       int limit = readLimit(10, 1, 100);
       println("Carrier                           Rate");
       println("---------------------------------------");
-      source.collect(HashMap::new, CarrierMetrics.accumulator(), CarrierMetrics.combiner())
+      source.collect(HashMap::new, 
+                     CarrierMetrics.accumulator(), 
+                     CarrierMetrics.combiner())
             .values()
             .stream()
             .filter(metrics -> metrics.getTotalCancelled() > 0)
             .sorted(highestCancellationRateComparator())
             .limit(limit)
-            .map(metrics -> {
-               Carrier carrier = metrics.getSubject();
-               return String.format("%-30s\t%6.1f", 
-                                    carrier.getName(),
-                                    metrics.getCancellationRate() * 100.0);
-            }).forEachOrdered(s -> println(s));
+            .forEach(m -> printf("%-30s\t%6.1f\n", 
+                                 m.getSubject().getName(),
+                                 m.getCancellationRate() * 100.0)
+            );
    }
 
    public void reportPlanesWithMostCancellations(Repository repository) {
@@ -495,7 +511,8 @@ public class FlightReportsApp extends AbstractReportsApp {
             .entrySet()
             .stream()
             .sorted(comparingByKey())
-            .forEach(e -> printf("%s\t%,10d\n", formatYearMonth(e.getKey()), e.getValue()));
+            .forEach(e -> printf("%s\t%,10d\n", 
+                                 formatYearMonth(e.getKey()), e.getValue()));
    }
 
    public void reportTotalDailyFlights(Repository repository) {
