@@ -95,14 +95,7 @@ public final class Repository {
    private Map<String, Plane> planeMap;
 
    public Repository() {
-      Reader reader;
-      try {
-         reader = new FileReader("config.yaml");
-      } catch (FileNotFoundException e) {
-         throw new RepositoryException(e);
-      }
-      Yaml yaml = new Yaml(new Constructor(Config.class));
-      Config config = yaml.load(reader);
+      Config config = getConfig();
       Map<Integer, String> pathMap = config.getFlightPaths();
       this.flightPaths = new HashMap<>();
       Path path;
@@ -121,6 +114,25 @@ public final class Repository {
       this.airportPath = getAndValidatePath(config.getAirportPath());
       this.carrierPath = getAndValidatePath(config.getCarrierPath());
       this.planePath = getAndValidatePath(config.getPlanePath());
+   }
+
+   private Config getConfig() {
+      Config config;
+      try {
+         Reader reader = new FileReader("config.yaml");
+         Yaml yaml = new Yaml(new Constructor(Config.class));
+         config = yaml.load(reader);
+      } catch (FileNotFoundException e) {
+         // Set defaults
+         config = new Config();
+         config.setAirportPath("data/airports.csv");
+         config.setCarrierPath("data/carriers.csv");
+         config.setPlanePath("data/planes.csv");
+         Map<Integer, String> flightPaths = new HashMap<>();
+         flightPaths.put(2008, "data/flights-2008.csv");
+         config.setFlightPaths(flightPaths);
+      }
+      return config;
    }
 
    public Stream<Airport> getAirportStream() {

@@ -1,9 +1,10 @@
-package airtraffic;
+package airtraffic.app;
 
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.splitByCharacterTypeCamelCase;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.time.YearMonth;
@@ -14,11 +15,18 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.beryx.textio.TextIO;
 import org.beryx.textio.TextIoFactory;
 import org.beryx.textio.TextTerminal;
+import org.beryx.textio.jline.JLineTextTerminal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import airtraffic.Airport;
+import airtraffic.Carrier;
+import airtraffic.Repository;
+import airtraffic.TerminalType;
 
 /**
  * Parent class for reporting apps.
@@ -26,10 +34,11 @@ import org.slf4j.LoggerFactory;
  * @author tony@piazzaconsulting.com
  */
 public abstract class AbstractReportsApp {
-   private static final String REPORT_METHOD_NAME_PREFIX = "report";
-   private static final int REPORT_METHOD_PARAMETER_COUNT = 1;
-   private static final Class<?> REPORT_METHOD_RETURN_TYPE = Void.TYPE;
-   private static final DateTimeFormatter YEAR_MONTH_FORMAT = DateTimeFormatter.ofPattern("MMM yyyy");
+   private static final String METHOD_NAME_PREFIX = "report";
+   private static final int METHOD_PARAMETER_COUNT = 1;
+   private static final Class<?> METHOD_RETURN_TYPE = Void.TYPE;
+   private static final DateTimeFormatter YEAR_MONTH_FORMAT = 
+      DateTimeFormatter.ofPattern("MMM yyyy");
 
    private final Logger logger = LoggerFactory.getLogger(AbstractReportsApp.class);
    private final TextIO io = TextIoFactory.getTextIO();
@@ -38,12 +47,23 @@ public abstract class AbstractReportsApp {
 
    protected List<Method> getReportMethods() {
       return Arrays.stream(this.getClass().getDeclaredMethods())
-                   .filter(m -> Modifier.isPublic(m.getModifiers()) &&
-                           m.getName().startsWith(REPORT_METHOD_NAME_PREFIX) &&
-                           m.getParameterTypes().length == REPORT_METHOD_PARAMETER_COUNT &&
-                           m.getReturnType().equals(REPORT_METHOD_RETURN_TYPE))
+                   .filter(method -> methodFilter(method))
                    .sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
                    .collect(toList());
+   }
+
+   private boolean methodFilter(Method method) {
+      return Modifier.isPublic(method.getModifiers()) &&
+            method.getName().startsWith(METHOD_NAME_PREFIX) &&
+            method.getParameterTypes().length == METHOD_PARAMETER_COUNT &&
+            method.getReturnType().equals(METHOD_RETURN_TYPE) &&
+            supportedTerminalType(method);
+   }
+
+   private boolean supportedTerminalType(Method method) {
+      TerminalType type = method.getAnnotation(TerminalType.class);
+      return type == null || (type != null &&
+                              type.value().equals(terminal.getClass()));
    }
 
    protected String left(String str, int len) {
@@ -52,6 +72,25 @@ public abstract class AbstractReportsApp {
 
    protected String repeat(String str, int len) {
       return StringUtils.repeat(str, len);
+   }
+
+   protected void clearScreen() {
+      if(terminal instanceof JLineTextTerminal) {
+         try {
+            ((JLineTextTerminal) terminal).getReader().clearScreen();
+         } catch (IOException e) {
+            logger.debug("Unable to clear screen");
+         }
+      }
+   }
+
+   protected void rawPrintf(String format, Object... args) {
+      if(terminal instanceof JLineTextTerminal && 
+         (SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_MAC_OSX)) {
+         ((JLineTextTerminal) terminal).rawPrint(String.format(format, args));
+      } else {
+         terminal.printf(format, args);
+      }
    }
 
    protected void print(String message) {
@@ -140,11 +179,11 @@ public abstract class AbstractReportsApp {
 
    protected void executeSelectedReport() throws Exception {
       List<Method> reportMethods = getReportMethods();
-      int optionNum = getReportOption(reportMethods);
-      if(optionNum == 0) {
+      int option = getReportOption(reportMethods);
+      if(option == 0) {
          System.exit(0);
       }
-      Method method = reportMethods.get(optionNum-1);
+      Method method = reportMethods.get(option-1);
       logger.debug("User requested invocation of method {}", method.getName());
       terminal.println();
       terminal.println(getReportDescription(method));
@@ -154,13 +193,17 @@ public abstract class AbstractReportsApp {
    }
 
    protected int getReportOption(List<Method> printMethods) {
+      if(printMethods.size() == 0) {
+         logger.warn("No report options available for this class");
+         return 0;
+      }
       TextTerminal<?> terminal = io.getTextTerminal();
       terminal.println("Report options:\n");
       String format = "%2d  %s\n";
       int n = 0;
-      terminal.printf(format, n, "Exit program");
+      terminal.printf(format, n++, "Exit program");
       for(Method m : printMethods) {
-         terminal.printf(format, ++n, getReportDescription(m));
+         terminal.printf(format, n++, getReportDescription(m));
          logger.debug("Found report method {}", m.getName());
       }
       terminal.println();
@@ -172,7 +215,7 @@ public abstract class AbstractReportsApp {
    }
 
    protected String getReportDescription(Method method) {
-      String name = method.getName().substring(REPORT_METHOD_NAME_PREFIX.length());
+      String name = method.getName().substring(METHOD_NAME_PREFIX.length());
       String[] words = splitByCharacterTypeCamelCase(name);
       return Arrays.stream(words).collect(joining(" "));
    }
