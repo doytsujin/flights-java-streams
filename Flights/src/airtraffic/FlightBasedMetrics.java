@@ -1,6 +1,7 @@
 package airtraffic;
 
 import java.util.Comparator;
+import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -12,9 +13,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * @author tony@piazzaconsulting.com
  */
 public abstract class FlightBasedMetrics<T> {
-   protected int totalFlights;
-   protected int totalCancelled;
-   protected int totalDiverted;
+   protected LongAdder totalFlights = new LongAdder();
+   protected LongAdder totalCancelled = new LongAdder();
+   protected LongAdder totalDiverted = new LongAdder();
    private T subject;
 
    protected FlightBasedMetrics(T subject) {
@@ -32,27 +33,27 @@ public abstract class FlightBasedMetrics<T> {
    }
 
    public static Comparator<FlightBasedMetrics<?>> highestTotalFlightsComparator() {
-      return (m1, m2) -> Integer.compare(m2.getTotalFlights(), m1.getTotalFlights());
+      return (m1, m2) -> Long.compare(m2.getTotalFlights(), m1.getTotalFlights());
    }
 
-   public int getTotalFlights() {
-      return totalFlights;
+   public Long getTotalFlights() {
+      return totalFlights.longValue();
    }
 
-   public int getTotalCancelled() {
-      return totalCancelled;
+   public long getTotalCancelled() {
+      return totalCancelled.longValue();
    }
 
    public double getCancellationRate() {
-      return (double)totalCancelled / (double)totalFlights;
+      return totalCancelled.doubleValue() / totalFlights.doubleValue();
    }
 
-   public int getTotalDiverted() {
-      return totalDiverted;
+   public long getTotalDiverted() {
+      return totalDiverted.longValue();
    }
 
    public double getDiversionRate() {
-      return (double)totalDiverted / (double)totalFlights;
+      return totalDiverted.doubleValue() / totalFlights.doubleValue();
    }
 
    @Override

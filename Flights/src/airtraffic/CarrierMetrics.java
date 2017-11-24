@@ -24,12 +24,12 @@ public class CarrierMetrics extends FlightBasedMetrics<Carrier> {
          throw new IllegalArgumentException("Wrong carrier");
       }
    
-      ++totalFlights;
+      totalFlights.increment();
       if(flight.cancelled()) {
-         ++totalCancelled;
+         totalCancelled.increment();
       }
       if(flight.diverted()) {
-         ++totalDiverted;
+         totalDiverted.increment();
       }
       airports.add(flight.getOrigin().getIATA());
       airports.add(flight.getDestination().getIATA());
@@ -64,9 +64,12 @@ public class CarrierMetrics extends FlightBasedMetrics<Carrier> {
                          throw new IllegalArgumentException("Wrong carrier");
                       }
                       CarrierMetrics result = new CarrierMetrics(metrics1.getSubject());
-                      result.totalFlights = metrics1.totalFlights + metrics2.totalFlights;
-                      result.totalCancelled = metrics1.totalCancelled + metrics2.totalCancelled;
-                      result.totalDiverted = metrics1.totalDiverted + metrics2.totalDiverted;
+                      result.totalFlights.add(metrics1.totalFlights.longValue());
+                      result.totalFlights.add(metrics2.totalFlights.longValue());
+                      result.totalCancelled.add(metrics1.totalCancelled.longValue());
+                      result.totalCancelled.add(metrics2.totalCancelled.longValue());
+                      result.totalDiverted.add(metrics1.totalDiverted.longValue());
+                      result.totalDiverted.add(metrics2.totalDiverted.longValue());
                       result.airports.addAll(metrics1.airports);
                       result.airports.addAll(metrics2.airports);
                       return result;

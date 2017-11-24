@@ -83,7 +83,7 @@ public class FlightReportsApp extends AbstractReportsApp {
       Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("\nOrigin\t\tCount");
-      println("---------------------------");
+      println(repeat("-", 27));
       source.filter(f -> f.notCancelled())
             .collect(groupingBy(Flight::getOrigin, counting()))
             .entrySet()
@@ -101,7 +101,7 @@ public class FlightReportsApp extends AbstractReportsApp {
       int limit = readLimit(10, 1, 100);
       printf("Top destinations from %s\n\n", origin.getName());
       println("Destination\t   Count");
-      println("------------------------------");
+      println(repeat("-", 30));
       source.filter(f -> f.notCancelled() && f.getOrigin().equals(origin))
             .collect(groupingBy(Flight::getDestination, counting()))
             .entrySet()
@@ -117,7 +117,7 @@ public class FlightReportsApp extends AbstractReportsApp {
       Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("Route\t\t    Count");
-      println("---------------------------");
+      println(repeat("-", 27));
       source.collect(groupingBy(Flight::getRoute, counting()))
             .entrySet()
             .stream()
@@ -132,7 +132,7 @@ public class FlightReportsApp extends AbstractReportsApp {
       Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("Origin\tDelay (min)");
-      println("----------------------");
+      println(repeat("-", 22));
       source.filter(f -> f.notCancelled())
             .collect(groupingBy(Flight::getOrigin, 
                                 averagingInt(f -> f.getDepartureDelay())))
@@ -149,7 +149,7 @@ public class FlightReportsApp extends AbstractReportsApp {
       Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("Destination\tDelay (min)");
-      println("----------------------------");
+      println(repeat("-", 28));
       source.filter(f -> f.notCancelled() && f.notDiverted())
             .collect(groupingBy(Flight::getDestination, 
                                 averagingInt(f -> f.getArrivalDelay())))
@@ -166,7 +166,7 @@ public class FlightReportsApp extends AbstractReportsApp {
       Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("Origin\t\t  Count");
-      println("---------------------------");
+      println(repeat("-", 27));
       source.filter(f -> f.cancelled())
             .collect(groupingBy(Flight::getOrigin, counting()))
             .entrySet()
@@ -182,7 +182,7 @@ public class FlightReportsApp extends AbstractReportsApp {
       Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("State\t  Count");
-      println("-------------------");
+      println(repeat("-", 19));
       source.filter(f -> f.notCancelled())
             .map(f -> f.getOrigin())
             .collect(groupingBy(Airport::getState, counting()))
@@ -198,7 +198,7 @@ public class FlightReportsApp extends AbstractReportsApp {
       Stream<Flight> source = repository.getFlightStream(year);
       int limit = readLimit(10, 1, 100);
       println("State\tCount");
-      println("-------------------");
+      println(repeat("-", 19));
       source.filter(f -> f.notCancelled() && f.notDiverted())
             .map(f -> f.getDestination())
             .collect(groupingBy(Airport::getState, counting()))
@@ -277,7 +277,7 @@ public class FlightReportsApp extends AbstractReportsApp {
       int year = selectYear();
       Stream<Flight> source = repository.getFlightStream(year);
       println("Month\t\tCount");
-      println("---------------------------");
+      println(repeat("-", 27));
       source.filter(f -> f.notCancelled())
             .collect(groupingBy(Flight::getYearMonth, counting()))
             .entrySet()
@@ -291,7 +291,7 @@ public class FlightReportsApp extends AbstractReportsApp {
       int year = selectYear();
       Stream<Flight> source = repository.getFlightStream(year);
       println("Day\t\t   Count");
-      println("---------------------------");
+      println(repeat("-", 27));
       source.filter(f -> f.notCancelled())
             .collect(groupingBy(Flight::getDate, counting()))
             .entrySet()
@@ -304,7 +304,7 @@ public class FlightReportsApp extends AbstractReportsApp {
       int year = selectYear();
       Stream<Flight> source = repository.getFlightStream(year);
       println("Day of Week\t   Count");
-      println("---------------------------");
+      println(repeat("-", 27));
       source.filter(f -> f.notCancelled())
             .map(f -> f.getDate())
             .collect(groupingBy(LocalDate::getDayOfWeek, counting()))

@@ -10,7 +10,6 @@ import org.beryx.textio.TextTerminal;
 
 @Retention(RUNTIME)
 @Target(METHOD)
-
 public @interface TerminalType {
    public Class<? extends TextTerminal<?>> value();
 }

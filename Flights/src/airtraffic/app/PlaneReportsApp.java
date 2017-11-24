@@ -8,7 +8,6 @@ import static java.util.stream.Collectors.groupingBy;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Stream;
 
 import airtraffic.Flight;
@@ -163,18 +162,16 @@ public class PlaneReportsApp extends AbstractReportsApp {
       Stream<Flight> source = repository.getFlightStream(year);
       println("Age Range\tCount");
       println(repeat("-", 27));
-      LongAdder total = new LongAdder();
-      source.filter(f -> f.notCancelled() && f.getPlane().getYear() > 0)
+      long total = source.filter(f -> f.notCancelled() && f.getPlane().getYear() > 0)
             .collect(groupingBy(PlaneAgeRange.classifier(AGE_RANGES), counting()))
             .entrySet()
             .stream()
             .sorted(comparingByKey())
-            .forEach(e -> {
-               total.add(e.getValue());
-               printf("%-10s\t%,10d\n", e.getKey(), e.getValue());
-            });
+            .peek(e -> printf("%-10s\t%,10d\n", e.getKey(), e.getValue()))
+            .mapToLong(e -> e.getValue())
+            .sum();
       println(repeat("-", 27));
-      printf("Total\t       %,11d\n", total.longValue());
+      printf("Total\t       %,11d\n", total);
    }
 
    public void reportTotalFlightsByAircraftType(Repository repository) {
