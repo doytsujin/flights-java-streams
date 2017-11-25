@@ -64,3 +64,5 @@ above application classes:
 
 All of the code in this project is licensed under the MIT License. See the 
 LICENSE file for details.
+
+Pull requests are welcome.
