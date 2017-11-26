@@ -156,7 +156,7 @@ public class FlightReportsApp extends AbstractReportsApp {
                 .stream()
                 .sorted(comparingByValue(reverseOrder()))
                 .limit(limit)
-                .forEachOrdered(e -> printf(" %3s\t\t%.0f\n", 
+                .forEachOrdered(e -> printf("%3s\t\t%.0f\n", 
                                             e.getKey().getIATA(), 
                                             e.getValue()));
    }

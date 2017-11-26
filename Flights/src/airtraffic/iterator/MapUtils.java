@@ -14,31 +14,31 @@ import java.util.Map.Entry;
  * @author tony@piazzaconsulting.com
  */
 public final class MapUtils {
-   public static <T, K extends Comparable<K>> void accumulateCount(Iterator<T> iterator, 
-      Comparator<Entry<K, Long>> comparator, int limit, 
-      MapAccumulator<T, K, Long> accumulator) {
-      Map<K, Long> map = new HashMap<>();
+   public static <T, K extends Comparable<K>, V> void accumulate(Iterator<T> iterator, 
+      Comparator<Entry<K, V>> comparator, int limit, 
+      MapAccumulator<T, K, V> accumulator) {
+      Map<K, V> map = new HashMap<>();
       while(iterator.hasNext()) {
          T subject = iterator.next();
          if(accumulator.filter(subject)) {
             K key = accumulator.getKey(subject);
-            Long counter = map.get(key);
+            V counter = map.get(key);
             if (counter == null) {
-               map.put(key, Long.valueOf(1));
+               map.put(key, accumulator.initializeValue(subject));
             } else {
-               map.put(key, Long.valueOf(counter.longValue() + 1));
+               map.put(key, accumulator.updateValue(subject, counter));
             }
          }
       }
       @SuppressWarnings("unchecked")
-      Entry<K, Long>[] entries = map.entrySet().toArray(new Entry[map.size()]);
+      Entry<K, V>[] entries = map.entrySet().toArray(new Entry[map.size()]);
       Arrays.sort(entries, comparator);
-      Map<K, Long> result = new LinkedHashMap<K, Long>();
-      for (Entry<K, Long> entry : entries) {
+      Map<K, V> result = new LinkedHashMap<>();
+      for (Entry<K, V> entry : entries) {
          result.put(entry.getKey(), entry.getValue());
       }
       int count = 0;
-      for(Entry<K, Long> entry : result.entrySet()) {
+      for(Entry<K, V> entry : result.entrySet()) {
          accumulator.forEach(entry);
          if(++count >= limit) {
             break;
