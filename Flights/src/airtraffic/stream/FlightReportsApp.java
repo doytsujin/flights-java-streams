@@ -176,7 +176,7 @@ public class FlightReportsApp extends AbstractReportsApp {
                 .stream()
                 .sorted(comparingByValue(reverseOrder()))
                 .limit(limit)
-                .forEachOrdered(e -> printf(" %3s\t\t\t%.0f\n", 
+                .forEachOrdered(e -> printf("%3s\t\t\t%.0f\n", 
                                             e.getKey().getIATA(), 
                                             e.getValue()));
    }
@@ -195,7 +195,7 @@ public class FlightReportsApp extends AbstractReportsApp {
                 .stream()
                 .sorted(comparingByValue(reverseOrder()))
                 .limit(limit)
-                .forEachOrdered(e -> printf(" %3s\t\t%,8d\n", 
+                .forEachOrdered(e -> printf("%3s\t\t%,8d\n", 
                                             e.getKey().getIATA(), 
                                             e.getValue()));
    }
@@ -252,16 +252,17 @@ public class FlightReportsApp extends AbstractReportsApp {
       final int year = selectYear();
       final int limit = readLimit(10, 1, 100);
 
-      println("Flight #     Date\tOrigin\tDestination\tDistance");
-      println(repeat("-", 57));
+      println("Flight #     Date\tCarrier\tOrigin\tDestination\tDistance");
+      println(repeat("-", 65));
 
       repository.getFlightStream(year)
                 .filter(f -> f.notCancelled() && f.notDiverted())
                 .sorted(comparator)
                 .limit(limit)
-                .forEach(f -> printf("%-8s  %10s\t %3s\t    %3s\t\t%4d\n",
+                .forEach(f -> printf("%-8s  %10s\t  %2s\t %3s\t    %3s\t\t%6d\n",
                                      f.getFlightNumber(),
                                      f.getDate(),
+                                     f.getCarrier().getCode(),
                                      f.getOrigin().getIATA(),
                                      f.getDestination().getIATA(),
                                      f.getDistance())
