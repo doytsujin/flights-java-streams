@@ -17,7 +17,7 @@ obviously limits what you can do with the data in those cases.
 
 The structure of the project can be seen in the following picture.
 
-![Eclipse Project File Structure](https://i.imgur.com/kGgLcLX.gif)
+![Eclipse Project File Structure](https://i.imgur.com/x3VSIu5.gif)
 
 The project makes extensive using of the following domain classes:
 
@@ -37,13 +37,17 @@ mvn install
 *This may take some time depending on your Internet download speed.*
 
 Once the data files have been downloaded and extracted, you can execute any 
-of the following classes in the airtraffic.app package:
+of the following classes in the airtraffic.stream package:
 
 * AirportReportsApp
 * CarrierReportsApp
 * FlightReportsApp
 * PlaneReportsApp
 * StreamingReportsApp
+
+My goal is to implement identical classes in the airtraffic.iterator package
+using Iterator instead of Stream. This will provide a side-by-side comparison
+of using Iterators vs. Streams.
 
 If you visit the [source data link](http://stat-computing.org/dataexpo/2009/the-data.html "Flight Data"), 
 you will notice there are data files for each year from 1987 to 2008. 
