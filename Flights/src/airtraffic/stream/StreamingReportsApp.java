@@ -1,4 +1,4 @@
-package airtraffic.app;
+package airtraffic.stream;
 
 import java.util.stream.Stream;
 

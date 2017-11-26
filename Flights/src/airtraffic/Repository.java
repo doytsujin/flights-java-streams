@@ -1,6 +1,7 @@
 package airtraffic;
 
 import static java.util.stream.Collectors.toMap;
+import static org.apache.commons.io.FileUtils.lineIterator;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -14,16 +15,19 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.LineIterator;
 import org.simpleflatmapper.csv.CellValueReader;
 import org.simpleflatmapper.csv.CsvMapper;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.CsvParser;
+import org.simpleflatmapper.csv.CsvParser.StaticMapToDSL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
@@ -137,13 +141,24 @@ public final class Repository {
 
    public Stream<Airport> getAirportStream() {
       try {
-         return CsvParser.skip(1)         // skip header
-                         .mapTo(Airport.class)
-                         .headers(AIRPORT_HEADERS)
-                         .stream(getReader(airportPath));
+         return getAirportDSL().stream(getReader(airportPath));
       } catch (IOException e) {
          throw new RepositoryException(e);
       }
+   }
+
+   public Iterator<Airport> getAirportIterator() {
+      try {
+         return getAirportDSL().iterator(getReader(airportPath));
+      } catch (IOException e) {
+         throw new RepositoryException(e);
+      }
+   }
+
+   private StaticMapToDSL<Airport> getAirportDSL() {
+      return CsvParser.skip(1)
+            .mapTo(Airport.class)
+            .headers(AIRPORT_HEADERS);
    }
 
    private Map<String, Airport> getAirportMap() {
@@ -164,13 +179,24 @@ public final class Repository {
 
    public Stream<Carrier> getCarrierStream() {
       try {
-         return CsvParser.skip(1)         // skip header
-                         .mapTo(Carrier.class)
-                         .headers(CARRIER_HEADERS)
-                         .stream(getReader(carrierPath));
+         return getCarrierDSL().stream(getReader(carrierPath));
       } catch (IOException e) {
          throw new RepositoryException(e);
       }
+   }
+
+   public Iterator<Carrier> getCarrierIterator() {
+      try {
+         return getCarrierDSL().iterator(getReader(carrierPath));
+      } catch (IOException e) {
+         throw new RepositoryException(e);
+      }
+   }
+
+   private StaticMapToDSL<Carrier> getCarrierDSL() {
+      return CsvParser.skip(1)         // skip header
+            .mapTo(Carrier.class)
+            .headers(CARRIER_HEADERS);
    }
 
    private Map<String, Carrier> getCarrierMap() {
@@ -198,6 +224,29 @@ public final class Repository {
          return Files.lines(path)
                      .skip(1)            // skip header
                      .map(s -> new Flight(s, this));
+      } catch (IOException e) {
+         throw new RepositoryException(e);
+      }
+   }
+
+   public Iterator<Flight> getFlightIterator(int year) {
+      final Path path = flightPaths.get(year);
+      try {
+         return new Iterator<Flight>() {
+            private LineIterator iterator;
+            {
+               iterator = lineIterator(path.toFile());
+               iterator.next();     // skip header
+            }
+            @Override
+            public boolean hasNext() {
+               return iterator.hasNext();
+            }
+            @Override
+            public Flight next() {
+               return new Flight(iterator.next(), Repository.this);
+            }
+         };
       } catch (IOException e) {
          throw new RepositoryException(e);
       }

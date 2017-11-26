@@ -1,4 +1,4 @@
-package airtraffic.app;
+package airtraffic.stream;
 
 import static java.util.Comparator.reverseOrder;
 import static java.util.Map.Entry.comparingByKey;

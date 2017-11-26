@@ -3,3 +3,6 @@ target/
 .settings/
 data/*.csv
 dependency-reduced-pom.xml
+/.DS_Store
+src/.DS_Store
+src/airtraffic/.DS_Store

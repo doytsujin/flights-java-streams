@@ -20,6 +20,11 @@
 			<version>3.6</version>
 		</dependency>
 		<dependency>
+		   <groupId>commons-io</groupId>
+		   <artifactId>commons-io</artifactId>
+		   <version>2.6</version>
+		</dependency>
+		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
 			<artifactId>sfm-csv</artifactId>
 			<version>3.13.4</version>
@@ -53,6 +58,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<data.dir>${project.basedir}/data</data.dir>
+		<jar.name>flights.jar</jar.name>
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -165,7 +171,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>airtraffic.app.ReportsApp</mainClass>
+									<mainClass>airtraffic.ReportsApp</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>

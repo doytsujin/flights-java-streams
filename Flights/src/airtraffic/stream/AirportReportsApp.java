@@ -1,4 +1,4 @@
-package airtraffic.app;
+package airtraffic.stream;
 
 import static airtraffic.FlightBasedMetrics.highestCancellationRateComparator;
 import static airtraffic.GeoHelper.distanceFromReferenceComparator;

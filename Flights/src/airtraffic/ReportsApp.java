@@ -1,4 +1,4 @@
-package airtraffic.app;
+package airtraffic;
 
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.splitByCharacterTypeCamelCase;
@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.reflect.ClassPath;
 import com.google.common.reflect.ClassPath.ClassInfo;
+
+import airtraffic.stream.AbstractReportsApp;
 
 public final class ReportsApp {
    private final Logger logger = LoggerFactory.getLogger(ReportsApp.class);
@@ -47,7 +49,7 @@ public final class ReportsApp {
    }
 
    private List<Class<?>> getClasses() throws IOException {
-      Set<ClassInfo> infos = ClassPath.from(cl).getTopLevelClasses("airtraffic.app");
+      Set<ClassInfo> infos = ClassPath.from(cl).getTopLevelClasses("airtraffic.stream");
       List<Class<?>> classes = new ArrayList<>();
       for(ClassInfo info : infos) {
          Class<?> klass = info.load();
