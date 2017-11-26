@@ -1,7 +1,7 @@
 package airtraffic.iterator;
 
 import static airtraffic.iterator.MapUtils.accumulateCount;
-import static java.util.Collections.reverseOrder;
+import static java.util.Comparator.reverseOrder;
 import static java.util.Map.Entry.comparingByValue;
 
 import java.util.Iterator;
@@ -10,8 +10,14 @@ import java.util.Map.Entry;
 import airtraffic.Airport;
 import airtraffic.Flight;
 import airtraffic.Repository;
+import airtraffic.Route;
 import airtraffic.stream.AbstractReportsApp;
 
+/**
+ * Generate various flight statistics using Java iterators.
+ *
+ * @author tony@piazzaconsulting.com
+ */
 public class FlightReportsApp extends AbstractReportsApp {
    public static void main(String[] args) throws Exception {
       new FlightReportsApp().executeSelectedReport();
@@ -127,4 +133,30 @@ public class FlightReportsApp extends AbstractReportsApp {
          }
       );
    }
+
+   public void reportMostPopularRoutes(Repository repository) {
+      int year = selectYear();
+      int limit = readLimit(10, 1, 100);
+
+      println("Route\t\t    Count");
+      println(repeat("-", 27));
+
+      Iterator<Flight> iterator = repository.getFlightIterator(year);
+      accumulateCount(iterator, comparingByValue(reverseOrder()), limit, 
+         new MapAccumulator<Flight, Route, Long>() {
+            @Override public boolean filter(Flight source) {
+               return true;
+            }
+            @Override public Route getKey(Flight source) {
+               return source.getRoute();
+            }
+            @Override public void forEach(Entry<Route, Long> entry) {
+               printf("%s\t%,10d\n", 
+                      entry.getKey(), 
+                      entry.getValue().intValue());
+            }
+         }
+      );
+   }
+
 }
