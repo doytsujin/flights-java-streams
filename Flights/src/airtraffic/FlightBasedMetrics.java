@@ -22,7 +22,7 @@ public abstract class FlightBasedMetrics<T> {
       this.subject = subject;
    }
 
-   public abstract void addFlight(Flight flight);
+   public abstract FlightBasedMetrics<T> addFlight(Flight flight);
 
    public T getSubject() {
       return subject;

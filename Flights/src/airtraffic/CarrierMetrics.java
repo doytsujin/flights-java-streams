@@ -19,7 +19,7 @@ public class CarrierMetrics extends FlightBasedMetrics<Carrier> {
    }
 
    @Override
-   public void addFlight(Flight flight) {
+   public CarrierMetrics addFlight(Flight flight) {
       if(!flight.getCarrier().equals(getSubject())) {
          throw new IllegalArgumentException("Wrong carrier");
       }
@@ -33,6 +33,7 @@ public class CarrierMetrics extends FlightBasedMetrics<Carrier> {
       }
       airports.add(flight.getOrigin().getIATA());
       airports.add(flight.getDestination().getIATA());
+      return this;
    }
 
    public Set<String> getAirports() {

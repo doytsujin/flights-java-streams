@@ -90,18 +90,12 @@ public class FlightReportsApp extends AbstractReportsApp {
 
       Iterator<Flight> iterator = repository.getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
-         new MapAccumulator<Flight, Airport, Long>() {
+         new CountingAccumulator<Flight, Airport>() {
             @Override public boolean filter(Flight source) {
                return source.notCancelled();
             }
             @Override public Airport getKey(Flight source) {
                return source.getOrigin();
-            }
-            @Override public Long initializeValue(Flight source) {
-               return Long.valueOf(1);
-            }
-            @Override public Long updateValue(Flight source, Long value) {
-               return Long.valueOf(value.longValue() + 1);
             }
             @Override public void forEach(Entry<Airport, Long> entry) {
                printf("%3s\t\t%,10d\n", 
@@ -123,19 +117,13 @@ public class FlightReportsApp extends AbstractReportsApp {
 
       Iterator<Flight> iterator = repository.getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
-         new MapAccumulator<Flight, Airport, Long>() {
+         new CountingAccumulator<Flight, Airport>() {
             @Override public boolean filter(Flight source) {
                return source.notCancelled() && 
                       source.getOrigin().equals(origin);
             }
             @Override public Airport getKey(Flight source) {
                return source.getDestination();
-            }
-            @Override public Long initializeValue(Flight source) {
-               return Long.valueOf(1);
-            }
-            @Override public Long updateValue(Flight source, Long value) {
-               return Long.valueOf(value.longValue() + 1);
             }
            @Override public void forEach(Entry<Airport, Long> entry) {
                printf("%3s\t\t%,10d\n", 
@@ -155,18 +143,12 @@ public class FlightReportsApp extends AbstractReportsApp {
 
       Iterator<Flight> iterator = repository.getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
-         new MapAccumulator<Flight, Route, Long>() {
+         new CountingAccumulator<Flight, Route>() {
             @Override public boolean filter(Flight source) {
                return true;
             }
             @Override public Route getKey(Flight source) {
                return source.getRoute();
-            }
-            @Override public Long initializeValue(Flight source) {
-               return Long.valueOf(1);
-            }
-            @Override public Long updateValue(Flight source, Long value) {
-               return Long.valueOf(value.longValue() + 1);
             }
             @Override public void forEach(Entry<Route, Long> entry) {
                printf("%s\t%,10d\n", 

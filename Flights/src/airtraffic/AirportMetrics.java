@@ -23,7 +23,7 @@ public class AirportMetrics extends FlightBasedMetrics<Airport> {
       super(airport);
    }
 
-   public void addFlight(Flight flight) {
+   public AirportMetrics addFlight(Flight flight) {
       if(flight.getOrigin().equals(getSubject())) {
          totalOrigins.increment();
          // cancellations are counted only for the origin airport
@@ -47,6 +47,7 @@ public class AirportMetrics extends FlightBasedMetrics<Airport> {
       }
 
       totalFlights.increment();
+      return this;
    }
 
    public long getTotalOrigins() {

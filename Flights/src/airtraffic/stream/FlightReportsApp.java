@@ -38,8 +38,8 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalFlightsFromOrigin(Repository repository) {
-      int year = selectYear();
-      Airport origin = readAirport("Origin");
+      final int year = selectYear();
+      final Airport origin = readAirport("Origin");
 
       long count = repository.getFlightStream(year)
                              .filter(f -> f.notCancelled() && 
@@ -50,8 +50,8 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalFlightsToDestination(Repository repository) {
-      int year = selectYear();
-      Airport destination = readAirport("Destination");
+      final int year = selectYear();
+      final Airport destination = readAirport("Destination");
 
       long count = repository.getFlightStream(year)
                              .filter(f -> f.notCancelled() && 
@@ -63,9 +63,9 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalFlightsFromOriginToDestination(Repository repository) {
-      int year = selectYear();
-      Airport origin = readAirport("Origin");
-      Airport destination = readAirport("Destination");
+      final int year = selectYear();
+      final Airport origin = readAirport("Origin");
+      final Airport destination = readAirport("Destination");
 
       long count = repository.getFlightStream(year)
                              .filter(f -> f.notCancelled() && 
@@ -84,8 +84,8 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTopFlightsByOrigin(Repository repository) {
-      int year = selectYear();
-      int limit = readLimit(10, 1, 100);
+      final int year = selectYear();
+      final int limit = readLimit(10, 1, 100);
 
       println("\nOrigin\t\tCount");
       println(repeat("-", 27));
@@ -103,9 +103,9 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTopDestinationsFromOrigin(Repository repository) {
-      int year = selectYear();
-      Airport origin = readAirport("Origin");
-      int limit = readLimit(10, 1, 100);
+      final int year = selectYear();
+      final Airport origin = readAirport("Origin");
+      final int limit = readLimit(10, 1, 100);
 
       printf("Top destinations from %s\n\n", origin.getName());
       println("Destination\t   Count");
@@ -124,8 +124,8 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportMostPopularRoutes(Repository repository) {
-      int year = selectYear();
-      int limit = readLimit(10, 1, 100);
+      final int year = selectYear();
+      final int limit = readLimit(10, 1, 100);
 
       println("Route\t\t    Count");
       println(repeat("-", 27));
@@ -142,8 +142,8 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportWorstAverageDepartureDelayByOrigin(Repository repository) {
-      int year = selectYear();
-      int limit = readLimit(10, 1, 100);
+      final int year = selectYear();
+      final int limit = readLimit(10, 1, 100);
 
       println("Origin\tDelay (min)");
       println(repeat("-", 22));
@@ -162,8 +162,8 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportWorstAverageArrivalDelayByDestination(Repository repository) {
-      int year = selectYear();
-      int limit = readLimit(10, 1, 100);
+      final int year = selectYear();
+      final int limit = readLimit(10, 1, 100);
 
       println("Destination\tDelay (min)");
       println(repeat("-", 28));
@@ -182,8 +182,8 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportMostCancelledFlightsByOrigin(Repository repository) {
-      int year = selectYear();
-      int limit = readLimit(10, 1, 100);
+      final int year = selectYear();
+      final int limit = readLimit(10, 1, 100);
 
       println("Origin\t\t  Count");
       println(repeat("-", 27));
@@ -201,8 +201,8 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalFlightsByOriginState(Repository repository) {
-      int year = selectYear();
-      int limit = readLimit(10, 1, 100);
+      final int year = selectYear();
+      final int limit = readLimit(10, 1, 100);
 
       println("State\t  Count");
       println(repeat("-", 19));
@@ -221,8 +221,8 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalFlightsByDestinationState(Repository repository) {
-      int year = selectYear();
-      int limit = readLimit(10, 1, 100);
+      final int year = selectYear();
+      final int limit = readLimit(10, 1, 100);
 
       println("State\tCount");
       println(repeat("-", 19));
@@ -249,8 +249,8 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    private void byDistance(Repository repository, Comparator<Flight> comparator) {
-      int year = selectYear();
-      int limit = readLimit(10, 1, 100);
+      final int year = selectYear();
+      final int limit = readLimit(10, 1, 100);
 
       println("Flight #     Date\tOrigin\tDestination\tDistance");
       println(repeat("-", 57));
@@ -269,7 +269,7 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalFlightsByDistanceRange(Repository repository) {
-      int year = selectYear();
+      final int year = selectYear();
 
       println("Range\t\tCount");
       println(repeat("-", 27));
@@ -296,8 +296,8 @@ public class FlightReportsApp extends AbstractReportsApp {
 
    private void byDaysWithCancellations(Repository repository, 
       Comparator<Entry<LocalDate, Long>> comparator) {
-      int year = selectYear();
-      int limit = readLimit(10, 1, 100);
+      final int year = selectYear();
+      final int limit = readLimit(10, 1, 100);
 
       println("Date\t\tCount");
       println(repeat("-", 24));
@@ -315,7 +315,7 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalMonthlyFlights(Repository repository) {
-      int year = selectYear();
+      final int year = selectYear();
 
       println("Month\t\tCount");
       println(repeat("-", 27));
@@ -332,7 +332,7 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalDailyFlights(Repository repository) {
-      int year = selectYear();
+      final int year = selectYear();
 
       println("Day\t\t   Count");
       println(repeat("-", 27));
@@ -347,7 +347,7 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalFlightsByDayOfWeek(Repository repository) {
-      int year = selectYear();
+      final int year = selectYear();
 
       println("Day of Week\t   Count");
       println(repeat("-", 27));
