@@ -9,25 +9,24 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * Contains useful methods for working with Maps that need to be sorted.
+ * Contains useful methods for accumulation.
  *
  * @author tony@piazzaconsulting.com
  */
-public final class MapUtils {
-   public static <T, K extends Comparable<K>, V> void accumulate(Iterator<T> iterator, 
-      Comparator<Entry<K, V>> comparator, int limit, 
+public final class AccumulatorHelper {
+   public static <T, K extends Comparable<K>, V extends Comparable<V>> void accumulate(
+      Iterator<T> iterator, Comparator<Entry<K, V>> comparator, int limit, 
       MapAccumulator<T, K, V> accumulator) {
       Map<K, V> map = new HashMap<>();
       while(iterator.hasNext()) {
          T subject = iterator.next();
          if(accumulator.filter(subject)) {
             K key = accumulator.getKey(subject);
-            V counter = map.get(key);
-            if (counter == null) {
-               map.put(key, accumulator.initializeValue(subject));
-            } else {
-               map.put(key, accumulator.updateValue(subject, counter));
-            }
+            V value = map.get(key);
+            map.put(key, value == null ? 
+               accumulator.initializeValue(subject) :
+               accumulator.updateValue(subject, value)
+            );
          }
       }
       @SuppressWarnings("unchecked")

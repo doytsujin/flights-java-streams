@@ -1,6 +1,6 @@
 package airtraffic.iterator;
 
-import static airtraffic.iterator.MapUtils.accumulate;
+import static airtraffic.iterator.AccumulatorHelper.accumulate;
 import static java.util.Comparator.reverseOrder;
 import static java.util.Map.Entry.comparingByValue;
 
