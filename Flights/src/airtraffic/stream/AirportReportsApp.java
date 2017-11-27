@@ -66,7 +66,7 @@ public class AirportReportsApp extends AbstractReportsApp {
    public void reportAirportMetrics(Repository repository) {
       final int year = selectYear();
 
-      print("IATA    Airport Name                        ");
+      print("\nIATA    Airport Name                        ");
       println("Total        Cancelled %   Diverted %");
       println(repeat("-", 82));
 
@@ -80,7 +80,7 @@ public class AirportReportsApp extends AbstractReportsApp {
                 .forEach(metrics -> {
                    Airport airport = metrics.getSubject();
                    String name = airport.getName();
-                   printf(" %3s    %-30s     %,9d    %6.1f        %6.1f\n", 
+                   printf("%3s     %-30s     %,9d    %6.1f        %6.1f\n", 
                           airport.getIATA(),
                           name.substring(0, Math.min(name.length(), 29)),
                           metrics.getTotalFlights(),
@@ -93,8 +93,8 @@ public class AirportReportsApp extends AbstractReportsApp {
       final int year = selectYear();
       final int limit = readLimit(10, 1, 100);
 
-      println("IATA\tRate");
-      println("---------------");
+      println("\nIATA\tName\t\t\t\tRate");
+      println(repeat("-", 47));
 
       repository.getFlightStream(year)
                 .collect(HashMap::new, 
@@ -105,9 +105,14 @@ public class AirportReportsApp extends AbstractReportsApp {
                 .filter(metrics -> metrics.getTotalCancelled() > 0)
                 .sorted(highestCancellationRateComparator())
                 .limit(limit)
-                .forEach(m -> printf(" %3s\t%6.1f\n", 
-                                     m.getSubject().getIATA(), 
-                                     m.getCancellationRate() * 100.0)
-                );
+                .forEach(metrics -> {
+                   Airport airport = metrics.getSubject();
+                   String name = airport.getName();
+                   printf("%3s\t%-30s\t%6.1f\n", 
+                         airport.getIATA(),
+                         left(name, 30),
+                         metrics.getCancellationRate() * 100.0
+                   );
+                });
    }
 }
