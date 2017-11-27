@@ -35,15 +35,16 @@ public class FlightReportsApp extends AbstractReportsApp {
                     FlightDistanceRange.between( 251,  500),
                     FlightDistanceRange.between( 501, 1000),
                     FlightDistanceRange.between(1001, 2500),
-                    FlightDistanceRange.between(2501, 5000));
+                    FlightDistanceRange.between(2501, 5000),
+                    FlightDistanceRange.between(5001, 9999));
 
    public static void main(String[] args) throws Exception {
       new FlightReportsApp().executeSelectedReport();
    }
 
    public void reportTotalFlightsFromOrigin(Repository repository) {
-      int year = selectYear();
-      Airport origin = readAirport("Origin");
+      final int year = selectYear();
+      final Airport origin = readAirport("Origin");
 
       long count = 0;
       Iterator<Flight> iterator = repository.getFlightIterator(year);
@@ -58,8 +59,8 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalFlightsToDestination(Repository repository) {
-      int year = selectYear();
-      Airport destination = readAirport("Destination");
+      final int year = selectYear();
+      final Airport destination = readAirport("Destination");
 
       long count = 0;
       Iterator<Flight> iterator = repository.getFlightIterator(year);
@@ -75,9 +76,9 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalFlightsFromOriginToDestination(Repository repository) {
-      int year = selectYear();
-      Airport origin = readAirport("Origin");
-      Airport destination = readAirport("Destination");
+      final int year = selectYear();
+      final Airport origin = readAirport("Origin");
+      final Airport destination = readAirport("Destination");
 
       long count = 0;
       Iterator<Flight> iterator = repository.getFlightIterator(year);
@@ -100,8 +101,8 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTopFlightsByOrigin(Repository repository) {
-      int year = selectYear();
-      int limit = readLimit(10, 1, 100);
+      final int year = selectYear();
+      final int limit = readLimit(10, 1, 100);
 
       println("\nOrigin\t\tCount");
       println(repeat("-", 27));
@@ -125,9 +126,9 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTopDestinationsFromOrigin(Repository repository) {
-      int year = selectYear();
-      Airport origin = readAirport("Origin");
-      int limit = readLimit(10, 1, 100);
+      final int year = selectYear();
+      final Airport origin = readAirport("Origin");
+      final int limit = readLimit(10, 1, 100);
 
       printf("Top destinations from %s\n\n", origin.getName());
       println("Destination\t   Count");
@@ -153,8 +154,8 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportMostPopularRoutes(Repository repository) {
-      int year = selectYear();
-      int limit = readLimit(10, 1, 100);
+      final int year = selectYear();
+      final int limit = readLimit(10, 1, 100);
 
       println("Route\t\t    Count");
       println(repeat("-", 27));
@@ -178,8 +179,8 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportWorstAverageDepartureDelayByOrigin(Repository repository) {
-      int year = selectYear();
-      int limit = readLimit(10, 1, 100);
+      final int year = selectYear();
+      final int limit = readLimit(10, 1, 100);
 
       println("Origin\tDelay (min)");
       println(repeat("-", 22));

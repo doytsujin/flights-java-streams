@@ -32,7 +32,8 @@ public class FlightReportsApp extends AbstractReportsApp {
                     FlightDistanceRange.between( 251,  500),
                     FlightDistanceRange.between( 501, 1000),
                     FlightDistanceRange.between(1001, 2500),
-                    FlightDistanceRange.between(2501, 5000));
+                    FlightDistanceRange.between(2501, 5000),
+                    FlightDistanceRange.between(5001, 9999));
 
    public static void main(String[] args) throws Exception {
       new FlightReportsApp().executeSelectedReport();
