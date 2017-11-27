@@ -7,7 +7,6 @@ import static airtraffic.GeoLocation.Units.MILES;
 import static java.util.Comparator.comparing;
 
 import java.util.HashMap;
-import java.util.stream.Stream;
 
 import airtraffic.AbstractReportsApp;
 import airtraffic.Airport;
@@ -26,16 +25,19 @@ public class AirportReportsApp extends AbstractReportsApp {
    }
 
    public void reportAirportsForState(Repository repository) {
-      final Stream<Airport> source = repository.getAirportStream();
       final String state = readString("State").toUpperCase();
 
       println("\nIATA\tAirport Name\t\t\t\t\tCity");
       println(repeat("-", 77));
 
-      source.filter(a -> a.getState().equals(state))
-            .sorted()
-            .forEach(a -> printf(" %3s\t%-40s\t%-20s\n", 
-                                 a.getIATA(), a.getName(), a.getCity()));
+      repository.getAirportStream()
+                .filter(a -> a.getState().equals(state))
+                .sorted()
+                .forEach(a -> printf("%3s\t%-40s\t%-20s\n", 
+                                     a.getIATA(), 
+                                     a.getName(), 
+                                     a.getCity())
+                );
    }
 
    public void reportAirportsNearLocation(Repository repository) {
@@ -53,7 +55,7 @@ public class AirportReportsApp extends AbstractReportsApp {
       repository.getAirportStream()
                 .filter(a -> getDistance(a, loc, MILES) <= distance)
                 .sorted(distanceFromReferenceComparator(loc, MILES))
-                .forEach(a -> printf(" %3s\t%-40s\t %2s\t%-15s    %,4.0f\n", 
+                .forEach(a -> printf("%3s\t%-40s\t %2s\t%-15s    %,4.0f\n", 
                                      a.getIATA(), 
                                      a.getName(), 
                                      a.getState(), 

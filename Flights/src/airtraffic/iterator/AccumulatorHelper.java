@@ -1,10 +1,13 @@
 package airtraffic.iterator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -42,6 +45,25 @@ public final class AccumulatorHelper {
          if(++count >= limit) {
             break;
          }
+      }
+   }
+
+   public static <T extends Comparable<T>> void accumulate(Iterator<T> iterator, 
+      Comparator<? super T> comparator, int limit, ListAccumulator<T> accumulator) {
+      List<T> list = new ArrayList<>();
+      while(iterator.hasNext()) {
+         T subject = iterator.next();
+         if(accumulator.filter(subject)) {
+            list.add(subject);
+         }
+      }
+      Collections.sort(list, comparator);
+      int count = 0;
+      for(T subject : list) {
+         accumulator.forEach(subject);
+         if(++count >= limit) {
+            break;
+         }         
       }
    }
 }

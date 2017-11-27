@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
  * @author tony@piazzaconsulting.com
  */
 public abstract class AbstractReportsApp {
+   protected static final int MAX_LIMIT = Integer.MAX_VALUE;
    private static final String METHOD_NAME_PREFIX = "report";
    private static final int METHOD_PARAMETER_COUNT = 1;
    private static final Class<?> METHOD_RETURN_TYPE = Void.TYPE;

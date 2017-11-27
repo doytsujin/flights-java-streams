@@ -369,7 +369,7 @@ public class FlightReportsApp extends AbstractReportsApp {
       println(repeat("-", 27));
 
       Iterator<Flight> iterator = repository.getFlightIterator(year);
-      accumulate(iterator, comparingByKey(), Integer.MAX_VALUE, 
+      accumulate(iterator, comparingByKey(), MAX_LIMIT, 
          new MapAccumulator<Flight, FlightDistanceRange, Long>() {
             @Override public boolean filter(Flight source) {
                return source.notCancelled() && source.notDiverted();
@@ -437,7 +437,7 @@ public class FlightReportsApp extends AbstractReportsApp {
       println(repeat("-", 27));
 
       Iterator<Flight> iterator = repository.getFlightIterator(year);
-      accumulate(iterator, comparingByKey(), Integer.MAX_VALUE, 
+      accumulate(iterator, comparingByKey(), MAX_LIMIT, 
          new CountingAccumulator<Flight, YearMonth>() {
             @Override public boolean filter(Flight source) {
                return source.notCancelled();
@@ -461,7 +461,7 @@ public class FlightReportsApp extends AbstractReportsApp {
       println(repeat("-", 27));
 
       Iterator<Flight> iterator = repository.getFlightIterator(year);
-      accumulate(iterator, comparingByKey(), Integer.MAX_VALUE, 
+      accumulate(iterator, comparingByKey(), MAX_LIMIT, 
          new CountingAccumulator<Flight, ChronoLocalDate>() {
             @Override public boolean filter(Flight source) {
                return source.notCancelled();
@@ -483,7 +483,7 @@ public class FlightReportsApp extends AbstractReportsApp {
       println(repeat("-", 27));
 
       Iterator<Flight> iterator = repository.getFlightIterator(year);
-      accumulate(iterator, comparingByKey(), Integer.MAX_VALUE, 
+      accumulate(iterator, comparingByKey(), MAX_LIMIT, 
          new CountingAccumulator<Flight, DayOfWeek>() {
             @Override public boolean filter(Flight source) {
                return source.notCancelled();
