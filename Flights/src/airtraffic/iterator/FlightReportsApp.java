@@ -16,12 +16,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import airtraffic.AbstractReportsApp;
 import airtraffic.Airport;
 import airtraffic.Flight;
 import airtraffic.FlightDistanceRange;
 import airtraffic.Repository;
 import airtraffic.Route;
-import airtraffic.stream.AbstractReportsApp;
 
 /**
  * Generate various flight statistics using Java iterators.

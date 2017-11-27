@@ -9,6 +9,7 @@ import static java.util.Comparator.comparing;
 import java.util.HashMap;
 import java.util.stream.Stream;
 
+import airtraffic.AbstractReportsApp;
 import airtraffic.Airport;
 import airtraffic.AirportMetrics;
 import airtraffic.GeoLocation;

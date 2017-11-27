@@ -9,6 +9,7 @@ import static java.util.stream.Collectors.groupingBy;
 import java.util.Arrays;
 import java.util.List;
 
+import airtraffic.AbstractReportsApp;
 import airtraffic.Flight;
 import airtraffic.Plane;
 import airtraffic.PlaneAgeRange;

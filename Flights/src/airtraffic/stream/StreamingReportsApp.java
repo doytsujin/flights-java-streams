@@ -1,20 +1,17 @@
 package airtraffic.stream;
 
-import org.beryx.textio.jline.JLineTextTerminal;
-
+import airtraffic.AbstractReportsApp;
 import airtraffic.Airport;
 import airtraffic.AirportMetrics;
 import airtraffic.Carrier;
 import airtraffic.CarrierMetrics;
 import airtraffic.Repository;
-import airtraffic.TerminalType;
 
 public class StreamingReportsApp extends AbstractReportsApp {
    public static void main(String[] args) throws Exception {
       new StreamingReportsApp().executeSelectedReport();
    }
 
-   @TerminalType(JLineTextTerminal.class)
    public void reportStreamingAirportMetrics(Repository repository) {
       final int year = selectYear();
       final Airport airport = readAirport("Airport");
@@ -30,19 +27,19 @@ public class StreamingReportsApp extends AbstractReportsApp {
                                   flight.getDestination().equals(airport))
                 .forEach(flight -> {
                    metrics.addFlight(flight);
-                   rawPrintf("%,10d\t%,10d\t%,10d\t%,10d\t  %,10d\r", 
-                             metrics.getTotalFlights(), 
-                             metrics.getTotalCancelled(), 
-                             metrics.getTotalDiverted(), 
-                             metrics.getTotalOrigins(), 
-                             metrics.getTotalDestinations()
+                   printf("%,10d\t%,10d\t%,10d\t%,10d\t  %,10d", 
+                          metrics.getTotalFlights(), 
+                          metrics.getTotalCancelled(), 
+                          metrics.getTotalDiverted(), 
+                          metrics.getTotalOrigins(), 
+                          metrics.getTotalDestinations()
                    );
+                   moveLineToStart();
                 });
 
       println();
    }
 
-   @TerminalType(JLineTextTerminal.class)
    public void reportStreamingCarrierMetrics(Repository repository) {
       final int year = selectYear();
       final Carrier carrier = readCarrier();
@@ -57,12 +54,13 @@ public class StreamingReportsApp extends AbstractReportsApp {
                 .filter(flight -> flight.getCarrier().equals(carrier))
                 .forEach(flight -> {
                    metrics.addFlight(flight);
-                   rawPrintf("%,10d\t%,10d\t%,10d\t%,10d\r",
-                             metrics.getTotalFlights(), 
-                             metrics.getTotalCancelled(), 
-                             metrics.getTotalDiverted(), 
-                             metrics.getAirports().size()
+                   printf("%,10d\t%,10d\t%,10d\t%,10d",
+                          metrics.getTotalFlights(), 
+                          metrics.getTotalCancelled(), 
+                          metrics.getTotalDiverted(), 
+                          metrics.getAirports().size()
                    );
+                   moveLineToStart();
                 });
 
       println();

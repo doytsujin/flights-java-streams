@@ -1,4 +1,4 @@
-package airtraffic.stream;
+package airtraffic;
 
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
@@ -23,11 +23,6 @@ import org.beryx.textio.jline.JLineTextTerminal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import airtraffic.Airport;
-import airtraffic.Carrier;
-import airtraffic.Repository;
-import airtraffic.TerminalType;
-
 /**
  * Parent class for reporting apps.
  *
@@ -40,7 +35,8 @@ public abstract class AbstractReportsApp {
    private static final DateTimeFormatter YEAR_MONTH_FORMAT = 
       DateTimeFormatter.ofPattern("MMM yyyy");
 
-   private final Logger logger = LoggerFactory.getLogger(AbstractReportsApp.class);
+   private final Logger logger = 
+      LoggerFactory.getLogger(AbstractReportsApp.class);
    private final TextIO io = TextIoFactory.getTextIO();
    private final TextTerminal<?> terminal = io.getTextTerminal();
    private final Repository repository = new Repository();
@@ -56,14 +52,7 @@ public abstract class AbstractReportsApp {
       return Modifier.isPublic(method.getModifiers()) &&
             method.getName().startsWith(METHOD_NAME_PREFIX) &&
             method.getParameterTypes().length == METHOD_PARAMETER_COUNT &&
-            method.getReturnType().equals(METHOD_RETURN_TYPE) &&
-            supportedTerminalType(method);
-   }
-
-   private boolean supportedTerminalType(Method method) {
-      TerminalType type = method.getAnnotation(TerminalType.class);
-      return type == null || (type != null &&
-                              type.value().equals(terminal.getClass()));
+            method.getReturnType().equals(METHOD_RETURN_TYPE);
    }
 
    protected String left(String str, int len) {
@@ -82,6 +71,10 @@ public abstract class AbstractReportsApp {
             logger.debug("Unable to clear screen");
          }
       }
+   }
+
+   protected void moveLineToStart() {
+      terminal.moveToLineStart();
    }
 
    protected void rawPrintf(String format, Object... args) {

@@ -21,8 +21,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.reflect.ClassPath;
 import com.google.common.reflect.ClassPath.ClassInfo;
 
-import airtraffic.stream.AbstractReportsApp;
-
 public final class ReportsApp {
    private final Logger logger = LoggerFactory.getLogger(ReportsApp.class);
    private final ClassLoader cl = this.getClass().getClassLoader();
@@ -34,7 +32,7 @@ public final class ReportsApp {
    }
 
    private void executeSelectedApp() throws Exception {
-      List<Class<?>> classes = getClasses();
+      List<Class<?>> classes = getClasses("airtraffic." + readStyleOption());
       clearScreen();
       int option = getAppOption(classes);
       if(option == 0) {
@@ -48,17 +46,36 @@ public final class ReportsApp {
       method.invoke(null, (Object) params);
    }
 
-   private List<Class<?>> getClasses() throws IOException {
-      Set<ClassInfo> infos = ClassPath.from(cl).getTopLevelClasses("airtraffic.stream");
+   private List<Class<?>> getClasses(String pkg) throws IOException {
+      Set<ClassInfo> infos = ClassPath.from(cl).getTopLevelClasses(pkg);
       List<Class<?>> classes = new ArrayList<>();
       for(ClassInfo info : infos) {
          Class<?> klass = info.load();
-         if(klass.getSuperclass().equals(AbstractReportsApp.class)) {
+         if(!klass.isInterface() && 
+             klass.getSuperclass().equals(AbstractReportsApp.class)) {
             classes.add(klass);
          }
       }
       Collections.sort(classes, (c1, c2) -> c1.getName().compareTo(c2.getName()));
       return classes;
+   }
+
+   private String readStyleOption() {
+      String format = "%2d  %s\n";
+      terminal.println("Style options:\n");
+      terminal.printf(format, 0, "Exit program");
+      terminal.printf(format, 1, "Iterator-based");
+      terminal.printf(format, 2, "Stream-based");
+      terminal.println();
+      int option = io.newIntInputReader()
+                     .withDefaultValue(0)
+                     .withMinVal(0)
+                     .withMaxVal(2)
+                     .read("Style");
+      if(option == 0) {
+         System.exit(0);
+      }
+      return option == 1 ? "iterator" : "stream";
    }
 
    private int getAppOption(List<Class<?>> classes) {

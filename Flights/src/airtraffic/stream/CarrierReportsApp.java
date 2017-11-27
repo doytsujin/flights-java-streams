@@ -9,6 +9,7 @@ import static java.util.stream.Collectors.groupingBy;
 
 import java.util.HashMap;
 
+import airtraffic.AbstractReportsApp;
 import airtraffic.Carrier;
 import airtraffic.CarrierMetrics;
 import airtraffic.Repository;
