@@ -1,5 +1,7 @@
 package airtraffic.stream;
 
+import static airtraffic.PairGroup.pairAirportDay;
+import static airtraffic.PairGroup.pairCarrierDay;
 import static java.util.Comparator.comparingInt;
 import static java.util.Comparator.reverseOrder;
 import static java.util.Map.Entry.comparingByKey;
@@ -16,8 +18,10 @@ import java.util.Map.Entry;
 
 import airtraffic.AbstractReportsApp;
 import airtraffic.Airport;
+import airtraffic.Carrier;
 import airtraffic.Flight;
 import airtraffic.FlightDistanceRange;
+import airtraffic.PairGroup;
 import airtraffic.Repository;
 
 /**
@@ -365,5 +369,83 @@ public class FlightReportsApp extends AbstractReportsApp {
                 .forEach(e -> printf("%10s\t%,10d\n", 
                                      e.getKey(), 
                                      e.getValue()));
+   }
+
+   public void reportMostFlightsByDay(Repository repository) {
+      byDay(repository, comparingByValue(reverseOrder()));
+   }
+
+   public void reportLeastFlightsByDay(Repository repository) {
+      byDay(repository, comparingByValue());
+   }
+
+   private void byDay(Repository repository, 
+      Comparator<Entry<LocalDate, Long>> comparator) {
+      final int year = selectYear();
+      final int limit = readLimit(10, 1, 100);
+
+      println("Day\t\t   Count");
+      println(repeat("-", 27));
+
+      repository.getFlightStream(year)
+                .filter(f -> f.notCancelled())
+                .collect(groupingBy(Flight::getDate, counting()))
+                .entrySet()
+                .stream()
+                .sorted(comparator)
+                .limit(limit)
+                .forEach(e -> printf("%s\t%,10d\n", e.getKey(), e.getValue()));
+   }
+
+   public void reportMostFlightsByOriginByDay(Repository repository) {
+      final int year = selectYear();
+      final int limit = readLimit(10, 1, 100);
+
+      println("Origin\t\t\t\tDate\t\t     Count");
+      println(repeat("-", 59));
+
+      repository.getFlightStream(year)
+                .filter(f -> f.notCancelled())
+                .collect(groupingBy(f -> pairAirportDay(f.getOrigin(), 
+                                                        f.getDate()), 
+                                    counting()))
+                .entrySet()
+                .stream()
+                .sorted(comparingByValue(reverseOrder()))
+                .limit(limit)
+                .forEach(entry -> {
+                   PairGroup<Airport, LocalDate> key = entry.getKey();
+                   printf("%-30s\t%s\t%,10d\n", 
+                          left(key.getFirst().getName(), 30), 
+                          key.getSecond(), 
+                          entry.getValue()
+                   );
+                });
+   }
+
+   public void reportMostFlightsByCarrierByDay(Repository repository) {
+      final int year = selectYear();
+      final int limit = readLimit(10, 1, 100);
+
+      println("Carrier\t\t\t\tDate\t\t     Count");
+      println(repeat("-", 59));
+
+      repository.getFlightStream(year)
+                .filter(f -> f.notCancelled())
+                .collect(groupingBy(f -> pairCarrierDay(f.getCarrier(), 
+                                                        f.getDate()),
+                                    counting()))
+                .entrySet()
+                .stream()
+                .sorted(comparingByValue(reverseOrder()))
+                .limit(limit)
+                .forEach(entry -> {
+                   PairGroup<Carrier, LocalDate> key = entry.getKey();
+                   printf("%-30s\t%s\t%,10d\n", 
+                         left(key.getFirst().getName(), 30), 
+                         key.getSecond(), 
+                         entry.getValue()
+                   );
+                });
    }
 }

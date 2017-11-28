@@ -6,6 +6,7 @@ import static java.util.Map.Entry.comparingByKey;
 import static java.util.Map.Entry.comparingByValue;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.chrono.ChronoLocalDate;
 import java.util.ArrayList;
@@ -18,8 +19,10 @@ import java.util.Map.Entry;
 
 import airtraffic.AbstractReportsApp;
 import airtraffic.Airport;
+import airtraffic.Carrier;
 import airtraffic.Flight;
 import airtraffic.FlightDistanceRange;
+import airtraffic.PairGroup;
 import airtraffic.Repository;
 import airtraffic.Route;
 
@@ -494,6 +497,100 @@ public class FlightReportsApp extends AbstractReportsApp {
             }
             @Override public void forEach(Entry<DayOfWeek, Long> entry) {
                printf("%10s\t%,10d\n", entry.getKey(), entry.getValue());
+            }
+         }
+      );
+   }
+
+   public void reportMostFlightsByDay(Repository repository) {
+      byDay(repository, comparingByValue(reverseOrder()));
+   }
+
+   public void reportLeastFlightsByDay(Repository repository) {
+      byDay(repository, comparingByValue(reverseOrder()));
+   }
+
+   private void byDay(Repository repository, 
+      Comparator<Entry<ChronoLocalDate, Long>> comparator) {
+      final int year = selectYear();
+      final int limit = readLimit(10, 1, 100);
+
+      println("Day\t\t   Count");
+      println(repeat("-", 27));
+
+      Iterator<Flight> iterator = repository.getFlightIterator(year);
+      accumulate(iterator, comparator, limit, 
+         new CountingAccumulator<Flight, ChronoLocalDate>() {
+            @Override public boolean filter(Flight source) {
+               return source.notCancelled();
+            }
+            @Override public ChronoLocalDate getKey(Flight source) {
+               return source.getDate();
+            }
+            @Override public void forEach(Entry<ChronoLocalDate, Long> entry) {
+               printf("%s\t%,10d\n", entry.getKey(), entry.getValue());
+            }
+         }
+      );
+   }
+
+   public void reportMostFlightsByOriginByDay(Repository repository) {
+      final int year = selectYear();
+      final int limit = readLimit(10, 1, 100);
+
+      println("Origin\t\t\t\tDate\t\t     Count");
+      println(repeat("-", 59));
+
+      Iterator<Flight> iterator = repository.getFlightIterator(year);
+      accumulate(iterator, comparingByValue(reverseOrder()), limit, 
+         new CountingAccumulator<Flight, PairGroup<Airport, LocalDate>>() {
+            @Override public boolean filter(Flight flight) {
+               return flight.notCancelled();
+            }
+            @Override public PairGroup<Airport, LocalDate> getKey(
+               Flight flight) {
+               return new PairGroup<Airport, LocalDate>(flight.getOrigin(), 
+                                                        flight.getDate());
+            }
+            @Override public void forEach(Entry<PairGroup<Airport, LocalDate>, 
+               Long> entry) {
+               PairGroup<Airport, LocalDate> key = entry.getKey();
+               printf("%-30s\t%s\t%,10d\n", 
+                      left(key.getFirst().getName(), 30), 
+                      key.getSecond(), 
+                      entry.getValue()
+               );
+            }
+         }
+      );
+   }
+
+   public void reportMostFlightsByCarrierByDay(Repository repository) {
+      final int year = selectYear();
+      final int limit = readLimit(10, 1, 100);
+
+      println("Carrier\t\t\t\tDate\t\t     Count");
+      println(repeat("-", 59));
+
+      Iterator<Flight> iterator = repository.getFlightIterator(year);
+      accumulate(iterator, comparingByValue(reverseOrder()), limit, 
+         new CountingAccumulator<Flight, PairGroup<Carrier, LocalDate>>() {
+            @Override public boolean filter(Flight flight) {
+               return flight.notCancelled();
+            }
+            @Override public PairGroup<Carrier, LocalDate> getKey(
+               Flight flight) {
+               return new PairGroup<Carrier, LocalDate>(flight.getCarrier(), 
+                                                        flight.getDate());
+            }
+            @Override public void forEach(
+               Entry<PairGroup<Carrier, LocalDate>, Long> entry) {
+               PairGroup<Carrier, LocalDate> key = entry.getKey();
+               printf("%-30s\t%s\t%,10d\n", 
+                      left(key.getFirst().getName(), 30), 
+                      key.getSecond(), 
+                      entry.getValue()
+               );
             }
          }
       );
