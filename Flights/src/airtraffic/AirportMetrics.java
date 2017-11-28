@@ -11,7 +11,9 @@ import airtraffic.Flight.CancellationCode;
  *
  * @author tony@piazzaconsulting.com
  */
-public class AirportMetrics extends FlightBasedMetrics<Airport> {
+public class AirportMetrics extends FlightBasedMetrics<Airport> 
+   implements Comparable<AirportMetrics> {
+
    private LongAdder totalCancelledCarrier = new LongAdder();
    private LongAdder totalCancelledWeather = new LongAdder();
    private LongAdder totalCancelledNAS = new LongAdder();
@@ -21,6 +23,11 @@ public class AirportMetrics extends FlightBasedMetrics<Airport> {
 
    public AirportMetrics(Airport airport) {
       super(airport);
+   }
+
+   @Override
+   public int compareTo(AirportMetrics other) {
+      return this.getSubject().compareTo(other.getSubject());
    }
 
    public AirportMetrics addFlight(Flight flight) {

@@ -12,6 +12,7 @@ import java.util.HashMap;
 import airtraffic.AbstractReportsApp;
 import airtraffic.Carrier;
 import airtraffic.CarrierMetrics;
+import airtraffic.Flight;
 import airtraffic.Repository;
 
 public class CarrierReportsApp extends AbstractReportsApp {
@@ -29,14 +30,13 @@ public class CarrierReportsApp extends AbstractReportsApp {
 
       repository.getFlightStream(year)
                 .filter(f -> f.cancelled())
-                .map(f -> f.getCarrier())
-                .collect(groupingBy(Carrier::getName, counting()))
+                .collect(groupingBy(Flight::getCarrier, counting()))
                 .entrySet()
                 .stream()
                 .sorted(comparingByValue(reverseOrder()))
                 .limit(limit)
-                .forEachOrdered(e -> printf("%-24s\t%,8d\n",
-                                            left(e.getKey(), 24), 
+                .forEachOrdered(e -> printf("%-24s\t%,8d\n", 
+                                            left(e.getKey().getName(), 24), 
                                             e.getValue())
                 );
    }
@@ -60,7 +60,7 @@ public class CarrierReportsApp extends AbstractReportsApp {
                    String name = carrier.getName();
                    printf(" %2s     %-30s     %,9d    %6.1f        %6.1f         %,5d\n", 
                           carrier.getCode(),
-                          name.substring(0, Math.min(name.length(), 29)),
+                          left(name, 30),
                           metrics.getTotalFlights(),
                           metrics.getCancellationRate() * 100.0,
                           metrics.getDiversionRate() * 100.0,

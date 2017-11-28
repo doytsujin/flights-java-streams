@@ -11,11 +11,18 @@ import java.util.function.BiConsumer;
  *
  * @author tony@piazzaconsulting.com
  */
-public class CarrierMetrics extends FlightBasedMetrics<Carrier> {
+public class CarrierMetrics extends FlightBasedMetrics<Carrier> 
+   implements Comparable<CarrierMetrics> {
+
    Set<String> airports = new HashSet<String>();
 
    public CarrierMetrics(Carrier carrier) {
       super(carrier);
+   }
+
+   @Override
+   public int compareTo(CarrierMetrics other) {
+      return this.getSubject().compareTo(other.getSubject());
    }
 
    @Override
