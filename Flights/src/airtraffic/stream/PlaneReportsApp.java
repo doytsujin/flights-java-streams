@@ -115,7 +115,7 @@ public class PlaneReportsApp extends AbstractReportsApp {
                 .stream()
                 .sorted(comparingByValue(reverseOrder()))
                 .limit(limit)
-                .forEachOrdered(e -> {
+                .forEach(e -> {
                    Plane plane = e.getKey();
                    printf("%-8s  %-20s  %-10s  %,10d\n", 
                           plane.getTailNumber(), 
@@ -140,15 +140,16 @@ public class PlaneReportsApp extends AbstractReportsApp {
                 .stream()
                 .sorted(comparingByValue(reverseOrder()))
                 .limit(limit)
-                .map(e -> {
+                .forEach(e -> {
                    PlaneModel model = e.getKey();
                    Long count = e.getValue();
-                   return String.format("%-25s\t%-20s\t%,10d\t%8.1f",
+                   printf("%-25s\t%-20s\t%,10d\t%8.1f",
                                         model.getManufacturer(),
                                         model.getModelNumber(),
                                         count,
-                                        count.floatValue() / 365);
-                }).forEachOrdered(s -> println(s));
+                                        count.floatValue() / 365
+                   );
+                });
    }
 
    public void reportTotalFlightsByPlaneManufacturer(Repository repository) {
@@ -164,9 +165,9 @@ public class PlaneReportsApp extends AbstractReportsApp {
                 .entrySet()
                 .stream()
                 .sorted(comparingByValue(reverseOrder()))
-                .forEachOrdered(e -> printf("%-25s\t%,10d\n", 
-                                            e.getKey(), 
-                                            e.getValue()));
+                .forEach(e -> printf("%-25s\t%,10d\n", 
+                                     e.getKey(), 
+                                     e.getValue()));
    }
 
    public void reportTotalFlightsByPlaneAgeRange(Repository repository) {
@@ -184,8 +185,8 @@ public class PlaneReportsApp extends AbstractReportsApp {
                              .stream()
                              .sorted(comparingByKey())
                              .peek(e -> printf("%-10s\t%,10d\n", 
-                                               e.getKey(), e
-                                               .getValue()))
+                                               e.getKey(), 
+                                               e.getValue()))
                              .mapToLong(e -> e.getValue())
                              .sum();
 
@@ -206,9 +207,9 @@ public class PlaneReportsApp extends AbstractReportsApp {
                 .entrySet()
                 .stream()
                 .sorted(comparingByValue(reverseOrder()))
-                .forEachOrdered(e -> printf("%-25s\t%,10d\n", 
-                                            e.getKey(), 
-                                            e.getValue()));
+                .forEach(e -> printf("%-25s\t%,10d\n", 
+                                     e.getKey(), 
+                                     e.getValue()));
    }
 
    public void reportTotalFlightsByEngineType(Repository repository) {
@@ -224,8 +225,8 @@ public class PlaneReportsApp extends AbstractReportsApp {
                 .entrySet()
                 .stream()
                 .sorted(comparingByValue(reverseOrder()))
-                .forEachOrdered(e -> printf("%-25s\t%,10d\n", 
-                                            e.getKey(), 
-                                            e.getValue()));
+                .forEach(e -> printf("%-25s\t%,10d\n", 
+                                     e.getKey(), 
+                                     e.getValue()));
    }
 }

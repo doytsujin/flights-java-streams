@@ -262,6 +262,16 @@ public final class Repository {
       }
    }
 
+   public Iterator<Plane> getPlaneIterator() {
+      try {
+         return CsvParser.skip(1)         // skip header
+                         .mapWith(PLANE_MAPPER)
+                         .iterator(getReader(planePath));
+      } catch (IOException e) {
+         throw new RepositoryException(e);
+      }
+   }
+
    private Map<String, Plane> getPlaneMap() {
       if(planeMap == null) {
          planeMap = getPlaneStream().collect(toMap(Plane::getTailNumber, Function.identity()));
