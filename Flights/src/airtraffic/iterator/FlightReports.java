@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
-import airtraffic.AbstractReportsApp;
+import airtraffic.AbstractReportsProvider;
 import airtraffic.Airport;
 import airtraffic.Carrier;
 import airtraffic.Flight;
@@ -31,7 +31,7 @@ import airtraffic.Route;
  *
  * @author tony@piazzaconsulting.com
  */
-public class FlightReportsApp extends AbstractReportsApp {
+public class FlightReports extends AbstractReportsProvider {
    private static final List<FlightDistanceRange> DISTANCE_RANGES =
       Arrays.asList(FlightDistanceRange.between(   0,  100), 
                     FlightDistanceRange.between( 101,  250),
@@ -41,13 +41,9 @@ public class FlightReportsApp extends AbstractReportsApp {
                     FlightDistanceRange.between(2501, 5000),
                     FlightDistanceRange.between(5001, 9999));
 
-   public static void main(String[] args) throws Exception {
-      new FlightReportsApp().executeSelectedReport();
-   }
-
    public void reportTotalFlightsFromOrigin(Repository repository) {
-      final int year = selectYear();
-      final Airport origin = readAirport("Origin");
+      final int year = selectYear(repository);
+      final Airport origin = readAirport(repository, "Origin");
 
       long count = 0;
       Iterator<Flight> iterator = repository.getFlightIterator(year);
@@ -62,8 +58,8 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalFlightsToDestination(Repository repository) {
-      final int year = selectYear();
-      final Airport destination = readAirport("Destination");
+      final int year = selectYear(repository);
+      final Airport destination = readAirport(repository, "Destination");
 
       long count = 0;
       Iterator<Flight> iterator = repository.getFlightIterator(year);
@@ -79,9 +75,9 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalFlightsFromOriginToDestination(Repository repository) {
-      final int year = selectYear();
-      final Airport origin = readAirport("Origin");
-      final Airport destination = readAirport("Destination");
+      final int year = selectYear(repository);
+      final Airport origin = readAirport(repository, "Origin");
+      final Airport destination = readAirport(repository, "Destination");
 
       long count = 0;
       Iterator<Flight> iterator = repository.getFlightIterator(year);
@@ -104,7 +100,7 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTopFlightsByOrigin(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
 
       println("\nOrigin\t\tCount");
@@ -129,8 +125,8 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTopDestinationsFromOrigin(Repository repository) {
-      final int year = selectYear();
-      final Airport origin = readAirport("Origin");
+      final int year = selectYear(repository);
+      final Airport origin = readAirport(repository, "Origin");
       final int limit = readLimit(10, 1, 100);
 
       printf("Top destinations from %s\n\n", origin.getName());
@@ -157,7 +153,7 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportMostPopularRoutes(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
 
       println("Route\t\t    Count");
@@ -182,7 +178,7 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportWorstAverageDepartureDelayByOrigin(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
 
       println("Origin\tDelay (min)");
@@ -213,7 +209,7 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportWorstAverageArrivalDelayByDestination(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
 
       println("Destination\tDelay (min)");
@@ -244,7 +240,7 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportMostCancelledFlightsByOrigin(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
 
       println("Origin\t\t  Count");
@@ -269,7 +265,7 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalFlightsByOriginState(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
 
       println("State\t  Count");
@@ -294,7 +290,7 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalFlightsByDestinationState(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
 
       println("State\tCount");
@@ -335,7 +331,7 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    private void byDistance(Repository repository, Comparator<Flight> comparator) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
 
       println("Flight #     Date\tCarrier\tOrigin\tDestination\tDistance");
@@ -367,7 +363,7 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalFlightsByDistanceRange(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
 
       println("Range\t\tCount");
       println(repeat("-", 27));
@@ -410,7 +406,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 
    private void byDaysWithCancellations(Repository repository, 
       Comparator<Entry<ChronoLocalDate, Long>> comparator) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
 
       println("Date\t\tCount");
@@ -435,7 +431,7 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalMonthlyFlights(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
 
       println("Month\t\tCount");
       println(repeat("-", 27));
@@ -459,7 +455,7 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalDailyFlights(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
 
       println("Day\t\t   Count");
       println(repeat("-", 27));
@@ -481,7 +477,7 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalFlightsByDayOfWeek(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
 
       println("Day of Week\t   Count");
       println(repeat("-", 27));
@@ -512,7 +508,7 @@ public class FlightReportsApp extends AbstractReportsApp {
 
    private void byDay(Repository repository, 
       Comparator<Entry<ChronoLocalDate, Long>> comparator) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
 
       println("Day\t\t   Count");
@@ -535,7 +531,7 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportMostFlightsByOriginByDay(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
 
       println("Origin\t\t\t\tDate\t\t     Count");
@@ -566,7 +562,7 @@ public class FlightReportsApp extends AbstractReportsApp {
    }
 
    public void reportMostFlightsByCarrierByDay(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
 
       println("Carrier\t\t\t\tDate\t\t     Count");

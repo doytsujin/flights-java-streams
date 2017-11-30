@@ -9,20 +9,16 @@ import static java.util.stream.Collectors.groupingBy;
 
 import java.util.HashMap;
 
-import airtraffic.AbstractReportsApp;
+import airtraffic.AbstractReportsProvider;
 import airtraffic.Carrier;
 import airtraffic.CarrierMetrics;
 import airtraffic.Flight;
 import airtraffic.Repository;
 
-public class CarrierReportsApp extends AbstractReportsApp {
-
-   public static void main(String[] args) throws Exception {
-      new CarrierReportsApp().executeSelectedReport();
-   }
+public class CarrierReports extends AbstractReportsProvider {
 
    public void reportMostCancelledFlightsByCarrier(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
 
       println("Carrier\t\t\t\t Count");
@@ -42,7 +38,7 @@ public class CarrierReportsApp extends AbstractReportsApp {
    }
 
    public void reportCarrierMetrics(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
 
       print("Code    Carrier Name                        ");
       println("Total        Cancelled %   Diverted %    Airports");
@@ -70,7 +66,7 @@ public class CarrierReportsApp extends AbstractReportsApp {
    }
 
    public void reportCarriersWithHighestCancellationRate(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
 
       println("Carrier                           Rate");

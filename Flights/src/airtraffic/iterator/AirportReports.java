@@ -14,17 +14,14 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import airtraffic.AbstractReportsApp;
+import airtraffic.AbstractReportsProvider;
 import airtraffic.Airport;
 import airtraffic.AirportMetrics;
 import airtraffic.Flight;
 import airtraffic.GeoLocation;
 import airtraffic.Repository;
 
-public class AirportReportsApp extends AbstractReportsApp {
-   public static void main(String[] args) throws Exception {
-      new AirportReportsApp().executeSelectedReport();
-   }
+public class AirportReports extends AbstractReportsProvider {
 
    public void reportAirportsForState(Repository repository) {
       final String state = readString("State").toUpperCase();
@@ -81,7 +78,7 @@ public class AirportReportsApp extends AbstractReportsApp {
    }
 
    public void reportAirportMetrics(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
 
       print("\nIATA    Airport Name                        ");
       println("Total        Cancelled %   Diverted %");
@@ -127,7 +124,7 @@ public class AirportReportsApp extends AbstractReportsApp {
    }
 
    public void reportAirportsWithHighestCancellationRate(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
 
       println("\nIATA\tName\t\t\t\tRate");

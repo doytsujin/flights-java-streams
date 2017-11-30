@@ -9,7 +9,7 @@ import static java.util.stream.Collectors.groupingBy;
 import java.util.Arrays;
 import java.util.List;
 
-import airtraffic.AbstractReportsApp;
+import airtraffic.AbstractReportsProvider;
 import airtraffic.Flight;
 import airtraffic.Plane;
 import airtraffic.PlaneAgeRange;
@@ -21,7 +21,7 @@ import airtraffic.Repository;
  *
  * @author tony@piazzaconsulting.com
  */
-public class PlaneReportsApp extends AbstractReportsApp {
+public class PlaneReports extends AbstractReportsProvider {
    private static final List<PlaneAgeRange> AGE_RANGES =
       Arrays.asList(PlaneAgeRange.between(   0,  5),
                     PlaneAgeRange.between(   6,  10),
@@ -30,10 +30,6 @@ public class PlaneReportsApp extends AbstractReportsApp {
                     PlaneAgeRange.between(  31,  40),
                     PlaneAgeRange.between(  41,  50),
                     PlaneAgeRange.between(  51, 100));
-
-   public static void main(String[] args) throws Exception {
-      new PlaneReportsApp().executeSelectedReport();
-   }
 
    public void reportTotalPlanesByManfacturer(Repository repository) {
       println("Manufacturer\t\t\tCount");
@@ -85,7 +81,7 @@ public class PlaneReportsApp extends AbstractReportsApp {
    }
 
    public void reportPlanesWithMostCancellations(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
 
       println("Tail #\t\tCount");
@@ -102,7 +98,7 @@ public class PlaneReportsApp extends AbstractReportsApp {
    }
 
    public void reportMostFlightsByPlane(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
 
       println("Tail #\t  Manufacturer\t\tModel #\t\tCount");
@@ -126,7 +122,7 @@ public class PlaneReportsApp extends AbstractReportsApp {
    }
 
    public void reportMostFlightsByPlaneModel(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
 
       println("Manufacturer\t\t\tModel #\t\t\t  Count\t\tDaily Avg");
@@ -153,7 +149,7 @@ public class PlaneReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalFlightsByPlaneManufacturer(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
 
       println("Manufacturer\t\t\t Count");
       println("-------------------------------------------");
@@ -171,7 +167,7 @@ public class PlaneReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalFlightsByPlaneAgeRange(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
 
       println("Age Range\tCount");
       println(repeat("-", 27));
@@ -195,7 +191,7 @@ public class PlaneReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalFlightsByAircraftType(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
 
       println("Aircraft Type\t\t\tCount");
       println("-------------------------------------------");
@@ -213,7 +209,7 @@ public class PlaneReportsApp extends AbstractReportsApp {
    }
 
    public void reportTotalFlightsByEngineType(Repository repository) {
-      final int year = selectYear();
+      final int year = selectYear(repository);
 
       println("Engine Type\t\t\tCount");
       println("-------------------------------------------");

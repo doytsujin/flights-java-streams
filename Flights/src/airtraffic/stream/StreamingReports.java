@@ -1,20 +1,17 @@
 package airtraffic.stream;
 
-import airtraffic.AbstractReportsApp;
+import airtraffic.AbstractReportsProvider;
 import airtraffic.Airport;
 import airtraffic.AirportMetrics;
 import airtraffic.Carrier;
 import airtraffic.CarrierMetrics;
 import airtraffic.Repository;
 
-public class StreamingReportsApp extends AbstractReportsApp {
-   public static void main(String[] args) throws Exception {
-      new StreamingReportsApp().executeSelectedReport();
-   }
+public class StreamingReports extends AbstractReportsProvider {
 
    public void reportStreamingAirportMetrics(Repository repository) {
-      final int year = selectYear();
-      final Airport airport = readAirport("Airport");
+      final int year = selectYear(repository);
+      final Airport airport = readAirport(repository, "Airport");
 
       clearScreen();
       printf("Airport metrics for %s\n\n", airport.getName());
@@ -41,8 +38,8 @@ public class StreamingReportsApp extends AbstractReportsApp {
    }
 
    public void reportStreamingCarrierMetrics(Repository repository) {
-      final int year = selectYear();
-      final Carrier carrier = readCarrier();
+      final int year = selectYear(repository);
+      final Carrier carrier = readCarrier(repository);
 
       clearScreen();
       printf("Carrier metrics for %s\n\n", carrier.getName());
