@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.beryx.textio.TextIO;
 import org.beryx.textio.TextIoFactory;
 import org.beryx.textio.TextTerminal;
@@ -30,7 +29,6 @@ public abstract class AbstractReportsProvider {
       LoggerFactory.getLogger(AbstractReportsProvider.class);
    private final TextIO io = TextIoFactory.getTextIO();
    private final TextTerminal<?> terminal = io.getTextTerminal();
-//   private final Repository repository = new Repository();
 
    protected String left(String str, int len) {
       return StringUtils.left(str, len);
@@ -52,15 +50,6 @@ public abstract class AbstractReportsProvider {
 
    protected void moveLineToStart() {
       terminal.moveToLineStart();
-   }
-
-   protected void rawPrintf(String format, Object... args) {
-      if(terminal instanceof JLineTextTerminal && 
-         (SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_MAC_OSX)) {
-         ((JLineTextTerminal) terminal).rawPrint(String.format(format, args));
-      } else {
-         terminal.printf(format, args);
-      }
    }
 
    protected void print(String message) {

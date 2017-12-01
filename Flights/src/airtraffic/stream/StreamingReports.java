@@ -24,6 +24,7 @@ public class StreamingReports extends AbstractReportsProvider {
                                   flight.getDestination().equals(airport))
                 .forEach(flight -> {
                    metrics.addFlight(flight);
+                   moveLineToStart();
                    printf("%,10d\t%,10d\t%,10d\t%,10d\t  %,10d", 
                           metrics.getTotalFlights(), 
                           metrics.getTotalCancelled(), 
@@ -31,7 +32,6 @@ public class StreamingReports extends AbstractReportsProvider {
                           metrics.getTotalOrigins(), 
                           metrics.getTotalDestinations()
                    );
-                   moveLineToStart();
                 });
 
       println();
@@ -51,13 +51,13 @@ public class StreamingReports extends AbstractReportsProvider {
                 .filter(flight -> flight.getCarrier().equals(carrier))
                 .forEach(flight -> {
                    metrics.addFlight(flight);
+                   moveLineToStart();
                    printf("%,10d\t%,10d\t%,10d\t%,10d",
                           metrics.getTotalFlights(), 
                           metrics.getTotalCancelled(), 
                           metrics.getTotalDiverted(), 
                           metrics.getAirports().size()
                    );
-                   moveLineToStart();
                 });
 
       println();
