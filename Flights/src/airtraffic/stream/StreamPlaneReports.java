@@ -5,24 +5,24 @@ import static java.util.Map.Entry.comparingByKey;
 import static java.util.Map.Entry.comparingByValue;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
+import static org.apache.commons.lang3.StringUtils.left;
 
 import java.util.Arrays;
 import java.util.List;
 
-import airtraffic.AbstractReportsProvider;
 import airtraffic.Flight;
 import airtraffic.Plane;
 import airtraffic.PlaneAgeRange;
 import airtraffic.PlaneModel;
 import airtraffic.PlaneReports;
-import airtraffic.Repository;
+import airtraffic.ReportContext;
 
 /**
  * Generate various airplane statistics using Java 8 streams.
  *
  * @author tony@piazzaconsulting.com
  */
-public class StreamPlaneReports extends AbstractReportsProvider implements PlaneReports {
+public class StreamPlaneReports implements PlaneReports {
    private static final List<PlaneAgeRange> AGE_RANGES =
       Arrays.asList(PlaneAgeRange.between(   0,  5),
                     PlaneAgeRange.between(   6,  10),
@@ -33,208 +33,198 @@ public class StreamPlaneReports extends AbstractReportsProvider implements Plane
                     PlaneAgeRange.between(  51, 100));
 
    @Override
-   public void reportTotalPlanesByManfacturer(Repository repository) {
-      println("Manufacturer\t\t\tCount");
-      println("---------------------------------------");
-
-      repository.getPlaneStream()
-                .collect(groupingBy(Plane::getManufacturer, counting()))
-                .entrySet()
-                .stream()
-                .sorted(comparingByValue(reverseOrder()))
-                .forEach(e -> printf("%-25s\t%5d\n", e.getKey(), e.getValue()));
+   public void reportTotalPlanesByManfacturer(ReportContext context) {
+      context.getRepository()
+             .getPlaneStream()
+             .collect(groupingBy(Plane::getManufacturer, counting()))
+             .entrySet()
+             .stream()
+             .sorted(comparingByValue(reverseOrder()))
+             .forEach(e -> context.getTerminal()
+                                  .printf("%-25s\t%5d\n", 
+                                          e.getKey(), 
+                                          e.getValue()));
    }
 
    @Override
-   public void reportTotalPlanesByYear(Repository repository) {
-      println("Year\tCount");
-      println("------------------");
-
-      repository.getPlaneStream()
-                .filter(p -> p.getYear() > 0)
-                .collect(groupingBy(Plane::getYear, counting()))
-                .entrySet()
-                .stream()
-                .sorted(comparingByKey(reverseOrder()))
-                .forEach(e -> printf("%4d\t%5d\n", e.getKey(), e.getValue()));
+   public void reportTotalPlanesByYear(ReportContext context) {
+      context.getRepository().getPlaneStream()
+             .filter(p -> p.getYear() > 0)
+             .collect(groupingBy(Plane::getYear, counting()))
+             .entrySet()
+             .stream()
+             .sorted(comparingByKey(reverseOrder()))
+             .forEach(e -> context.getTerminal()
+                                  .printf("%4d\t%5d\n", 
+                                          e.getKey(), 
+                                          e.getValue()));
    }
 
    @Override
-   public void reportTotalPlanesByAircraftType(Repository repository) {
-      println("Aircraft Type\t\t\tCount");
-      println("---------------------------------------");
-
-      repository.getPlaneStream()
-                .collect(groupingBy(Plane::getAircraftType, counting()))
-                .entrySet()
-                .stream()
-                .sorted(comparingByValue(reverseOrder()))
-                .forEach(e -> printf("%-25s\t%5d\n", e.getKey(), e.getValue()));
+   public void reportTotalPlanesByAircraftType(ReportContext context) {
+      context.getRepository().getPlaneStream()
+             .collect(groupingBy(Plane::getAircraftType, counting()))
+             .entrySet()
+             .stream()
+             .sorted(comparingByValue(reverseOrder()))
+             .forEach(e -> context.getTerminal()
+                                  .printf("%-25s\t%5d\n", 
+                                          e.getKey(), 
+                                          e.getValue()));
    }
 
    @Override
-   public void reportTotalPlanesByEngineType(Repository repository) {
-      println("Engine Type\t\t\tCount");
-      println("---------------------------------------");
-
-      repository.getPlaneStream()
-                .collect(groupingBy(Plane::getEngineType, counting()))
-                .entrySet()
-                .stream()
-                .sorted(comparingByValue(reverseOrder()))
-                .forEach(e -> printf("%-25s\t%5d\n", e.getKey(), e.getValue()));
+   public void reportTotalPlanesByEngineType(ReportContext context) {
+      context.getRepository()
+             .getPlaneStream()
+             .collect(groupingBy(Plane::getEngineType, counting()))
+             .entrySet()
+             .stream()
+             .sorted(comparingByValue(reverseOrder()))
+             .forEach(e -> context.getTerminal()
+                                  .printf("%-25s\t%5d\n", 
+                                          e.getKey(), 
+                                          e.getValue()));
    }
 
    @Override
-   public void reportPlanesWithMostCancellations(Repository repository) {
-      final int year = selectYear(repository);
-      final int limit = readLimit(10, 1, 100);
+   public void reportPlanesWithMostCancellations(ReportContext context) {
+      final int year = context.getYear();
+      final int limit = context.getLimit();
 
-      println("Tail #\t\tCount");
-      println("-----------------------");
-
-      repository.getFlightStream(year)
-                .filter(f -> f.cancelled() && f.validTailNumber())
-                .collect(groupingBy(Flight::getTailNumber, counting()))
-                .entrySet()
-                .stream()
-                .sorted(comparingByValue(reverseOrder()))
-                .limit(limit)
-                .forEach(e -> printf("%-8s\t%,6d\n", e.getKey(), e.getValue()));
+      context.getRepository()
+             .getFlightStream(year)
+             .filter(f -> f.cancelled() && f.validTailNumber())
+             .collect(groupingBy(Flight::getTailNumber, counting()))
+             .entrySet()
+             .stream()
+             .sorted(comparingByValue(reverseOrder()))
+             .limit(limit)
+             .forEach(e -> context.getTerminal()
+                                  .printf("%-8s\t%,6d\n", 
+                                          e.getKey(), 
+                                          e.getValue()));
    }
 
    @Override
-   public void reportMostFlightsByPlane(Repository repository) {
-      final int year = selectYear(repository);
-      final int limit = readLimit(10, 1, 100);
+   public void reportMostFlightsByPlane(ReportContext context) {
+      final int year = context.getYear();
+      final int limit = context.getLimit();
 
-      println("Tail #\t  Manufacturer\t\tModel #\t\tCount");
-      println(repeat("-", 67));
-
-      repository.getFlightStream(year)
-                .filter(f -> f.notCancelled() && f.validTailNumber())
-                .collect(groupingBy(Flight::getPlane, counting()))
-                .entrySet()
-                .stream()
-                .sorted(comparingByValue(reverseOrder()))
-                .limit(limit)
-                .forEach(e -> {
-                   Plane plane = e.getKey();
-                   printf("%-8s  %-20s  %-10s  %,10d\n", 
-                          plane.getTailNumber(), 
-                          left(plane.getManufacturer(), 20),
-                          left(plane.getModel().getModelNumber(), 10),
-                          e.getValue());
-                });
+      context.getRepository()
+             .getFlightStream(year)
+             .filter(f -> f.notCancelled() && f.validTailNumber())
+             .collect(groupingBy(Flight::getPlane, counting()))
+             .entrySet()
+             .stream()
+             .sorted(comparingByValue(reverseOrder()))
+             .limit(limit)
+             .forEach(e -> {
+                Plane plane = e.getKey();
+                context.getTerminal()
+                       .printf("%-8s  %-20s  %-10s  %,10d\n", 
+                               plane.getTailNumber(), 
+                               left(plane.getManufacturer(), 20),
+                               left(plane.getModel().getModelNumber(), 10),
+                               e.getValue());
+             });
    }
 
    @Override
-   public void reportMostFlightsByPlaneModel(Repository repository) {
-      final int year = selectYear(repository);
-      final int limit = readLimit(10, 1, 100);
+   public void reportMostFlightsByPlaneModel(ReportContext context) {
+      final int year = context.getYear();
+      final int limit = context.getLimit();
 
-      println("Manufacturer\t\t\tModel #\t\t\t  Count\t\tDaily Avg");
-      println(repeat("-", 82));
-
-      repository.getFlightStream(year)
-                .filter(f -> f.notCancelled())
-                .map(p -> p.getPlane())
-                .collect(groupingBy(Plane::getModel, counting()))
-                .entrySet()
-                .stream()
-                .sorted(comparingByValue(reverseOrder()))
-                .limit(limit)
-                .forEach(e -> {
-                   PlaneModel model = e.getKey();
-                   Long count = e.getValue();
-                   printf("%-25s\t%-20s\t%,10d\t%8.1f",
-                                        model.getManufacturer(),
-                                        model.getModelNumber(),
-                                        count,
-                                        count.floatValue() / 365
-                   );
-                });
+      context.getRepository()
+             .getFlightStream(year)
+             .filter(f -> f.notCancelled())
+             .map(p -> p.getPlane())
+             .collect(groupingBy(Plane::getModel, counting()))
+             .entrySet()
+             .stream()
+             .sorted(comparingByValue(reverseOrder()))
+             .limit(limit)
+             .forEach(e -> {
+                PlaneModel model = e.getKey();
+                Long count = e.getValue();
+                context.getTerminal()
+                       .printf("%-25s\t%-20s\t%,10d\t%8.1f",
+                               model.getManufacturer(),
+                               model.getModelNumber(),
+                               count,
+                               count.floatValue() / 365);
+             });
    }
 
    @Override
-   public void reportTotalFlightsByPlaneManufacturer(Repository repository) {
-      final int year = selectYear(repository);
+   public void reportTotalFlightsByPlaneManufacturer(ReportContext context) {
+      final int year = context.getYear();
 
-      println("Manufacturer\t\t\t Count");
-      println("-------------------------------------------");
-
-      repository.getFlightStream(year)
-                .filter(f -> f.notCancelled())
-                .map(f -> f.getPlane())
-                .collect(groupingBy(Plane::getManufacturer, counting()))
-                .entrySet()
-                .stream()
-                .sorted(comparingByValue(reverseOrder()))
-                .forEach(e -> printf("%-25s\t%,10d\n", 
-                                     e.getKey(), 
-                                     e.getValue()));
+      context.getRepository()
+             .getFlightStream(year)
+             .filter(f -> f.notCancelled())
+             .map(f -> f.getPlane())
+             .collect(groupingBy(Plane::getManufacturer, counting()))
+             .entrySet()
+             .stream()
+             .sorted(comparingByValue(reverseOrder()))
+             .forEach(e -> context.getTerminal()
+                                  .printf("%-25s\t%,10d\n", 
+                                          e.getKey(), 
+                                          e.getValue()));
    }
 
    @Override
-   public void reportTotalFlightsByPlaneAgeRange(Repository repository) {
-      final int year = selectYear(repository);
+   public void reportTotalFlightsByPlaneAgeRange(ReportContext context) {
+      final int year = context.getYear();
 
-      println("Age Range\tCount");
-      println(repeat("-", 27));
-
-      long total = repository.getFlightStream(year)
-                             .filter(f -> f.notCancelled() && 
-                                          f.getPlane().getYear() > 0)
-                             .collect(groupingBy(PlaneAgeRange.classifier(AGE_RANGES), 
-                                                 counting()))
-                             .entrySet()
-                             .stream()
-                             .sorted(comparingByKey())
-                             .peek(e -> printf("%-10s\t%,10d\n", 
-                                               e.getKey(), 
-                                               e.getValue()))
-                             .mapToLong(e -> e.getValue())
-                             .sum();
-
-      println(repeat("-", 27));
-      printf("Total\t       %,11d\n", total);
+      context.getRepository()
+             .getFlightStream(year)
+             .filter(f -> f.notCancelled() && 
+                          f.getPlane().getYear() > 0)
+             .collect(groupingBy(PlaneAgeRange.classifier(AGE_RANGES), 
+                                 counting()))
+             .entrySet()
+             .stream()
+             .sorted(comparingByKey())
+             .forEach(e -> context.getTerminal()
+                                  .printf("%-10s\t%,10d\n", 
+                                          e.getKey(), 
+                                          e.getValue()));
    }
 
    @Override
-   public void reportTotalFlightsByAircraftType(Repository repository) {
-      final int year = selectYear(repository);
+   public void reportTotalFlightsByAircraftType(ReportContext context) {
+      final int year = context.getYear();
 
-      println("Aircraft Type\t\t\tCount");
-      println("-------------------------------------------");
-
-      repository.getFlightStream(year)
-                .filter(f -> f.notCancelled())
-                .map(f -> f.getPlane())
-                .collect(groupingBy(Plane::getAircraftType, counting()))
-                .entrySet()
-                .stream()
-                .sorted(comparingByValue(reverseOrder()))
-                .forEach(e -> printf("%-25s\t%,10d\n", 
-                                     e.getKey(), 
-                                     e.getValue()));
+      context.getRepository()
+             .getFlightStream(year)
+             .filter(f -> f.notCancelled())
+             .map(f -> f.getPlane())
+             .collect(groupingBy(Plane::getAircraftType, counting()))
+             .entrySet()
+             .stream()
+             .sorted(comparingByValue(reverseOrder()))
+             .forEach(e -> context.getTerminal()
+                                  .printf("%-25s\t%,10d\n", 
+                                          e.getKey(), 
+                                          e.getValue()));
    }
 
    @Override
-   public void reportTotalFlightsByEngineType(Repository repository) {
-      final int year = selectYear(repository);
+   public void reportTotalFlightsByEngineType(ReportContext context) {
+      final int year = context.getYear();
 
-      println("Engine Type\t\t\tCount");
-      println("-------------------------------------------");
-
-      repository.getFlightStream(year)
-                .filter(f -> f.notCancelled())
-                .map(f -> f.getPlane())
-                .collect(groupingBy(Plane::getEngineType, counting()))
-                .entrySet()
-                .stream()
-                .sorted(comparingByValue(reverseOrder()))
-                .forEach(e -> printf("%-25s\t%,10d\n", 
-                                     e.getKey(), 
-                                     e.getValue()));
+      context.getRepository().getFlightStream(year)
+             .filter(f -> f.notCancelled())
+             .map(f -> f.getPlane())
+             .collect(groupingBy(Plane::getEngineType, counting()))
+             .entrySet()
+             .stream()
+             .sorted(comparingByValue(reverseOrder()))
+             .forEach(e -> context.getTerminal()
+                                  .printf("%-25s\t%,10d\n", 
+                                          e.getKey(), 
+                                          e.getValue()));
    }
 }

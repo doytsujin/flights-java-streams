@@ -1,6 +1,6 @@
 package airtraffic;
 
 public interface LiveReports {
-   void reportAirportMetrics(Repository repository);
-   void reportCarrierMetrics(Repository repository);
+   void reportAirportMetrics(ReportContext context);
+   void reportCarrierMetrics(ReportContext context);
 }

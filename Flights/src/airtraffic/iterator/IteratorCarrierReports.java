@@ -5,28 +5,25 @@ import static airtraffic.iterator.AccumulatorHelper.accumulate;
 import static java.util.Comparator.reverseOrder;
 import static java.util.Map.Entry.comparingByKey;
 import static java.util.Map.Entry.comparingByValue;
+import static org.apache.commons.lang3.StringUtils.left;
 
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import airtraffic.AbstractReportsProvider;
 import airtraffic.Carrier;
 import airtraffic.CarrierMetrics;
 import airtraffic.CarrierReports;
 import airtraffic.Flight;
-import airtraffic.Repository;
+import airtraffic.ReportContext;
 
-public class IteratorCarrierReports extends AbstractReportsProvider implements CarrierReports {
+public class IteratorCarrierReports implements CarrierReports {
 
    @Override
-   public void reportMostCancelledFlightsByCarrier(Repository repository) {
-      final int year = selectYear(repository);
-      final int limit = readLimit(10, 1, 100);
+   public void reportMostCancelledFlightsByCarrier(ReportContext context) {
+      final int year = context.getYear();
+      final int limit = context.getLimit();
 
-      println("Carrier\t\t\t\t Count");
-      println("-----------------------------------------");
-
-      Iterator<Flight> iterator = repository.getFlightIterator(year);
+      Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
          new CountingAccumulator<Flight, Carrier>() {
             @Override public boolean filter(Flight source) {
@@ -36,24 +33,22 @@ public class IteratorCarrierReports extends AbstractReportsProvider implements C
                return source.getCarrier();
             }
             @Override public void forEach(Entry<Carrier, Long> entry) {
-               printf("%-24s\t%,8d\n", 
-                      left(entry.getKey().getName(), 24), 
-                      entry.getValue());
+               context.getTerminal()
+                      .printf("%-24s\t%,8d\n", 
+                              left(entry.getKey().getName(), 24), 
+                              entry.getValue());
             }
          }
       );
    }
 
    @Override
-   public void reportCarrierMetrics(Repository repository) {
-      final int year = selectYear(repository);
+   public void reportCarrierMetrics(ReportContext context) {
+      final int year = context.getYear();
+      final int limit = context.getLimit();
 
-      print("Code    Carrier Name                        ");
-      println("Total        Cancelled %   Diverted %    Airports");
-      println(repeat("-", 94));
-
-      Iterator<Flight> iterator = repository.getFlightIterator(year);
-      accumulate(iterator, comparingByKey(), MAX_LIMIT, 
+      Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
+      accumulate(iterator, comparingByKey(), limit, 
          new MapAccumulator<Flight, String, CarrierMetrics>() {
             @Override public boolean filter(Flight source) {
                return true;
@@ -72,13 +67,14 @@ public class IteratorCarrierReports extends AbstractReportsProvider implements C
             @Override public void forEach(Entry<String, CarrierMetrics> entry) {
                CarrierMetrics metrics = entry.getValue();
                String name = metrics.getSubject().getName();
-               printf(" %2s     %-30s     %,9d    %6.1f        %6.1f         %,5d\n", 
-                      entry.getKey(),
-                      left(name, 30),
-                      metrics.getTotalFlights(),
-                      metrics.getCancellationRate() * 100.0,
-                      metrics.getDiversionRate() * 100.0,
-                      metrics.getAirports().size()
+               context.getTerminal()
+                      .printf(" %2s     %-30s     %,9d    %6.1f        %6.1f         %,5d\n", 
+                              entry.getKey(),
+                              left(name, 30),
+                              metrics.getTotalFlights(),
+                              metrics.getCancellationRate() * 100.0,
+                              metrics.getDiversionRate() * 100.0,
+                              metrics.getAirports().size()
                );
             }
          }
@@ -86,14 +82,11 @@ public class IteratorCarrierReports extends AbstractReportsProvider implements C
    }
 
    @Override
-   public void reportCarriersWithHighestCancellationRate(Repository repository) {
-      final int year = selectYear(repository);
-      final int limit = readLimit(10, 1, 100);
+   public void reportCarriersWithHighestCancellationRate(ReportContext context) {
+      final int year = context.getYear();
+      final int limit = context.getLimit();
 
-      println("Carrier                           Rate");
-      println("---------------------------------------");
-
-      Iterator<Flight> iterator = repository.getFlightIterator(year);
+      Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(highestCancellationRateComparator()), limit, 
          new MapAccumulator<Flight, String, CarrierMetrics>() {
             @Override public boolean filter(Flight source) {
@@ -112,9 +105,10 @@ public class IteratorCarrierReports extends AbstractReportsProvider implements C
             }
             @Override public void forEach(Entry<String, CarrierMetrics> entry) {
                CarrierMetrics metrics = entry.getValue();
-               printf("%-30s\t%6.1f\n", 
-                      left(metrics.getSubject().getName(), 30), 
-                      metrics.getCancellationRate() * 100.0
+               context.getTerminal()
+                      .printf("%-30s\t%6.1f\n", 
+                              left(metrics.getSubject().getName(), 30), 
+                              metrics.getCancellationRate() * 100.0
                );
             }
          }

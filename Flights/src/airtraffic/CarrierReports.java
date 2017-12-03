@@ -1,7 +1,7 @@
 package airtraffic;
 
 public interface CarrierReports {
-   void reportMostCancelledFlightsByCarrier(Repository repository);
-   void reportCarrierMetrics(Repository repository);
-   void reportCarriersWithHighestCancellationRate(Repository repository);
+   void reportMostCancelledFlightsByCarrier(ReportContext context);
+   void reportCarrierMetrics(ReportContext context);
+   void reportCarriersWithHighestCancellationRate(ReportContext context);
 }

@@ -1,68 +1,61 @@
 package airtraffic.stream;
 
-import airtraffic.AbstractReportsProvider;
+import org.beryx.textio.TextTerminal;
+
 import airtraffic.Airport;
 import airtraffic.AirportMetrics;
 import airtraffic.Carrier;
 import airtraffic.CarrierMetrics;
 import airtraffic.LiveReports;
-import airtraffic.Repository;
+import airtraffic.ReportContext;
 
-public class StreamLiveReports extends AbstractReportsProvider implements LiveReports {
+public class StreamLiveReports implements LiveReports {
 
    @Override
-   public void reportAirportMetrics(Repository repository) {
-      final int year = selectYear(repository);
-      final Airport airport = readAirport(repository, "Airport");
+   public void reportAirportMetrics(ReportContext context) {
+      final int year = context.getYear();
+      final Airport airport = context.getAirport();
 
-      clearScreen();
-      printf("Airport metrics for %s\n\n", airport.getName());
-      println("     Total\t Cancelled\t  Diverted\t   Origins\tDestinations");
-      println(repeat("-", 77));
-
+      TextTerminal<?> terminal = context.getTerminal();
       final AirportMetrics metrics = new AirportMetrics(airport);
-      repository.getFlightStream(year)
-                .filter(flight -> flight.getOrigin().equals(airport) || 
-                                  flight.getDestination().equals(airport))
-                .forEach(flight -> {
-                   metrics.addFlight(flight);
-                   moveLineToStart();
-                   printf("%,10d\t%,10d\t%,10d\t%,10d\t  %,10d", 
-                          metrics.getTotalFlights(), 
-                          metrics.getTotalCancelled(), 
-                          metrics.getTotalDiverted(), 
-                          metrics.getTotalOrigins(), 
-                          metrics.getTotalDestinations()
-                   );
-                });
+      context.getRepository()
+             .getFlightStream(year)
+             .filter(flight -> flight.getOrigin().equals(airport) || 
+                               flight.getDestination().equals(airport))
+             .forEach(flight -> {
+                metrics.addFlight(flight);
+                terminal.printf("%,10d\t%,10d\t%,10d\t%,10d\t  %,10d", 
+                                metrics.getTotalFlights(), 
+                                metrics.getTotalCancelled(), 
+                                metrics.getTotalDiverted(), 
+                                metrics.getTotalOrigins(), 
+                                metrics.getTotalDestinations());
+                terminal.moveToLineStart();
+             });
 
-      println();
+      terminal.println();
    }
 
    @Override
-   public void reportCarrierMetrics(Repository repository) {
-      final int year = selectYear(repository);
-      final Carrier carrier = readCarrier(repository);
+   public void reportCarrierMetrics(ReportContext context) {
+      final int year = context.getYear();
+      final Carrier carrier = context.getCarrier();
 
-      clearScreen();
-      printf("Carrier metrics for %s\n\n", carrier.getName());
-      println("     Total\t Cancelled\t  Diverted\t  Airports");
-      println(repeat("-", 59));
-
+      TextTerminal<?> terminal = context.getTerminal();
       final CarrierMetrics metrics = new CarrierMetrics(carrier);
-      repository.getFlightStream(year)
-                .filter(flight -> flight.getCarrier().equals(carrier))
-                .forEach(flight -> {
-                   metrics.addFlight(flight);
-                   moveLineToStart();
-                   printf("%,10d\t%,10d\t%,10d\t%,10d",
-                          metrics.getTotalFlights(), 
-                          metrics.getTotalCancelled(), 
-                          metrics.getTotalDiverted(), 
-                          metrics.getAirports().size()
-                   );
-                });
+      context.getRepository()
+             .getFlightStream(year)
+             .filter(flight -> flight.getCarrier().equals(carrier))
+             .forEach(flight -> {
+                metrics.addFlight(flight);
+                terminal.printf("%,10d\t%,10d\t%,10d\t%,10d",
+                                metrics.getTotalFlights(), 
+                                metrics.getTotalCancelled(), 
+                                metrics.getTotalDiverted(), 
+                                metrics.getAirports().size());
+                terminal.moveToLineStart();
+             });
 
-      println();
+      terminal.println();
    }
 }

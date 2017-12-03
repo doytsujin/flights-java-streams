@@ -1,15 +1,15 @@
 package airtraffic;
 
 public interface PlaneReports {
-   void reportTotalPlanesByManfacturer(Repository repository);
-   void reportTotalPlanesByYear(Repository repository);
-   void reportTotalPlanesByAircraftType(Repository repository);
-   void reportTotalPlanesByEngineType(Repository repository);
-   void reportPlanesWithMostCancellations(Repository repository);
-   void reportMostFlightsByPlane(Repository repository);
-   void reportMostFlightsByPlaneModel(Repository repository);
-   void reportTotalFlightsByPlaneManufacturer(Repository repository);
-   void reportTotalFlightsByPlaneAgeRange(Repository repository);
-   void reportTotalFlightsByAircraftType(Repository repository);
-   void reportTotalFlightsByEngineType(Repository repository);
+   void reportTotalPlanesByManfacturer(ReportContext context);
+   void reportTotalPlanesByYear(ReportContext context);
+   void reportTotalPlanesByAircraftType(ReportContext context);
+   void reportTotalPlanesByEngineType(ReportContext context);
+   void reportPlanesWithMostCancellations(ReportContext context);
+   void reportMostFlightsByPlane(ReportContext context);
+   void reportMostFlightsByPlaneModel(ReportContext context);
+   void reportTotalFlightsByPlaneManufacturer(ReportContext context);
+   void reportTotalFlightsByPlaneAgeRange(ReportContext context);
+   void reportTotalFlightsByAircraftType(ReportContext context);
+   void reportTotalFlightsByEngineType(ReportContext context);
 }
