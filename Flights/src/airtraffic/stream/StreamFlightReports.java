@@ -21,6 +21,7 @@ import airtraffic.Airport;
 import airtraffic.Carrier;
 import airtraffic.Flight;
 import airtraffic.FlightDistanceRange;
+import airtraffic.FlightReports;
 import airtraffic.PairGroup;
 import airtraffic.Repository;
 
@@ -29,7 +30,7 @@ import airtraffic.Repository;
  * 
  * @author tony@piazzaconsulting.com
  */
-public class FlightReports extends AbstractReportsProvider {
+public class StreamFlightReports extends AbstractReportsProvider implements FlightReports {
    private static final List<FlightDistanceRange> DISTANCE_RANGES =
       Arrays.asList(FlightDistanceRange.between(   0,  100), 
                     FlightDistanceRange.between( 101,  250),
@@ -39,6 +40,7 @@ public class FlightReports extends AbstractReportsProvider {
                     FlightDistanceRange.between(2501, 5000),
                     FlightDistanceRange.between(5001, 9999));
 
+   @Override
    public void reportTotalFlightsFromOrigin(Repository repository) {
       final int year = selectYear(repository);
       final Airport origin = readAirport(repository, "Origin");
@@ -51,6 +53,7 @@ public class FlightReports extends AbstractReportsProvider {
       printf("Total flights from %s is %,d\n", origin.getName().trim(), count);
    }
 
+   @Override
    public void reportTotalFlightsToDestination(Repository repository) {
       final int year = selectYear(repository);
       final Airport destination = readAirport(repository, "Destination");
@@ -64,6 +67,7 @@ public class FlightReports extends AbstractReportsProvider {
       printf("Total flights to %s is %,d\n", destination.getName().trim(), count);
    }
 
+   @Override
    public void reportTotalFlightsFromOriginToDestination(Repository repository) {
       final int year = selectYear(repository);
       final Airport origin = readAirport(repository, "Origin");
@@ -85,6 +89,7 @@ public class FlightReports extends AbstractReportsProvider {
       ); 
    }
 
+   @Override
    public void reportTopFlightsByOrigin(Repository repository) {
       final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
@@ -104,6 +109,7 @@ public class FlightReports extends AbstractReportsProvider {
                                             e.getValue()));
    }
 
+   @Override
    public void reportTopDestinationsFromOrigin(Repository repository) {
       final int year = selectYear(repository);
       final Airport origin = readAirport(repository, "Origin");
@@ -125,6 +131,7 @@ public class FlightReports extends AbstractReportsProvider {
                                             e.getValue()));
    }
 
+   @Override
    public void reportMostPopularRoutes(Repository repository) {
       final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
@@ -143,6 +150,7 @@ public class FlightReports extends AbstractReportsProvider {
                                            e.getValue().intValue()));
    }
 
+   @Override
    public void reportWorstAverageDepartureDelayByOrigin(Repository repository) {
       final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
@@ -163,6 +171,7 @@ public class FlightReports extends AbstractReportsProvider {
                                             e.getValue()));
    }
 
+   @Override
    public void reportWorstAverageArrivalDelayByDestination(Repository repository) {
       final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
@@ -183,6 +192,7 @@ public class FlightReports extends AbstractReportsProvider {
                                             e.getValue()));
    }
 
+   @Override
    public void reportMostCancelledFlightsByOrigin(Repository repository) {
       final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
@@ -202,6 +212,7 @@ public class FlightReports extends AbstractReportsProvider {
                                             e.getValue()));
    }
 
+   @Override
    public void reportTotalFlightsByOriginState(Repository repository) {
       final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
@@ -222,6 +233,7 @@ public class FlightReports extends AbstractReportsProvider {
                                             e.getValue()));
    }
 
+   @Override
    public void reportTotalFlightsByDestinationState(Repository repository) {
       final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
@@ -242,10 +254,12 @@ public class FlightReports extends AbstractReportsProvider {
                                             e.getValue()));
    }
 
+   @Override
    public void reportLongestFlights(Repository repository) {
       byDistance(repository, comparingInt(Flight::getDistance).reversed());
    }
 
+   @Override
    public void reportShortestFlights(Repository repository) {
       byDistance(repository, comparingInt(f -> f.getDistance()));
    }
@@ -271,6 +285,7 @@ public class FlightReports extends AbstractReportsProvider {
                 );
    }
 
+   @Override
    public void reportTotalFlightsByDistanceRange(Repository repository) {
       final int year = selectYear(repository);
 
@@ -289,10 +304,12 @@ public class FlightReports extends AbstractReportsProvider {
                                      e.getValue()));
    }
 
+   @Override
    public void reportDaysWithLeastCancellations(Repository repository) {
       byDaysWithCancellations(repository, comparingByValue());
    }
 
+   @Override
    public void reportDaysWithMostCancellations(Repository repository) {
       byDaysWithCancellations(repository, comparingByValue(reverseOrder()));
    }
@@ -317,6 +334,7 @@ public class FlightReports extends AbstractReportsProvider {
                                      e.getValue()));
    }
 
+   @Override
    public void reportTotalMonthlyFlights(Repository repository) {
       final int year = selectYear(repository);
 
@@ -334,6 +352,7 @@ public class FlightReports extends AbstractReportsProvider {
                                      e.getValue()));
    }
 
+   @Override
    public void reportTotalDailyFlights(Repository repository) {
       final int year = selectYear(repository);
 
@@ -349,6 +368,7 @@ public class FlightReports extends AbstractReportsProvider {
                 .forEach(e -> printf("%s\t%,10d\n", e.getKey(), e.getValue()));
    }
 
+   @Override
    public void reportTotalFlightsByDayOfWeek(Repository repository) {
       final int year = selectYear(repository);
 
@@ -367,10 +387,12 @@ public class FlightReports extends AbstractReportsProvider {
                                      e.getValue()));
    }
 
+   @Override
    public void reportMostFlightsByDay(Repository repository) {
       byDay(repository, comparingByValue(reverseOrder()));
    }
 
+   @Override
    public void reportLeastFlightsByDay(Repository repository) {
       byDay(repository, comparingByValue());
    }
@@ -393,6 +415,7 @@ public class FlightReports extends AbstractReportsProvider {
                 .forEach(e -> printf("%s\t%,10d\n", e.getKey(), e.getValue()));
    }
 
+   @Override
    public void reportMostFlightsByOriginByDay(Repository repository) {
       final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
@@ -419,6 +442,7 @@ public class FlightReports extends AbstractReportsProvider {
                 });
    }
 
+   @Override
    public void reportMostFlightsByCarrierByDay(Repository repository) {
       final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);

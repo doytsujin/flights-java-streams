@@ -22,6 +22,7 @@ import airtraffic.Airport;
 import airtraffic.Carrier;
 import airtraffic.Flight;
 import airtraffic.FlightDistanceRange;
+import airtraffic.FlightReports;
 import airtraffic.PairGroup;
 import airtraffic.Repository;
 import airtraffic.Route;
@@ -31,7 +32,7 @@ import airtraffic.Route;
  *
  * @author tony@piazzaconsulting.com
  */
-public class FlightReports extends AbstractReportsProvider {
+public class IteratorFlightReports extends AbstractReportsProvider implements FlightReports {
    private static final List<FlightDistanceRange> DISTANCE_RANGES =
       Arrays.asList(FlightDistanceRange.between(   0,  100), 
                     FlightDistanceRange.between( 101,  250),

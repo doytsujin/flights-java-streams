@@ -12,11 +12,13 @@ import java.util.Map.Entry;
 import airtraffic.AbstractReportsProvider;
 import airtraffic.Carrier;
 import airtraffic.CarrierMetrics;
+import airtraffic.CarrierReports;
 import airtraffic.Flight;
 import airtraffic.Repository;
 
-public class CarrierReports extends AbstractReportsProvider {
+public class IteratorCarrierReports extends AbstractReportsProvider implements CarrierReports {
 
+   @Override
    public void reportMostCancelledFlightsByCarrier(Repository repository) {
       final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
@@ -42,6 +44,7 @@ public class CarrierReports extends AbstractReportsProvider {
       );
    }
 
+   @Override
    public void reportCarrierMetrics(Repository repository) {
       final int year = selectYear(repository);
 
@@ -82,6 +85,7 @@ public class CarrierReports extends AbstractReportsProvider {
       );
    }
 
+   @Override
    public void reportCarriersWithHighestCancellationRate(Repository repository) {
       final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);

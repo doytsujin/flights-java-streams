@@ -14,6 +14,7 @@ import airtraffic.Flight;
 import airtraffic.Plane;
 import airtraffic.PlaneAgeRange;
 import airtraffic.PlaneModel;
+import airtraffic.PlaneReports;
 import airtraffic.Repository;
 
 /**
@@ -21,7 +22,7 @@ import airtraffic.Repository;
  *
  * @author tony@piazzaconsulting.com
  */
-public class PlaneReports extends AbstractReportsProvider {
+public class StreamPlaneReports extends AbstractReportsProvider implements PlaneReports {
    private static final List<PlaneAgeRange> AGE_RANGES =
       Arrays.asList(PlaneAgeRange.between(   0,  5),
                     PlaneAgeRange.between(   6,  10),
@@ -31,6 +32,7 @@ public class PlaneReports extends AbstractReportsProvider {
                     PlaneAgeRange.between(  41,  50),
                     PlaneAgeRange.between(  51, 100));
 
+   @Override
    public void reportTotalPlanesByManfacturer(Repository repository) {
       println("Manufacturer\t\t\tCount");
       println("---------------------------------------");
@@ -43,6 +45,7 @@ public class PlaneReports extends AbstractReportsProvider {
                 .forEach(e -> printf("%-25s\t%5d\n", e.getKey(), e.getValue()));
    }
 
+   @Override
    public void reportTotalPlanesByYear(Repository repository) {
       println("Year\tCount");
       println("------------------");
@@ -56,6 +59,7 @@ public class PlaneReports extends AbstractReportsProvider {
                 .forEach(e -> printf("%4d\t%5d\n", e.getKey(), e.getValue()));
    }
 
+   @Override
    public void reportTotalPlanesByAircraftType(Repository repository) {
       println("Aircraft Type\t\t\tCount");
       println("---------------------------------------");
@@ -68,6 +72,7 @@ public class PlaneReports extends AbstractReportsProvider {
                 .forEach(e -> printf("%-25s\t%5d\n", e.getKey(), e.getValue()));
    }
 
+   @Override
    public void reportTotalPlanesByEngineType(Repository repository) {
       println("Engine Type\t\t\tCount");
       println("---------------------------------------");
@@ -80,6 +85,7 @@ public class PlaneReports extends AbstractReportsProvider {
                 .forEach(e -> printf("%-25s\t%5d\n", e.getKey(), e.getValue()));
    }
 
+   @Override
    public void reportPlanesWithMostCancellations(Repository repository) {
       final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
@@ -97,6 +103,7 @@ public class PlaneReports extends AbstractReportsProvider {
                 .forEach(e -> printf("%-8s\t%,6d\n", e.getKey(), e.getValue()));
    }
 
+   @Override
    public void reportMostFlightsByPlane(Repository repository) {
       final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
@@ -121,6 +128,7 @@ public class PlaneReports extends AbstractReportsProvider {
                 });
    }
 
+   @Override
    public void reportMostFlightsByPlaneModel(Repository repository) {
       final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
@@ -148,6 +156,7 @@ public class PlaneReports extends AbstractReportsProvider {
                 });
    }
 
+   @Override
    public void reportTotalFlightsByPlaneManufacturer(Repository repository) {
       final int year = selectYear(repository);
 
@@ -166,6 +175,7 @@ public class PlaneReports extends AbstractReportsProvider {
                                      e.getValue()));
    }
 
+   @Override
    public void reportTotalFlightsByPlaneAgeRange(Repository repository) {
       final int year = selectYear(repository);
 
@@ -190,6 +200,7 @@ public class PlaneReports extends AbstractReportsProvider {
       printf("Total\t       %,11d\n", total);
    }
 
+   @Override
    public void reportTotalFlightsByAircraftType(Repository repository) {
       final int year = selectYear(repository);
 
@@ -208,6 +219,7 @@ public class PlaneReports extends AbstractReportsProvider {
                                      e.getValue()));
    }
 
+   @Override
    public void reportTotalFlightsByEngineType(Repository repository) {
       final int year = selectYear(repository);
 

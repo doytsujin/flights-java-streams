@@ -9,10 +9,12 @@ import airtraffic.Carrier;
 import airtraffic.CarrierMetrics;
 import airtraffic.Flight;
 import airtraffic.Repository;
+import airtraffic.LiveReports;
 
-public class StreamingReports extends AbstractReportsProvider {
+public class IteratorLiveReports extends AbstractReportsProvider implements LiveReports {
 
-   public void reportStreamingAirportMetrics(Repository repository) {
+   @Override
+   public void reportAirportMetrics(Repository repository) {
       final int year = selectYear(repository);
       final Airport airport = readAirport(repository, "Airport");
 
@@ -42,7 +44,7 @@ public class StreamingReports extends AbstractReportsProvider {
       println();
    }
 
-   public void reportStreamingCarrierMetrics(Repository repository) {
+   public void reportCarrierMetrics(Repository repository) {
       final int year = selectYear(repository);
       final Carrier carrier = readCarrier(repository);
 

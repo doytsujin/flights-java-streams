@@ -11,6 +11,7 @@ import java.util.HashMap;
 import airtraffic.AbstractReportsProvider;
 import airtraffic.Airport;
 import airtraffic.AirportMetrics;
+import airtraffic.AirportReports;
 import airtraffic.GeoLocation;
 import airtraffic.Repository;
 
@@ -19,8 +20,9 @@ import airtraffic.Repository;
  * 
  * @author tony@piazzaconsulting.com
  */
-public class AirportReports extends AbstractReportsProvider {
+public class StreamAirportReports extends AbstractReportsProvider implements AirportReports {
 
+   @Override
    public void reportAirportsForState(Repository repository) {
       final String state = readString("State").toUpperCase();
 
@@ -37,6 +39,7 @@ public class AirportReports extends AbstractReportsProvider {
                 );
    }
 
+   @Override
    public void reportAirportsNearLocation(Repository repository) {
       final double latitude = readDouble("Latitude", -90.0, 90.0);
       final double longitude = readDouble("Longitude", -180.0, 180.0);
@@ -60,6 +63,7 @@ public class AirportReports extends AbstractReportsProvider {
                                      getDistance(a, loc, MILES)));
    }
 
+   @Override
    public void reportAirportMetrics(Repository repository) {
       final int year = selectYear(repository);
 
@@ -86,6 +90,7 @@ public class AirportReports extends AbstractReportsProvider {
                 });
    }
 
+   @Override
    public void reportAirportsWithHighestCancellationRate(Repository repository) {
       final int year = selectYear(repository);
       final int limit = readLimit(10, 1, 100);
