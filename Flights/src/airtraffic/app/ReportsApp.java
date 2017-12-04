@@ -1,13 +1,14 @@
 package airtraffic.app;
 
+import static java.lang.reflect.Modifier.isAbstract;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.splitByCharacterTypeCamelCase;
 
 import java.io.IOException;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.beryx.textio.TextIO;
 import org.beryx.textio.TextIoFactory;
@@ -48,10 +49,10 @@ public final class ReportsApp {
                       .stream()
                       .map(i -> i.load())
                       .filter(c -> !c.isInterface() && 
-                                   !Modifier.isAbstract(c.getModifiers()) && 
+                                   !isAbstract(c.getModifiers()) && 
                                    AbstractReportsApp.class.isAssignableFrom(c))
                       .sorted((c1, c2) -> c1.getName().compareTo(c2.getName()))
-                      .collect(Collectors.toList());
+                      .collect(toList());
    }
 
    private int readAppOption(List<Class<?>> classes) {
@@ -77,7 +78,7 @@ public final class ReportsApp {
    }
 
    private String getAppDescription(Class<?> klass) {
-      String name = klass.getSimpleName().replace("App", new String());
+      String name = klass.getSimpleName().replace("App", EMPTY);
       String[] words = splitByCharacterTypeCamelCase(name);
       return Arrays.stream(words).collect(joining(" "));
    }
