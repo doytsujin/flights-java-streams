@@ -2,7 +2,6 @@ package airtraffic.stream;
 
 import static airtraffic.PairGroup.pairAirportDay;
 import static airtraffic.PairGroup.pairCarrierDay;
-import static airtraffic.ReportsHelper.formatYearMonth;
 import static java.util.Comparator.comparingInt;
 import static java.util.Comparator.reverseOrder;
 import static java.util.Map.Entry.comparingByKey;
@@ -339,7 +338,7 @@ public class StreamFlightReports implements FlightReports {
                 .sorted(comparingByKey())
                 .forEach(e -> context.getTerminal()
                                      .printf("%s\t%,10d\n", 
-                                             formatYearMonth(e.getKey()), 
+                                            YEAR_MONTH_FORMAT.format(e.getKey()), 
                                              e.getValue()));
    }
 

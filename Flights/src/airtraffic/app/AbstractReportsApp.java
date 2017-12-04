@@ -1,4 +1,4 @@
-package airtraffic;
+package airtraffic.app;
 
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
@@ -16,6 +16,12 @@ import org.beryx.textio.TextIoFactory;
 import org.beryx.textio.TextTerminal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import airtraffic.Airport;
+import airtraffic.Carrier;
+import airtraffic.GeoLocation;
+import airtraffic.ReportContext;
+import airtraffic.Repository;
 
 public abstract class AbstractReportsApp {
    private static final String METHOD_NAME_PREFIX = "report";

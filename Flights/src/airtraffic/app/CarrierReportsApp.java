@@ -1,9 +1,11 @@
-package airtraffic;
+package airtraffic.app;
 
 import static org.apache.commons.lang3.StringUtils.repeat;
 
 import org.beryx.textio.TextTerminal;
 
+import airtraffic.CarrierReports;
+import airtraffic.ReportContext;
 import airtraffic.iterator.IteratorCarrierReports;
 import airtraffic.stream.StreamCarrierReports;
 

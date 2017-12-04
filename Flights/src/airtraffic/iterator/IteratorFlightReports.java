@@ -1,6 +1,5 @@
 package airtraffic.iterator;
 
-import static airtraffic.ReportsHelper.formatYearMonth;
 import static airtraffic.iterator.AccumulatorHelper.accumulate;
 import static java.util.Comparator.reverseOrder;
 import static java.util.Map.Entry.comparingByKey;
@@ -435,7 +434,7 @@ public class IteratorFlightReports implements FlightReports {
             @Override public void forEach(Entry<YearMonth, Long> entry) {
                context.getTerminal()
                       .printf("%s\t%,10d\n", 
-                              formatYearMonth(entry.getKey()), 
+                              YEAR_MONTH_FORMAT.format(entry.getKey()), 
                               entry.getValue());
             }
          }

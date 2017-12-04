@@ -1,4 +1,4 @@
-package airtraffic;
+package airtraffic.app;
 
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.splitByCharacterTypeCamelCase;
@@ -29,7 +29,7 @@ public final class ReportsApp {
 
    private void executeSelectedApp() throws Exception {
       clearScreen();
-      List<Class<?>> classes = getClasses("airtraffic");
+      List<Class<?>> classes = getClasses("airtraffic.app");
       int option = readAppOption(classes);
       if(option == 0) {
          System.exit(0);

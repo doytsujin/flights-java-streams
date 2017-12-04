@@ -1,6 +1,10 @@
 package airtraffic;
 
+import java.time.format.DateTimeFormatter;
+
 public interface FlightReports {
+   DateTimeFormatter YEAR_MONTH_FORMAT = 
+         DateTimeFormatter.ofPattern("MMM yyyy");
    void reportTotalFlightsFromOrigin(ReportContext context);
    void reportTotalFlightsToDestination(ReportContext context);
    void reportTotalFlightsFromOriginToDestination(ReportContext context);
