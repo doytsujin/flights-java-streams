@@ -8,6 +8,10 @@ import airtraffic.iterator.IteratorPlaneReports;
 import airtraffic.stream.StreamPlaneReports;
 
 public class PlaneReportsApp extends AbstractReportsApp implements PlaneReports {
+   public static void main(String[] args) throws Exception {
+      new PlaneReportsApp().executeSelectedReport();
+   }
+
    @Override
    public void reportTotalPlanesByManfacturer(ReportContext context) {
       final String style = readStyleOption();

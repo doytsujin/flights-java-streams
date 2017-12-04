@@ -8,6 +8,10 @@ import airtraffic.iterator.IteratorLiveReports;
 import airtraffic.stream.StreamLiveReports;
 
 public class LiveReportsApp extends AbstractReportsApp implements LiveReports {
+   public static void main(String[] args) throws Exception {
+      new LiveReportsApp().executeSelectedReport();
+   }
+
    @Override
    public void reportAirportMetrics(ReportContext context) {
       final String style = readStyleOption();

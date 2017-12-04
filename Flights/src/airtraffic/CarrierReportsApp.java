@@ -8,6 +8,10 @@ import airtraffic.iterator.IteratorCarrierReports;
 import airtraffic.stream.StreamCarrierReports;
 
 public class CarrierReportsApp extends AbstractReportsApp implements CarrierReports {
+   public static void main(String[] args) throws Exception {
+      new CarrierReportsApp().executeSelectedReport();
+   }
+
    @Override
    public void reportMostCancelledFlightsByCarrier(ReportContext context) {
       final String style = readStyleOption();

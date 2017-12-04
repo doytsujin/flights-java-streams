@@ -8,6 +8,10 @@ import airtraffic.iterator.IteratorAirportReports;
 import airtraffic.stream.StreamAirportReports;
 
 public class AirportReportsApp extends AbstractReportsApp implements AirportReports {
+   public static void main(String[] args) throws Exception {
+      new AirportReportsApp().executeSelectedReport();
+   }
+
    @Override
    public void reportAirportMetrics(ReportContext context) {
       final String style = readStyleOption();
