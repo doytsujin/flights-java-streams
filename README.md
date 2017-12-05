@@ -17,7 +17,7 @@ obviously limits what you can do with the data in those cases.
 
 The structure of the project can be seen in the following picture.
 
-![Eclipse Project File Structure](https://i.imgur.com/x3VSIu5.gif)
+![Eclipse Project File Structure](https://i.imgur.com/yGJhebX.gif)
 
 The project makes extensive using of the following domain classes:
 
@@ -39,9 +39,14 @@ mvn install
 Once the data files have been downloaded and extracted, you can execute the
 ReportsApp class to select and launch available reports.
 
-My goal is to implement classes in the airtraffic.iterator and airtraffic.stream
-packages with the same method names and signatures. This will provide a 
-side-by-side comparison of using Iterators vs. Streams.
+The classes in the airtraffic.iterator and airtraffic.stream packages implement
+the same functionality using iterators and streams respectively. This provides
+a convenient way to compare an iterator-based solution and a stream-based one.
+
+I have also included classes in the airtraffic.benchmark class that perform
+micro benchmarks using [JMH](http://openjdk.java.net/projects/code-tools/jmh/).
+You will see that the stream-based solutions either as fast or faster than 
+the iterator-based ones.
 
 If you visit the [source data link](http://stat-computing.org/dataexpo/2009/the-data.html "Flight Data"), 
 you will notice there are data files for each year from 1987 to 2008. 
