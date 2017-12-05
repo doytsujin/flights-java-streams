@@ -4,7 +4,7 @@
 	<groupId>piazzaconsulting</groupId>
 	<artifactId>flightdata-java8</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Flight Data - Java 8</name>
+	<name>Java 8 Flight Data Processing</name>
 	<description>Example code using Java 8 streams</description>
 	<developers>
 		<developer>
@@ -20,9 +20,9 @@
 			<version>3.6</version>
 		</dependency>
 		<dependency>
-		   <groupId>commons-io</groupId>
-		   <artifactId>commons-io</artifactId>
-		   <version>2.6</version>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.6</version>
 		</dependency>
 		<dependency>
 			<groupId>org.simpleflatmapper</groupId>
@@ -33,6 +33,11 @@
 			<groupId>org.beryx</groupId>
 			<artifactId>text-io</artifactId>
 			<version>3.0.0-alpha-3</version>
+		</dependency>
+		<dependency>
+			<groupId>jline</groupId>
+			<artifactId>jline</artifactId>
+			<version>2.14.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -48,6 +53,16 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>23.4-jre</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openjdk.jmh</groupId>
+			<artifactId>jmh-core</artifactId>
+			<version>1.19</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openjdk.jmh</groupId>
+			<artifactId>jmh-generator-annprocess</artifactId>
+			<version>1.19</version>
 		</dependency>
 	</dependencies>
 	<properties>
@@ -166,7 +181,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>airtraffic.ReportsApp</mainClass>
+									<mainClass>airtraffic.benchmark.ReportsBenchmark</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>

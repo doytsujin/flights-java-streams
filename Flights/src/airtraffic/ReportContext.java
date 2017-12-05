@@ -33,6 +33,14 @@ public final class ReportContext {
       return this;
    }
 
+   public ReportContext setAirportByIATA(String iata) {
+      if(repository == null) {
+         throw new IllegalStateException("repository is null");
+      }
+      this.airport = repository.getAirport(iata);
+      return this;
+   }
+
    public Airport getOrigin() {
       return origin;
    }
@@ -57,6 +65,14 @@ public final class ReportContext {
 
    public ReportContext setCarrier(Carrier carrier) {
       this.carrier = carrier;
+      return this;
+   }
+
+   public ReportContext setCarrierByCode(String code) {
+      if(repository == null) {
+         throw new IllegalStateException("repository is null");
+      }
+      this.carrier = repository.getCarrier(code);
       return this;
    }
 
