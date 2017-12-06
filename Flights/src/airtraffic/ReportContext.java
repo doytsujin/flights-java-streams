@@ -28,16 +28,20 @@ public final class ReportContext {
       return airport;
    }
 
+   private Airport getAirportByIATA(String iata) {
+      if(repository == null) {
+         throw new IllegalStateException("repository is null");
+      }
+      return repository.getAirport(iata);
+   }
+
    public ReportContext setAirport(Airport airport) {
       this.airport = airport;
       return this;
    }
 
    public ReportContext setAirportByIATA(String iata) {
-      if(repository == null) {
-         throw new IllegalStateException("repository is null");
-      }
-      this.airport = repository.getAirport(iata);
+      this.airport = getAirportByIATA(iata);
       return this;
    }
 
@@ -50,12 +54,22 @@ public final class ReportContext {
       return this;
    }
 
+   public ReportContext setOriginByIATA(String iata) {
+      this.origin = getAirportByIATA(iata);
+      return this;
+   }
+
    public Airport getDestination() {
       return destination;
    }
 
    public ReportContext setDestination(Airport destination ) {
       this.destination = destination;
+      return this;
+   }
+
+   public ReportContext setDestinationByIATA(String iata) {
+      this.destination = getAirportByIATA(iata);
       return this;
    }
 
