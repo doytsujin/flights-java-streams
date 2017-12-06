@@ -145,13 +145,13 @@ public class PlaneReportsBenchmark extends AbstractReportsBenchmark {
 
    @Benchmark
    public void iteratorTotalFlightsByEngineType() {
-      ReportContext context = createReportContext();
+      ReportContext context = createReportContext().setYear(2008);
       iteratorImpl.reportTotalFlightsByEngineType(context);
    }
 
    @Benchmark
    public void streamTotalFlightsByEngineType() {
-      ReportContext context = createReportContext();
+      ReportContext context = createReportContext().setYear(2008);
       streamImpl.reportTotalFlightsByEngineType(context);
    }
 }
