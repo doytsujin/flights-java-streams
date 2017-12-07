@@ -89,7 +89,8 @@ public class PlaneReportsApp extends AbstractReportsApp implements PlaneReports 
    @Override
    public void reportMostFlightsByPlaneModel(ReportContext context) {
       final String style = readStyleOption();
-      context.setYear(readYear());
+      context.setYear(readYear())
+             .setLimit(readLimit(10, 1, 100));
 
       TextTerminal<?> terminal = context.getTerminal();
       terminal.println("Manufacturer\t\t\tModel #\t\t\t  Count\t\tDaily Avg");

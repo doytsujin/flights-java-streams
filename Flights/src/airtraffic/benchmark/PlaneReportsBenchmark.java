@@ -97,13 +97,13 @@ public class PlaneReportsBenchmark extends AbstractReportsBenchmark {
 
    @Benchmark
    public void iteratorMostFlightsByPlaneModel() {
-      ReportContext context = createReportContext().setYear(2008);
+      ReportContext context = createReportContext().setYear(2008).setLimit(10);
       iteratorImpl.reportMostFlightsByPlaneModel(context);
    }
 
    @Benchmark
    public void streamMostFlightsByPlaneModel() {
-      ReportContext context = createReportContext().setYear(2008);
+      ReportContext context = createReportContext().setYear(2008).setLimit(10);
       streamImpl.reportMostFlightsByPlaneModel(context);
    }
 

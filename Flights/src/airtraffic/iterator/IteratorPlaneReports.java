@@ -144,7 +144,7 @@ public class IteratorPlaneReports implements PlaneReports {
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
          new CountingAccumulator<Flight, Plane>() {
             @Override public boolean filter(Flight flight) {
-               return flight.cancelled() && flight.validTailNumber();
+               return flight.notCancelled() && flight.validTailNumber();
             }
             @Override public Plane getKey(Flight flight) {
                return flight.getPlane();
@@ -170,7 +170,8 @@ public class IteratorPlaneReports implements PlaneReports {
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
          new CountingAccumulator<Flight, PlaneModel>() {
             @Override public boolean filter(Flight flight) {
-               return flight.cancelled();
+               return flight.notCancelled() && 
+                      ! "UNKNOWN".equals(flight.getPlane().getManufacturer()); 
             }
             @Override public PlaneModel getKey(Flight flight) {
                return flight.getPlane().getModel();
@@ -218,7 +219,7 @@ public class IteratorPlaneReports implements PlaneReports {
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByKey(), limit, 
-         new MapAccumulator<Flight, PlaneAgeRange, Long>() {
+         new CountingAccumulator<Flight, PlaneAgeRange>() {
             @Override public boolean filter(Flight flight) {
                return flight.notCancelled() && flight.getPlane().getYear() > 0;
             }
@@ -230,12 +231,6 @@ public class IteratorPlaneReports implements PlaneReports {
                   }
                }
                throw new IllegalStateException("No range for age of " + age);
-            }
-            @Override public Long initializeValue(Flight source) {
-               return Long.valueOf(1);
-            }
-            @Override public Long updateValue(Flight source, Long value) {
-               return Long.valueOf(value.longValue() + 1);
             }
             @Override public void forEach(Entry<PlaneAgeRange, Long> entry) {
                context.getTerminal()

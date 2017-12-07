@@ -113,6 +113,7 @@ public class StreamPlaneReports implements PlaneReports {
 
       context.getRepository()
              .getFlightStream(year)
+             .parallel()
              .filter(f -> f.notCancelled() && f.validTailNumber())
              .collect(groupingBy(Flight::getPlane, counting()))
              .entrySet()
@@ -137,8 +138,10 @@ public class StreamPlaneReports implements PlaneReports {
 
       context.getRepository()
              .getFlightStream(year)
-             .filter(f -> f.notCancelled())
-             .map(p -> p.getPlane())
+             .parallel()
+             .filter(f -> f.notCancelled() && 
+                          ! "UNKNOWN".equals(f.getPlane().getManufacturer()))
+             .map(f -> f.getPlane())
              .collect(groupingBy(Plane::getModel, counting()))
              .entrySet()
              .stream()

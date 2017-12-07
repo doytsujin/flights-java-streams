@@ -31,10 +31,8 @@ public final class AccumulatorHelper {
             );
          }
       }
-//      @SuppressWarnings("unchecked")
-//      Entry<K, V>[] entries = map.entrySet().toArray(new Entry[map.size()]);
-//      Arrays.sort(entries, comparator);
       List<Entry<K, V>> entries = new ArrayList<>(map.entrySet());
+      Collections.sort(entries, comparator);
       Map<K, V> result = new LinkedHashMap<>();
       for (Entry<K, V> entry : entries) {
          result.put(entry.getKey(), entry.getValue());
