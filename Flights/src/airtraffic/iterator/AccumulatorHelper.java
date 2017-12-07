@@ -1,7 +1,6 @@
 package airtraffic.iterator;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -32,9 +31,10 @@ public final class AccumulatorHelper {
             );
          }
       }
-      @SuppressWarnings("unchecked")
-      Entry<K, V>[] entries = map.entrySet().toArray(new Entry[map.size()]);
-      Arrays.sort(entries, comparator);
+//      @SuppressWarnings("unchecked")
+//      Entry<K, V>[] entries = map.entrySet().toArray(new Entry[map.size()]);
+//      Arrays.sort(entries, comparator);
+      List<Entry<K, V>> entries = new ArrayList<>(map.entrySet());
       Map<K, V> result = new LinkedHashMap<>();
       for (Entry<K, V> entry : entries) {
          result.put(entry.getKey(), entry.getValue());
@@ -46,6 +46,9 @@ public final class AccumulatorHelper {
             break;
          }
       }
+      map.clear();
+      result.clear();
+      entries.clear();
    }
 
    public static <T extends Comparable<T>> void accumulate(Iterator<T> iterator, 
@@ -65,5 +68,6 @@ public final class AccumulatorHelper {
             break;
          }         
       }
+      list.clear();
    }
 }

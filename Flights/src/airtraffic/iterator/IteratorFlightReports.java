@@ -33,6 +33,12 @@ import airtraffic.Route;
  * @author tony@piazzaconsulting.com
  */
 public class IteratorFlightReports implements FlightReports {
+   private static final Comparator<Flight> FLIGHT_DISTANCE_COMPARATOR = 
+      new Comparator<Flight>() {
+         @Override public int compare(Flight f1, Flight f2) {
+            return f1.getDistance() - f2.getDistance();
+         }
+      };
    private static final List<FlightDistanceRange> DISTANCE_RANGES =
       Arrays.asList(FlightDistanceRange.between(   0,  100), 
                     FlightDistanceRange.between( 101,  250),
@@ -306,19 +312,11 @@ public class IteratorFlightReports implements FlightReports {
    }
 
    public void reportLongestFlights(ReportContext context) {
-      byDistance(context, new Comparator<Flight>() {
-         @Override public int compare(Flight f1, Flight f2) {
-            return f2.getDistance() - f1.getDistance();
-         }
-      });
+      byDistance(context, FLIGHT_DISTANCE_COMPARATOR.reversed());
    }
 
    public void reportShortestFlights(ReportContext context) {
-      byDistance(context, new Comparator<Flight>() {
-         @Override public int compare(Flight f1, Flight f2) {
-            return f1.getDistance() - f2.getDistance();
-         }
-      });
+      byDistance(context, FLIGHT_DISTANCE_COMPARATOR);
    }
 
    private void byDistance(ReportContext context, Comparator<Flight> comparator) {
@@ -349,6 +347,7 @@ public class IteratorFlightReports implements FlightReports {
             break;
          }         
       }
+      flights.clear();
    }
 
    public void reportTotalFlightsByDistanceRange(ReportContext context) {
