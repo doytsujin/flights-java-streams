@@ -260,7 +260,7 @@ public class StreamFlightReports implements FlightReports {
 
    @Override
    public void reportShortestFlights(ReportContext context) {
-      byDistance(context, comparingInt(f -> f.getDistance()));
+      byDistance(context, comparingInt(Flight::getDistance));
    }
 
    private void byDistance(ReportContext context, Comparator<Flight> comparator) {
