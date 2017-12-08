@@ -273,7 +273,6 @@ public class StreamFlightReports implements FlightReports {
 
       context.getRepository()
              .getFlightStream(year)
-             .parallel()
              .filter(f -> f.notCancelled() && f.notDiverted())
              .sorted(comparator)
              .limit(limit)
