@@ -21,6 +21,10 @@ import airtraffic.stream.StreamAirportReports;
 @Measurement(iterations = 5, timeUnit = TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
 public class AirportReportsBenchmark extends AbstractReportsBenchmark {
+   private static final GeoLocation HOUSTON = new GeoLocation() {
+      @Override public double getLatitude()  { return 29.7604270;  }
+      @Override public double getLongitude() { return -95.3698030; }
+   };
    private final AirportReports iteratorImpl = new IteratorAirportReports();
    private final AirportReports streamImpl = new StreamAirportReports();
 
@@ -50,14 +54,14 @@ public class AirportReportsBenchmark extends AbstractReportsBenchmark {
 
    @Benchmark
    public void iteratorAirportsNearLocation() {
-      ReportContext context = createReportContext().setLocation(getLocation())
+      ReportContext context = createReportContext().setLocation(HOUSTON)
                                                    .setDistance(100);
       iteratorImpl.reportAirportsNearLocation(context);
    }
 
    @Benchmark
    public void streamAirportsNearLocation() {
-      ReportContext context = createReportContext().setLocation(getLocation())
+      ReportContext context = createReportContext().setLocation(HOUSTON)
                                                    .setDistance(100);
       streamImpl.reportAirportsNearLocation(context);
    }
@@ -74,12 +78,5 @@ public class AirportReportsBenchmark extends AbstractReportsBenchmark {
       ReportContext context = createReportContext().setYear(2008)
                                                    .setLimit(10);
       streamImpl.reportAirportsWithHighestCancellationRate(context);
-   }
-
-   private GeoLocation getLocation() {
-      return new GeoLocation() {
-         @Override public double getLatitude()  { return 29.7604270;  }
-         @Override public double getLongitude() { return -95.3698030; }
-      };
    }
 }

@@ -48,7 +48,8 @@ public class StreamPlaneReports implements PlaneReports {
 
    @Override
    public void reportTotalPlanesByYear(ReportContext context) {
-      context.getRepository().getPlaneStream()
+      context.getRepository()
+             .getPlaneStream()
              .filter(p -> p.getYear() > 0)
              .collect(groupingBy(Plane::getYear, counting()))
              .entrySet()
@@ -62,7 +63,8 @@ public class StreamPlaneReports implements PlaneReports {
 
    @Override
    public void reportTotalPlanesByAircraftType(ReportContext context) {
-      context.getRepository().getPlaneStream()
+      context.getRepository()
+             .getPlaneStream()
              .collect(groupingBy(Plane::getAircraftType, counting()))
              .entrySet()
              .stream()
@@ -183,6 +185,7 @@ public class StreamPlaneReports implements PlaneReports {
 
       context.getRepository()
              .getFlightStream(year)
+             .parallel()
              .filter(f -> f.notCancelled() && 
                           f.getPlane().getYear() > 0)
              .collect(groupingBy(PlaneAgeRange.classifier(AGE_RANGES), 
@@ -218,7 +221,8 @@ public class StreamPlaneReports implements PlaneReports {
    public void reportTotalFlightsByEngineType(ReportContext context) {
       final int year = context.getYear();
 
-      context.getRepository().getFlightStream(year)
+      context.getRepository()
+             .getFlightStream(year)
              .filter(f -> f.notCancelled())
              .map(f -> f.getPlane())
              .collect(groupingBy(Plane::getEngineType, counting()))

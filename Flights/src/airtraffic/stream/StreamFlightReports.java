@@ -47,6 +47,7 @@ public class StreamFlightReports implements FlightReports {
 
       long count = context.getRepository()
                           .getFlightStream(year)
+                          .parallel()
                           .filter(f -> f.notCancelled() && 
                                        f.getOrigin().equals(origin))
                           .count();
@@ -64,6 +65,7 @@ public class StreamFlightReports implements FlightReports {
 
       long count = context.getRepository()
                           .getFlightStream(year)
+                          .parallel()
                           .filter(f -> f.notCancelled() && 
                                        f.notDiverted() && 
                                        f.getDestination().equals(destination))
@@ -239,18 +241,20 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
 
-      context.getRepository().getFlightStream(year)
-                .filter(f -> f.notCancelled() && f.notDiverted())
-                .map(f -> f.getDestination())
-                .collect(groupingBy(Airport::getState, counting()))
-                .entrySet()
-                .stream()
-                .sorted(comparingByValue(reverseOrder()))
-                .limit(limit)
-                .forEachOrdered(e -> context.getTerminal()
-                                            .printf("%2s\t%,10d\n", 
-                                                    e.getKey(), 
-                                                    e.getValue()));
+      context.getRepository()
+             .getFlightStream(year)
+             .parallel()
+             .filter(f -> f.notCancelled() && f.notDiverted())
+             .map(f -> f.getDestination())
+             .collect(groupingBy(Airport::getState, counting()))
+             .entrySet()
+             .stream()
+             .sorted(comparingByValue(reverseOrder()))
+             .limit(limit)
+             .forEachOrdered(e -> context.getTerminal()
+                                         .printf("%2s\t%,10d\n", 
+                                                 e.getKey(), 
+                                                 e.getValue()));
    }
 
    @Override
@@ -267,35 +271,38 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
 
-      context.getRepository().getFlightStream(year)
-                .filter(f -> f.notCancelled() && f.notDiverted())
-                .sorted(comparator)
-                .limit(limit)
-                .forEach(f -> context.getTerminal()
-                                     .printf("%-8s  %10s\t  %2s\t %3s\t    %3s\t\t%6d\n",
-                                             f.getFlightNumber(),
-                                             f.getDate(),
-                                             f.getCarrier().getCode(),
-                                             f.getOrigin().getIATA(),
-                                             f.getDestination().getIATA(),
-                                             f.getDistance()));
+      context.getRepository()
+             .getFlightStream(year)
+             .filter(f -> f.notCancelled() && f.notDiverted())
+             .sorted(comparator)
+             .limit(limit)
+             .forEach(f -> context.getTerminal()
+                                  .printf("%-8s  %10s\t  %2s\t %3s\t    %3s\t\t%6d\n",
+                                          f.getFlightNumber(),
+                                          f.getDate(),
+                                          f.getCarrier().getCode(),
+                                          f.getOrigin().getIATA(),
+                                          f.getDestination().getIATA(),
+                                          f.getDistance()));
    }
 
    @Override
    public void reportTotalFlightsByDistanceRange(ReportContext context) {
       final int year = context.getYear();
 
-      context.getRepository().getFlightStream(year)
-                .filter(f -> f.notCancelled() && f.notDiverted())
-                .collect(groupingBy(FlightDistanceRange.classifier(DISTANCE_RANGES),
-                                    counting()))
-                .entrySet()
-                .stream()
-                .sorted(comparingByKey())
-                .forEach(e -> context.getTerminal()
-                                     .printf("%-10s\t%,10d\n", 
-                                             e.getKey(), 
-                                             e.getValue()));
+      context.getRepository()
+             .getFlightStream(year)
+             .parallel()
+             .filter(f -> f.notCancelled() && f.notDiverted())
+             .collect(groupingBy(FlightDistanceRange.classifier(DISTANCE_RANGES),
+                                 counting()))
+             .entrySet()
+             .stream()
+             .sorted(comparingByKey())
+             .forEach(e -> context.getTerminal()
+                                  .printf("%-10s\t%,10d\n", 
+                                          e.getKey(), 
+                                          e.getValue()));
    }
 
    @Override
@@ -313,66 +320,69 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
 
-      context.getRepository().getFlightStream(year)
-                .filter(f -> f.cancelled())
-                .collect(groupingBy(Flight::getDate, counting()))
-                .entrySet()
-                .stream()
-                .sorted(comparator)
-                .limit(limit)
-                .forEach(e -> context.getTerminal()
-                                     .printf("%-10s       %,3d\n", 
-                                             e.getKey(), 
-                                             e.getValue()));
+      context.getRepository()
+             .getFlightStream(year)
+             .filter(f -> f.cancelled())
+             .collect(groupingBy(Flight::getDate, counting()))
+             .entrySet()
+             .stream()
+             .sorted(comparator)
+             .limit(limit)
+             .forEach(e -> context.getTerminal()
+                                  .printf("%-10s       %,3d\n", 
+                                          e.getKey(), 
+                                          e.getValue()));
    }
 
    @Override
    public void reportTotalMonthlyFlights(ReportContext context) {
       final int year = context.getYear();
 
-      context.getRepository().getFlightStream(year)
-                .filter(f -> f.notCancelled())
-                .collect(groupingBy(Flight::getYearMonth, counting()))
-                .entrySet()
-                .stream()
-                .sorted(comparingByKey())
-                .forEach(e -> context.getTerminal()
-                                     .printf("%s\t%,10d\n", 
-                                            YEAR_MONTH_FORMAT.format(e.getKey()), 
-                                             e.getValue()));
+      context.getRepository()
+             .getFlightStream(year)
+             .filter(f -> f.notCancelled())
+             .collect(groupingBy(Flight::getYearMonth, counting()))
+             .entrySet()
+             .stream()
+             .sorted(comparingByKey())
+             .forEach(e -> context.getTerminal()
+                                  .printf("%s\t%,10d\n", 
+                                          YEAR_MONTH_FORMAT.format(e.getKey()), 
+                                          e.getValue()));
    }
-
    @Override
    public void reportTotalDailyFlights(ReportContext context) {
       final int year = context.getYear();
 
-      context.getRepository().getFlightStream(year)
-                .filter(f -> f.notCancelled())
-                .collect(groupingBy(Flight::getDate, counting()))
-                .entrySet()
-                .stream()
-                .sorted(comparingByKey())
-                .forEach(e -> context.getTerminal()
-                                     .printf("%s\t%,10d\n", 
-                                             e.getKey(), 
-                                             e.getValue()));
+      context.getRepository()
+             .getFlightStream(year)
+             .filter(f -> f.notCancelled())
+             .collect(groupingBy(Flight::getDate, counting()))
+             .entrySet()
+             .stream()
+             .sorted(comparingByKey())
+             .forEach(e -> context.getTerminal()
+                                  .printf("%s\t%,10d\n", 
+                                          e.getKey(), 
+                                          e.getValue()));
    }
 
    @Override
    public void reportTotalFlightsByDayOfWeek(ReportContext context) {
       final int year = context.getYear();
 
-      context.getRepository().getFlightStream(year)
-                .filter(f -> f.notCancelled())
-                .map(f -> f.getDate())
-                .collect(groupingBy(LocalDate::getDayOfWeek, counting()))
-                .entrySet()
-                .stream()
-                .sorted(comparingByKey())
-                .forEach(e -> context.getTerminal()
-                                     .printf("%10s\t%,10d\n", 
-                                             e.getKey(), 
-                                             e.getValue()));
+      context.getRepository()
+             .getFlightStream(year)
+             .filter(f -> f.notCancelled())
+             .map(f -> f.getDate())
+             .collect(groupingBy(LocalDate::getDayOfWeek, counting()))
+             .entrySet()
+             .stream()
+             .sorted(comparingByKey())
+             .forEach(e -> context.getTerminal()
+                                  .printf("%10s\t%,10d\n", 
+                                          e.getKey(), 
+                                          e.getValue()));
    }
 
    @Override
@@ -390,17 +400,18 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
 
-      context.getRepository().getFlightStream(year)
-                .filter(f -> f.notCancelled())
-                .collect(groupingBy(Flight::getDate, counting()))
-                .entrySet()
-                .stream()
-                .sorted(comparator)
-                .limit(limit)
-                .forEach(e -> context.getTerminal()
-                                     .printf("%s\t%,10d\n", 
-                                             e.getKey(), 
-                                             e.getValue()));
+      context.getRepository()
+             .getFlightStream(year)
+             .filter(f -> f.notCancelled())
+             .collect(groupingBy(Flight::getDate, counting()))
+             .entrySet()
+             .stream()
+             .sorted(comparator)
+             .limit(limit)
+             .forEach(e -> context.getTerminal()
+                                  .printf("%s\t%,10d\n", 
+                                          e.getKey(), 
+                                          e.getValue()));
    }
 
    @Override
