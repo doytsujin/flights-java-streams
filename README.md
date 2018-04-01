@@ -43,7 +43,7 @@ The classes in the airtraffic.iterator and airtraffic.stream packages implement
 the same functionality using iterators and streams respectively. This provides
 a convenient way to compare an iterator-based solution and a stream-based one.
 
-I have also included classes in the airtraffic.benchmark class that perform
+I have also included classes in the airtraffic.benchmark package that perform
 micro benchmarks using [JMH](http://openjdk.java.net/projects/code-tools/jmh/).
 You will see that the stream-based solutions either as fast or faster than 
 the iterator-based ones.
