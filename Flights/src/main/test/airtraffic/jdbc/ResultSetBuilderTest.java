@@ -12,11 +12,11 @@ import org.junit.jupiter.api.Test;
 
 
 class ResultSetBuilderTest {
-    private ResultSetBuilder builder = new ResultSetBuilder();
+    private static final String NAME_1 = "first";
+    private final ResultSetBuilder builder = new ResultSetBuilder();
 
     @Test
-    void testWithOneColumnAndOneRow() throws SQLException {
-        final String NAME_1 = "first";
+    void buildWithOneColumnAndOneRow() throws SQLException {
         builder.addColumn(NAME_1, Types.INTEGER);
         builder.addRow(1);
         ResultSet rs = builder.build();
@@ -29,8 +29,7 @@ class ResultSetBuilderTest {
     }
 
     @Test
-    void testWithOneColumnAndNoData() throws SQLException {
-        final String NAME_1 = "first";
+    void buildWithOneColumnAndNoRows() throws SQLException {
         builder.addColumn(NAME_1, Types.INTEGER);
         ResultSet rs = builder.build();
         ResultSetMetaData meta = rs.getMetaData();
@@ -40,7 +39,22 @@ class ResultSetBuilderTest {
     }
 
     @Test
-    void testWithNoColumnsAndNoData() {
+    void addRowWithNoColumns() {
+        assertThrows(IllegalStateException.class,
+                     () -> builder.addRow(1),
+                     "Should not add row");
+    }
+
+    @Test
+    void addEmptyRowWithOneColumn() {
+        builder.addColumn(NAME_1, Types.INTEGER);
+        assertThrows(IllegalArgumentException.class,
+                     () -> builder.addRow(),
+                     "Should not add row");
+    }
+
+    @Test
+    void buildWithNoColumnsAndNoRows() {
         assertThrows(IllegalStateException.class,
                      () -> builder.build(),
                      "Should not build");

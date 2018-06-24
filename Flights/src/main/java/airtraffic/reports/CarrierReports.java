@@ -1,9 +1,10 @@
 package airtraffic.reports;
 
+import java.sql.ResultSet;
 import airtraffic.ReportContext;
 
 public interface CarrierReports {
-   void reportMostCancelledFlightsByCarrier(ReportContext context);
-   void reportCarrierMetrics(ReportContext context);
-   void reportCarriersWithHighestCancellationRate(ReportContext context);
+   ResultSet reportMostCancelledFlightsByCarrier(ReportContext context);
+   ResultSet reportCarrierMetrics(ReportContext context);
+   ResultSet reportCarriersWithHighestCancellationRate(ReportContext context);
 }

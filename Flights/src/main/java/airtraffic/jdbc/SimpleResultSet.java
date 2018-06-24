@@ -47,16 +47,6 @@ class SimpleResultSet implements ResultSet {
     }
 
     @Override
-    public <T> T unwrap(Class<T> iface) throws SQLException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public boolean next() throws SQLException {
         return data.size() > 0 && ++rowIndex < data.size();
     }
@@ -151,21 +141,6 @@ class SimpleResultSet implements ResultSet {
     }
 
     @Override
-    public InputStream getAsciiStream(int columnIndex) throws SQLException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public InputStream getUnicodeStream(int columnIndex) throws SQLException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public InputStream getBinaryStream(int columnIndex) throws SQLException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public String getString(String columnLabel) throws SQLException {
         return getString(findColumn(columnLabel));
     }
@@ -231,36 +206,6 @@ class SimpleResultSet implements ResultSet {
     }
 
     @Override
-    public InputStream getAsciiStream(String columnLabel) throws SQLException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public InputStream getUnicodeStream(String columnLabel) throws SQLException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public InputStream getBinaryStream(String columnLabel) throws SQLException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public SQLWarning getWarnings() throws SQLException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void clearWarnings() throws SQLException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getCursorName() throws SQLException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public ResultSetMetaData getMetaData() throws SQLException {
         return meta;
     }
@@ -283,16 +228,6 @@ class SimpleResultSet implements ResultSet {
             }
         }
         throw new IllegalArgumentException("Invalid column label");
-    }
-
-    @Override
-    public Reader getCharacterStream(int columnIndex) throws SQLException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Reader getCharacterStream(String columnLabel) throws SQLException {
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -359,7 +294,10 @@ class SimpleResultSet implements ResultSet {
 
     @Override
     public boolean absolute(int row) throws SQLException {
-        throw new UnsupportedOperationException();
+        if (row >= 0 && row < data.size()) {
+            rowIndex = row;
+        }
+        throw new IllegalArgumentException("Invalid row specified");
     }
 
     @Override
@@ -375,7 +313,7 @@ class SimpleResultSet implements ResultSet {
     @Override
     public boolean previous() throws SQLException {
         int result = rowIndex - 1;
-        if (result >=0) {
+        if (result >= 0) {
             rowIndex = result;
             return true;
         }
@@ -383,23 +321,8 @@ class SimpleResultSet implements ResultSet {
     }
 
     @Override
-    public void setFetchDirection(int direction) throws SQLException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public int getFetchDirection() throws SQLException {
         return FETCH_UNKNOWN;
-    }
-
-    @Override
-    public void setFetchSize(int rows) throws SQLException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public int getFetchSize() throws SQLException {
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -410,6 +333,161 @@ class SimpleResultSet implements ResultSet {
     @Override
     public int getConcurrency() throws SQLException {
         return CONCUR_READ_ONLY;
+    }
+
+    @Override
+    public Array getArray(int columnIndex) throws SQLException {
+        return getObject(columnIndex, Array.class);
+    }
+
+    @Override
+    public Array getArray(String columnLabel) throws SQLException {
+        return getArray(findColumn(columnLabel));
+    }
+
+    @Override
+    public Date getDate(int columnIndex, Calendar cal) throws SQLException {
+        return getDate(columnIndex);
+    }
+
+    @Override
+    public Date getDate(String columnLabel, Calendar cal) throws SQLException {
+        return getDate(findColumn(columnLabel));
+    }
+
+    @Override
+    public Time getTime(int columnIndex, Calendar cal) throws SQLException {
+        return getTime(columnIndex);
+    }
+
+    @Override
+    public Time getTime(String columnLabel, Calendar cal) throws SQLException {
+        return getTime(findColumn(columnLabel));
+    }
+
+    @Override
+    public Timestamp getTimestamp(int columnIndex, Calendar cal) throws SQLException {
+        return getTimestamp(columnIndex);
+    }
+
+    @Override
+    public Timestamp getTimestamp(String columnLabel, Calendar cal) throws SQLException {
+        return getTimestamp(findColumn(columnLabel));
+    }
+
+    @Override
+    public URL getURL(int columnIndex) throws SQLException {
+        return getObject(columnIndex, URL.class);
+    }
+
+    @Override
+    public URL getURL(String columnLabel) throws SQLException {
+        return getURL(findColumn(columnLabel));
+    }
+
+    @Override
+    public boolean isClosed() throws SQLException {
+        return closed;
+    }
+
+    @Override
+    public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
+        Object value = data.get(rowIndex)[columnIndex - 1];
+        if (type.isAssignableFrom(value.getClass())) {
+            return type.cast(value);
+        }
+        throw new SQLException("Invalid column type");
+    }
+
+    @Override
+    public <T> T getObject(String columnLabel, Class<T> type) throws SQLException {
+        return getObject(findColumn(columnLabel), type);
+    }
+
+    /**************************************************************************
+     **************************************************************************
+     ************** All of the methods below are not implemented **************
+     **************************************************************************
+     **************************************************************************/
+
+    @Override
+    public <T> T unwrap(Class<T> iface) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public InputStream getAsciiStream(int columnIndex) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public InputStream getUnicodeStream(int columnIndex) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public InputStream getBinaryStream(int columnIndex) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public InputStream getAsciiStream(String columnLabel) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public InputStream getUnicodeStream(String columnLabel) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public InputStream getBinaryStream(String columnLabel) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public SQLWarning getWarnings() throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void clearWarnings() throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getCursorName() throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Reader getCharacterStream(int columnIndex) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Reader getCharacterStream(String columnLabel) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setFetchDirection(int direction) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setFetchSize(int rows) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int getFetchSize() throws SQLException {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -681,11 +759,6 @@ class SimpleResultSet implements ResultSet {
     }
 
     @Override
-    public Array getArray(int columnIndex) throws SQLException {
-        return getObject(columnIndex, Array.class);
-    }
-
-    @Override
     public Object getObject(String columnLabel, Map<String, Class<?>> map) throws SQLException {
         throw new UnsupportedOperationException();
     }
@@ -703,51 +776,6 @@ class SimpleResultSet implements ResultSet {
     @Override
     public Clob getClob(String columnLabel) throws SQLException {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Array getArray(String columnLabel) throws SQLException {
-        return getArray(findColumn(columnLabel));
-    }
-
-    @Override
-    public Date getDate(int columnIndex, Calendar cal) throws SQLException {
-        return getDate(columnIndex);
-    }
-
-    @Override
-    public Date getDate(String columnLabel, Calendar cal) throws SQLException {
-        return getDate(findColumn(columnLabel));
-    }
-
-    @Override
-    public Time getTime(int columnIndex, Calendar cal) throws SQLException {
-        return getTime(columnIndex);
-    }
-
-    @Override
-    public Time getTime(String columnLabel, Calendar cal) throws SQLException {
-        return getTime(findColumn(columnLabel));
-    }
-
-    @Override
-    public Timestamp getTimestamp(int columnIndex, Calendar cal) throws SQLException {
-        return getTimestamp(columnIndex);
-    }
-
-    @Override
-    public Timestamp getTimestamp(String columnLabel, Calendar cal) throws SQLException {
-        return getTimestamp(findColumn(columnLabel));
-    }
-
-    @Override
-    public URL getURL(int columnIndex) throws SQLException {
-        return getObject(columnIndex, URL.class);
-    }
-
-    @Override
-    public URL getURL(String columnLabel) throws SQLException {
-        return getURL(findColumn(columnLabel));
     }
 
     @Override
@@ -813,11 +841,6 @@ class SimpleResultSet implements ResultSet {
     @Override
     public int getHoldability() throws SQLException {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isClosed() throws SQLException {
-        return closed;
     }
 
     @Override
@@ -1035,19 +1058,5 @@ class SimpleResultSet implements ResultSet {
     @Override
     public void updateNClob(String columnLabel, Reader reader) throws SQLException {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
-        Object value = data.get(rowIndex)[columnIndex - 1];
-        if (type.isAssignableFrom(value.getClass())) {
-            return type.cast(value);
-        }
-        throw new SQLException("Invalid column type");
-    }
-
-    @Override
-    public <T> T getObject(String columnLabel, Class<T> type) throws SQLException {
-        return getObject(findColumn(columnLabel), type);
     }
 }

@@ -6,22 +6,26 @@ import static java.util.Comparator.reverseOrder;
 import static java.util.Map.Entry.comparingByKey;
 import static java.util.Map.Entry.comparingByValue;
 import static org.apache.commons.lang3.StringUtils.left;
-
+import java.sql.ResultSet;
+import java.sql.Types;
 import java.util.Iterator;
 import java.util.Map.Entry;
-
 import airtraffic.Carrier;
 import airtraffic.Flight;
 import airtraffic.ReportContext;
+import airtraffic.jdbc.ResultSetBuilder;
 import airtraffic.metrics.CarrierMetrics;
 import airtraffic.reports.CarrierReports;
 
-public class IteratorCarrierReports implements CarrierReports {
 
+public class IteratorCarrierReports implements CarrierReports {
    @Override
-   public void reportMostCancelledFlightsByCarrier(ReportContext context) {
+   public ResultSet reportMostCancelledFlightsByCarrier(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+         new ResultSetBuilder().addColumn("Name", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
@@ -33,19 +37,25 @@ public class IteratorCarrierReports implements CarrierReports {
                return source.getCarrier();
             }
             @Override public void forEach(Entry<Carrier, Long> entry) {
-               context.getTerminal()
-                      .printf("%-24s\t%,8d\n", 
-                              left(entry.getKey().getName(), 24), 
-                              entry.getValue());
+               builder.addRow(entry.getKey().getName(), entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
    @Override
-   public void reportCarrierMetrics(ReportContext context) {
+   public ResultSet reportCarrierMetrics(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+         new ResultSetBuilder().addColumn("Code", Types.VARCHAR)
+                               .addColumn("Name", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER)
+                               .addColumn("CancellationRate", Types.DOUBLE)
+                               .addColumn("DiversionRate", Types.DOUBLE)
+                               .addColumn("TotalAirports", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByKey(), limit, 
@@ -66,25 +76,26 @@ public class IteratorCarrierReports implements CarrierReports {
             }
             @Override public void forEach(Entry<String, CarrierMetrics> entry) {
                CarrierMetrics metrics = entry.getValue();
-               String name = metrics.getSubject().getName();
-               context.getTerminal()
-                      .printf(" %2s     %-30s     %,9d    %6.1f        %6.1f         %,5d\n", 
-                              entry.getKey(),
-                              left(name, 30),
+               builder.addRow(entry.getKey(),
+                              metrics.getSubject().getName(),
                               metrics.getTotalFlights(),
-                              metrics.getCancellationRate() * 100.0,
-                              metrics.getDiversionRate() * 100.0,
-                              metrics.getAirports().size()
-               );
+                              metrics.getCancellationRate(),
+                              metrics.getDiversionRate(),
+                              metrics.getAirports().size());
             }
          }
       );
+
+      return builder.build();
    }
 
    @Override
-   public void reportCarriersWithHighestCancellationRate(ReportContext context) {
+   public ResultSet reportCarriersWithHighestCancellationRate(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+         new ResultSetBuilder().addColumn("Name", Types.VARCHAR)
+                               .addColumn("CancellationRate", Types.DOUBLE);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(highestCancellationRateComparator()), limit, 
@@ -105,13 +116,12 @@ public class IteratorCarrierReports implements CarrierReports {
             }
             @Override public void forEach(Entry<String, CarrierMetrics> entry) {
                CarrierMetrics metrics = entry.getValue();
-               context.getTerminal()
-                      .printf("%-30s\t%6.1f\n", 
-                              left(metrics.getSubject().getName(), 30), 
-                              metrics.getCancellationRate() * 100.0
-               );
+               builder.addRow(metrics.getSubject().getName(), 
+                              metrics.getCancellationRate());
             }
          }
       );
+
+      return builder.build();
    }
 }
