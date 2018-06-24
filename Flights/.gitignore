@@ -5,4 +5,4 @@ data/*.csv
 dependency-reduced-pom.xml
 /.DS_Store
 src/.DS_Store
-src/airtraffic/.DS_Store
+src/main/java/airtraffic/.DS_Store
