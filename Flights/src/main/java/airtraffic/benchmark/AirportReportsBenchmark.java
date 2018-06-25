@@ -11,9 +11,9 @@ import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 import airtraffic.GeoLocation;
 import airtraffic.ReportContext;
-import airtraffic.iterator.IteratorAirportReports;
 import airtraffic.reports.AirportReports;
-import airtraffic.stream.StreamAirportReports;
+import airtraffic.reports.iterator.IteratorAirportReports;
+import airtraffic.reports.stream.StreamAirportReports;
 
 @BenchmarkMode(Mode.AverageTime)
 @Warmup(iterations = 1, timeUnit = TimeUnit.MILLISECONDS)

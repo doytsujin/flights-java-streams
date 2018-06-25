@@ -1,4 +1,4 @@
-package airtraffic.stream;
+package airtraffic.reports.stream;
 
 import static airtraffic.PairGroup.pairAirportDay;
 import static airtraffic.PairGroup.pairCarrierDay;

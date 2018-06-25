@@ -1,4 +1,4 @@
-package airtraffic.iterator;
+package airtraffic.reports.iterator;
 
 /**
  * Simple class that stores total and count values to compute average.

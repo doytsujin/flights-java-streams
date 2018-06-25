@@ -1,4 +1,4 @@
-package airtraffic.stream;
+package airtraffic.reports.stream;
 
 import static airtraffic.metrics.FlightBasedMetrics.highestCancellationRateComparator;
 import static java.util.Comparator.comparing;

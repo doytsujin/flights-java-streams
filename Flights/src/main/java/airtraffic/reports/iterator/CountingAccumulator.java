@@ -1,4 +1,4 @@
-package airtraffic.iterator;
+package airtraffic.reports.iterator;
 
 /**
  * Implementation of MapAccumulator that counts the number of instances.

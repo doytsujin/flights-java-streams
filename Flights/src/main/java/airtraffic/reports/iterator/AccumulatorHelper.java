@@ -1,4 +1,4 @@
-package airtraffic.iterator;
+package airtraffic.reports.iterator;
 
 import java.util.ArrayList;
 import java.util.Collections;

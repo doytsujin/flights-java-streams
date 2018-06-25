@@ -1,4 +1,4 @@
-package airtraffic.iterator;
+package airtraffic.reports.iterator;
 
 public interface ListAccumulator<T> {
    boolean filter(T source);

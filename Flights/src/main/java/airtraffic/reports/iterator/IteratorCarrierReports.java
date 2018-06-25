@@ -1,11 +1,10 @@
-package airtraffic.iterator;
+package airtraffic.reports.iterator;
 
-import static airtraffic.iterator.AccumulatorHelper.accumulate;
 import static airtraffic.metrics.FlightBasedMetrics.highestCancellationRateComparator;
+import static airtraffic.reports.iterator.AccumulatorHelper.accumulate;
 import static java.util.Comparator.reverseOrder;
 import static java.util.Map.Entry.comparingByKey;
 import static java.util.Map.Entry.comparingByValue;
-import static org.apache.commons.lang3.StringUtils.left;
 import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.Iterator;

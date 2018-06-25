@@ -4,9 +4,9 @@ import static org.apache.commons.lang3.StringUtils.repeat;
 
 import org.beryx.textio.TextTerminal;
 import airtraffic.ReportContext;
-import airtraffic.iterator.IteratorFlightReports;
 import airtraffic.reports.FlightReports;
-import airtraffic.stream.StreamFlightReports;
+import airtraffic.reports.iterator.IteratorFlightReports;
+import airtraffic.reports.stream.StreamFlightReports;
 
 public class FlightReportsApp extends AbstractReportsApp implements FlightReports {
    public static void main(String[] args) throws Exception {

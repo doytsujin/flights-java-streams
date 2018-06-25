@@ -1,4 +1,4 @@
-package airtraffic.stream;
+package airtraffic.reports.stream;
 
 import static airtraffic.GeoHelper.distanceFromReferenceComparator;
 import static airtraffic.GeoHelper.getDistance;

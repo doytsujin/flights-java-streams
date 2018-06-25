@@ -1,10 +1,10 @@
-package airtraffic.iterator;
+package airtraffic.reports.iterator;
 
 import static airtraffic.GeoHelper.distanceFromReferenceComparator;
 import static airtraffic.GeoHelper.getDistance;
 import static airtraffic.GeoLocation.Units.MILES;
-import static airtraffic.iterator.AccumulatorHelper.accumulate;
 import static airtraffic.metrics.FlightBasedMetrics.highestCancellationRateComparator;
+import static airtraffic.reports.iterator.AccumulatorHelper.accumulate;
 import static java.util.Comparator.naturalOrder;
 import java.sql.ResultSet;
 import java.sql.Types;

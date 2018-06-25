@@ -6,10 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.beryx.textio.TextTerminal;
 import airtraffic.ReportContext;
-import airtraffic.iterator.IteratorCarrierReports;
 import airtraffic.reports.CarrierReports;
 import airtraffic.reports.ReportException;
-import airtraffic.stream.StreamCarrierReports;
+import airtraffic.reports.iterator.IteratorCarrierReports;
+import airtraffic.reports.stream.StreamCarrierReports;
 
 public class CarrierReportsApp extends AbstractReportsApp implements CarrierReports {
    public static void main(String[] args) throws Exception {

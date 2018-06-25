@@ -10,9 +10,9 @@ import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 import airtraffic.ReportContext;
-import airtraffic.iterator.IteratorPlaneReports;
 import airtraffic.reports.PlaneReports;
-import airtraffic.stream.StreamPlaneReports;
+import airtraffic.reports.iterator.IteratorPlaneReports;
+import airtraffic.reports.stream.StreamPlaneReports;
 
 @BenchmarkMode(Mode.AverageTime)
 @Warmup(iterations = 1, timeUnit = TimeUnit.MILLISECONDS)

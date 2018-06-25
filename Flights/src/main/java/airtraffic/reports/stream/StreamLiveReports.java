@@ -1,4 +1,4 @@
-package airtraffic.stream;
+package airtraffic.reports.stream;
 
 import org.beryx.textio.TextTerminal;
 
