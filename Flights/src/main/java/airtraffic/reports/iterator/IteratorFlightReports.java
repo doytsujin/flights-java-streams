@@ -4,8 +4,8 @@ import static airtraffic.reports.iterator.AccumulatorHelper.accumulate;
 import static java.util.Comparator.reverseOrder;
 import static java.util.Map.Entry.comparingByKey;
 import static java.util.Map.Entry.comparingByValue;
-import static org.apache.commons.lang3.StringUtils.left;
-
+import java.sql.ResultSet;
+import java.sql.Types;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -17,7 +17,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
-
 import airtraffic.Airport;
 import airtraffic.Carrier;
 import airtraffic.Flight;
@@ -25,6 +24,7 @@ import airtraffic.FlightDistanceRange;
 import airtraffic.PairGroup;
 import airtraffic.ReportContext;
 import airtraffic.Route;
+import airtraffic.jdbc.ResultSetBuilder;
 import airtraffic.reports.FlightReports;
 
 /**
@@ -48,9 +48,12 @@ public class IteratorFlightReports implements FlightReports {
                     FlightDistanceRange.between(2501, 5000),
                     FlightDistanceRange.between(5001, 9999));
 
-   public void reportTotalFlightsFromOrigin(ReportContext context) {
+   public ResultSet reportTotalFlightsFromOrigin(ReportContext context) {
       final int year = context.getYear();
       final Airport origin = context.getOrigin();
+      final ResultSetBuilder builder = 
+          new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
+                                .addColumn("TotalFlights", Types.INTEGER);
 
       long count = 0;
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
@@ -61,15 +64,15 @@ public class IteratorFlightReports implements FlightReports {
          }
       }
 
-      context.getTerminal()
-             .printf("Total flights from %s is %,d\n", 
-                     origin.getName().trim(), 
-                     count);
+      return builder.addRow(origin.getName().trim(), count).build();
    }
 
-   public void reportTotalFlightsToDestination(ReportContext context) {
+   public ResultSet reportTotalFlightsToDestination(ReportContext context) {
       final int year = context.getYear();
       final Airport destination = context.getDestination();
+      final ResultSetBuilder builder = 
+          new ResultSetBuilder().addColumn("Destination", Types.VARCHAR)
+                                .addColumn("TotalFlights", Types.INTEGER);
 
       long count = 0;
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
@@ -81,16 +84,17 @@ public class IteratorFlightReports implements FlightReports {
          }
       }
 
-      context.getTerminal()
-             .printf("Total flights to %s is %,d\n", 
-                     destination.getName().trim(), 
-                     count);
+      return builder.addRow(destination.getName().trim(), count).build();
    }
 
-   public void reportTotalFlightsFromOriginToDestination(ReportContext context) {
+   public ResultSet reportTotalFlightsFromOriginToDestination(ReportContext context) {
       final int year = context.getYear();
       final Airport origin = context.getOrigin();
       final Airport destination = context.getDestination();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
+                                  .addColumn("Destination", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       long count = 0;
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
@@ -103,19 +107,20 @@ public class IteratorFlightReports implements FlightReports {
          }
       }
 
-      context.getTerminal()
-             .printf("Total of %,d flights from %s (%s)\nto %s (%s)\n", 
-                     count,
-                     origin.getName().trim(), 
-                     origin.getIATA(), 
-                     destination.getName().trim(), 
-                     destination.getIATA()
-      ); 
+      return builder.addRow(origin.getName().trim(), 
+                            origin.getIATA(), 
+                            destination.getName().trim(), 
+                            destination.getIATA(),
+                            count)
+                    .build();
    }
 
-   public void reportTopFlightsByOrigin(ReportContext context) {
+   public ResultSet reportTopFlightsByOrigin(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+          new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
+                                .addColumn("TotalFlights", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
@@ -127,19 +132,21 @@ public class IteratorFlightReports implements FlightReports {
                return source.getOrigin();
             }
             @Override public void forEach(Entry<Airport, Long> entry) {
-               context.getTerminal()
-                      .printf("%3s\t\t%,10d\n", 
-                              entry.getKey().getIATA(), 
-                              entry.getValue());
+              builder.addRow(entry.getKey().getIATA(), entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportTopDestinationsFromOrigin(ReportContext context) {
+   public ResultSet reportTopDestinationsFromOrigin(ReportContext context) {
       final int year = context.getYear();
       final Airport origin = context.getOrigin();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
@@ -151,19 +158,21 @@ public class IteratorFlightReports implements FlightReports {
             @Override public Airport getKey(Flight source) {
                return source.getDestination();
             }
-           @Override public void forEach(Entry<Airport, Long> entry) {
-              context.getTerminal()
-                     .printf("%3s\t\t%,10d\n", 
-                             entry.getKey().getIATA(), 
-                             entry.getValue());
+            @Override public void forEach(Entry<Airport, Long> entry) {
+               builder.addRow(entry.getKey().getIATA(), entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportMostPopularRoutes(ReportContext context) {
+   public ResultSet reportMostPopularRoutes(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Route", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
@@ -175,18 +184,20 @@ public class IteratorFlightReports implements FlightReports {
                return source.getRoute();
             }
             @Override public void forEach(Entry<Route, Long> entry) {
-               context.getTerminal()
-                      .printf("%s\t%,10d\n", 
-                              entry.getKey(), 
-                              entry.getValue().intValue());
+               builder.addRow(entry.getKey(), entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportWorstAverageDepartureDelayByOrigin(ReportContext context) {
+   public ResultSet reportWorstAverageDepartureDelayByOrigin(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
+                                  .addColumn("Delay", Types.FLOAT);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
@@ -204,18 +215,21 @@ public class IteratorFlightReports implements FlightReports {
                return value.add(source.getDepartureDelay());
             }
             @Override public void forEach(Entry<Airport, AverageValue> entry) {
-               context.getTerminal()
-                      .printf("%3s\t\t%.0f\n", 
-                              entry.getKey().getIATA(), 
+               builder.addRow(entry.getKey().getIATA(), 
                               entry.getValue().getAverage());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportWorstAverageArrivalDelayByDestination(ReportContext context) {
+   public ResultSet reportWorstAverageArrivalDelayByDestination(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Destination", Types.VARCHAR)
+                                  .addColumn("Delay", Types.FLOAT);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
@@ -233,18 +247,21 @@ public class IteratorFlightReports implements FlightReports {
                return value.add(source.getArrivalDelay());
             }
             @Override public void forEach(Entry<Airport, AverageValue> entry) {
-               context.getTerminal()
-                      .printf("%3s\t\t%.0f\n", 
-                              entry.getKey().getIATA(), 
+               builder.addRow(entry.getKey().getIATA(), 
                               entry.getValue().getAverage());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportMostCancelledFlightsByOrigin(ReportContext context) {
+   public ResultSet reportMostCancelledFlightsByOrigin(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
@@ -256,18 +273,20 @@ public class IteratorFlightReports implements FlightReports {
                return source.getOrigin();
             }
             @Override public void forEach(Entry<Airport, Long> entry) {
-               context.getTerminal()
-                      .printf("%3s\t\t%,8d\n", 
-                              entry.getKey().getIATA(), 
-                              entry.getValue());
+               builder.addRow(entry.getKey().getIATA(), entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportTotalFlightsByOriginState(ReportContext context) {
+   public ResultSet reportTotalFlightsByOriginState(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("State", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
@@ -279,18 +298,20 @@ public class IteratorFlightReports implements FlightReports {
                return source.getOrigin().getState();
             }
             @Override public void forEach(Entry<String, Long> entry) {
-               context.getTerminal()
-                      .printf("%2s\t%,10d\n", 
-                              entry.getKey(), 
-                              entry.getValue());
+               builder.addRow(entry.getKey(), entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportTotalFlightsByDestinationState(ReportContext context) {
+   public ResultSet reportTotalFlightsByDestinationState(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("State", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
@@ -302,26 +323,32 @@ public class IteratorFlightReports implements FlightReports {
                return source.getDestination().getState();
             }
             @Override public void forEach(Entry<String, Long> entry) {
-               context.getTerminal()
-                      .printf("%2s\t%,10d\n", 
-                              entry.getKey(), 
-                              entry.getValue());
+               builder.addRow(entry.getKey(), entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportLongestFlights(ReportContext context) {
-      byDistance(context, FLIGHT_DISTANCE_COMPARATOR.reversed());
+   public ResultSet reportLongestFlights(ReportContext context) {
+      return byDistance(context, FLIGHT_DISTANCE_COMPARATOR.reversed());
    }
 
-   public void reportShortestFlights(ReportContext context) {
-      byDistance(context, FLIGHT_DISTANCE_COMPARATOR);
+   public ResultSet reportShortestFlights(ReportContext context) {
+      return byDistance(context, FLIGHT_DISTANCE_COMPARATOR);
    }
 
-   private void byDistance(ReportContext context, Comparator<Flight> comparator) {
+   private ResultSet byDistance(ReportContext context, Comparator<Flight> comparator) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("FlightNumber", Types.VARCHAR)
+                                  .addColumn("Date", Types.DATE)
+                                  .addColumn("Carrier", Types.VARCHAR)
+                                  .addColumn("Origin", Types.VARCHAR)
+                                  .addColumn("Destination", Types.VARCHAR)
+                                  .addColumn("Distance", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       List<Flight> flights = new ArrayList<>();
@@ -334,25 +361,26 @@ public class IteratorFlightReports implements FlightReports {
       Collections.sort(flights, comparator);
       int count = 0;
       for(Flight flight : flights) {
-         context.getTerminal()
-                .printf("%-8s  %10s\t  %2s\t %3s\t    %3s\t\t%6d\n", 
-                        flight.getFlightNumber(),
+         builder.addRow(flight.getFlightNumber(),
                         flight.getDate(),
                         flight.getCarrier().getCode(),
                         flight.getOrigin().getIATA(),
                         flight.getDestination().getIATA(),
-                        flight.getDistance()
-                );
+                        flight.getDistance());
          if(++count >= limit) {
             break;
          }         
       }
-      flights.clear();
+
+      return builder.build();
    }
 
-   public void reportTotalFlightsByDistanceRange(ReportContext context) {
+   public ResultSet reportTotalFlightsByDistanceRange(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Range", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByKey(), limit, 
@@ -376,27 +404,29 @@ public class IteratorFlightReports implements FlightReports {
                return Long.valueOf(value.longValue() + 1);
             }
             @Override public void forEach(Entry<FlightDistanceRange, Long> entry) {
-               context.getTerminal()
-                      .printf("%-10s\t%,10d\n", 
-                              entry.getKey(), 
-                              entry.getValue());
+               builder.addRow(entry.getKey(), entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportDaysWithLeastCancellations(ReportContext context) {
-      byDaysWithCancellations(context, comparingByValue());
+   public ResultSet reportDaysWithLeastCancellations(ReportContext context) {
+      return byDaysWithCancellations(context, comparingByValue());
    }
 
-   public void reportDaysWithMostCancellations(ReportContext context) {
-      byDaysWithCancellations(context, comparingByValue(reverseOrder()));
+   public ResultSet reportDaysWithMostCancellations(ReportContext context) {
+      return byDaysWithCancellations(context, comparingByValue(reverseOrder()));
    }
 
-   private void byDaysWithCancellations(ReportContext context, 
+   private ResultSet byDaysWithCancellations(ReportContext context, 
       Comparator<Entry<ChronoLocalDate, Long>> comparator) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Date", Types.DATE)
+                                  .addColumn("TotalCancellations", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparator, limit, 
@@ -408,18 +438,20 @@ public class IteratorFlightReports implements FlightReports {
                return source.getDate();
             }
             @Override public void forEach(Entry<ChronoLocalDate, Long> entry) {
-               context.getTerminal()
-                      .printf("%-10s       %,3d\n", 
-                              entry.getKey(), 
-                              entry.getValue());
+               builder.addRow(entry.getKey(), entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportTotalMonthlyFlights(ReportContext context) {
+   public ResultSet reportTotalMonthlyFlights(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("YearMonth", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByKey(), limit, 
@@ -431,18 +463,21 @@ public class IteratorFlightReports implements FlightReports {
                return source.getYearMonth();
             }
             @Override public void forEach(Entry<YearMonth, Long> entry) {
-               context.getTerminal()
-                      .printf("%s\t%,10d\n", 
-                              YEAR_MONTH_FORMAT.format(entry.getKey()), 
+               builder.addRow(YEAR_MONTH_FORMAT.format(entry.getKey()), 
                               entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportTotalDailyFlights(ReportContext context) {
+   public ResultSet reportTotalDailyFlights(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Date", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByKey(), limit, 
@@ -454,16 +489,20 @@ public class IteratorFlightReports implements FlightReports {
                return source.getDate();
             }
             @Override public void forEach(Entry<ChronoLocalDate, Long> entry) {
-               context.getTerminal()
-                      .printf("%s\t%,10d\n", entry.getKey(), entry.getValue());
+               builder.addRow(entry.getKey(), entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportTotalFlightsByDayOfWeek(ReportContext context) {
+   public ResultSet reportTotalFlightsByDayOfWeek(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("DayOfWeek", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByKey(), limit, 
@@ -475,27 +514,29 @@ public class IteratorFlightReports implements FlightReports {
                return source.getDate().getDayOfWeek();
             }
             @Override public void forEach(Entry<DayOfWeek, Long> entry) {
-               context.getTerminal()
-                      .printf("%10s\t%,10d\n", 
-                              entry.getKey(), 
-                              entry.getValue());
+               builder.addRow(entry.getKey(), entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportMostFlightsByDay(ReportContext context) {
-      byDay(context, comparingByValue(reverseOrder()));
+   public ResultSet reportMostFlightsByDay(ReportContext context) {
+      return byDay(context, comparingByValue(reverseOrder()));
    }
 
-   public void reportLeastFlightsByDay(ReportContext context) {
-      byDay(context, comparingByValue(reverseOrder()));
+   public ResultSet reportLeastFlightsByDay(ReportContext context) {
+      return byDay(context, comparingByValue(reverseOrder()));
    }
 
-   private void byDay(ReportContext context, 
+   private ResultSet byDay(ReportContext context, 
       Comparator<Entry<ChronoLocalDate, Long>> comparator) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Date", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparator, limit, 
@@ -507,16 +548,21 @@ public class IteratorFlightReports implements FlightReports {
                return source.getDate();
             }
             @Override public void forEach(Entry<ChronoLocalDate, Long> entry) {
-               context.getTerminal()
-                      .printf("%s\t%,10d\n", entry.getKey(), entry.getValue());
+               builder.addRow(entry.getKey(), entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportMostFlightsByOriginByDay(ReportContext context) {
+   public ResultSet reportMostFlightsByOriginByDay(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
+                                  .addColumn("Date", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
@@ -524,28 +570,29 @@ public class IteratorFlightReports implements FlightReports {
             @Override public boolean filter(Flight flight) {
                return flight.notCancelled();
             }
-            @Override public PairGroup<Airport, LocalDate> getKey(
-               Flight flight) {
+            @Override public PairGroup<Airport, LocalDate> getKey(Flight flight) {
                return new PairGroup<Airport, LocalDate>(flight.getOrigin(), 
                                                         flight.getDate());
             }
-            @Override public void forEach(Entry<PairGroup<Airport, LocalDate>, 
-               Long> entry) {
+            @Override public void forEach(Entry<PairGroup<Airport, LocalDate>, Long> entry) {
                PairGroup<Airport, LocalDate> key = entry.getKey();
-               context.getTerminal()
-                      .printf("%-30s\t%s\t%,10d\n", 
-                              left(key.getFirst().getName(), 30), 
+               builder.addRow(key.getFirst().getName(), 
                               key.getSecond(), 
-                              entry.getValue()
-               );
+                              entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportMostFlightsByCarrierByDay(ReportContext context) {
+   public ResultSet reportMostFlightsByCarrierByDay(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Carrier", Types.VARCHAR)
+                                  .addColumn("Date", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
@@ -553,22 +600,19 @@ public class IteratorFlightReports implements FlightReports {
             @Override public boolean filter(Flight flight) {
                return flight.notCancelled();
             }
-            @Override public PairGroup<Carrier, LocalDate> getKey(
-               Flight flight) {
+            @Override public PairGroup<Carrier, LocalDate> getKey(Flight flight) {
                return new PairGroup<Carrier, LocalDate>(flight.getCarrier(), 
                                                         flight.getDate());
             }
-            @Override public void forEach(
-               Entry<PairGroup<Carrier, LocalDate>, Long> entry) {
+            @Override public void forEach(Entry<PairGroup<Carrier, LocalDate>, Long> entry) {
                PairGroup<Carrier, LocalDate> key = entry.getKey();
-               context.getTerminal()
-                      .printf("%-30s\t%s\t%,10d\n", 
-                              left(key.getFirst().getName(), 30), 
+               builder.addRow(key.getFirst().getName(), 
                               key.getSecond(), 
-                              entry.getValue()
-               );
+                              entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 }

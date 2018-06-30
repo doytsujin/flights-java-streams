@@ -1,5 +1,6 @@
 package airtraffic.jdbc;
 
+import static org.apache.commons.lang3.builder.ToStringStyle.SIMPLE_STYLE;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
@@ -22,6 +23,9 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;;
 
 
 /**
@@ -1058,5 +1062,27 @@ class SimpleResultSet implements ResultSet {
     @Override
     public void updateNClob(String columnLabel, Reader reader) throws SQLException {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this, false);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof SimpleResultSet) {
+            SimpleResultSet other = (SimpleResultSet) obj;
+            EqualsBuilder builder = 
+                new EqualsBuilder().append(this.meta, other.meta)
+                                   .append(this.data, other.data);
+            return builder.build();
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, SIMPLE_STYLE);
     }
 }

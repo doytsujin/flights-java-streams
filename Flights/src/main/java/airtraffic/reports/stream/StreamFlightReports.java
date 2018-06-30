@@ -6,29 +6,29 @@ import static java.util.Comparator.comparingInt;
 import static java.util.Comparator.reverseOrder;
 import static java.util.Map.Entry.comparingByKey;
 import static java.util.Map.Entry.comparingByValue;
-import static java.util.stream.Collectors.averagingInt;
+import static java.util.stream.Collectors.averagingDouble;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
-import static org.apache.commons.lang3.StringUtils.left;
-
+import java.sql.ResultSet;
+import java.sql.Types;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
-
 import airtraffic.Airport;
 import airtraffic.Carrier;
 import airtraffic.Flight;
 import airtraffic.FlightDistanceRange;
 import airtraffic.PairGroup;
 import airtraffic.ReportContext;
+import airtraffic.jdbc.ResultSetBuilder;
 import airtraffic.reports.FlightReports;
 
 /**
  * Generate various flight statistics using Java 8 streams.
  * 
- * @author tony@piazzaconsulting.com
+ * @author Tony Piazza <tony@piazzaconsulting.com>
  */
 public class StreamFlightReports implements FlightReports {
    private static final List<FlightDistanceRange> DISTANCE_RANGES =
@@ -41,9 +41,12 @@ public class StreamFlightReports implements FlightReports {
                     FlightDistanceRange.between(5001, 9999));
 
    @Override
-   public void reportTotalFlightsFromOrigin(ReportContext context) {
+   public ResultSet reportTotalFlightsFromOrigin(ReportContext context) {
       final int year = context.getYear();
       final Airport origin = context.getOrigin();
+      final ResultSetBuilder builder = 
+          new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
+                                .addColumn("TotalFlights", Types.INTEGER);
 
       long count = context.getRepository()
                           .getFlightStream(year)
@@ -52,16 +55,16 @@ public class StreamFlightReports implements FlightReports {
                                        f.getOrigin().equals(origin))
                           .count();
 
-      context.getTerminal()
-             .printf("Total flights from %s is %,d\n", 
-                     origin.getName().trim(), 
-                     count);
+      return builder.addRow(origin.getName().trim(), count).build();
    }
 
    @Override
-   public void reportTotalFlightsToDestination(ReportContext context) {
+   public ResultSet reportTotalFlightsToDestination(ReportContext context) {
       final int year = context.getYear();
       final Airport destination = context.getDestination();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Destination", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       long count = context.getRepository()
                           .getFlightStream(year)
@@ -71,17 +74,18 @@ public class StreamFlightReports implements FlightReports {
                                        f.getDestination().equals(destination))
                           .count();
 
-      context.getTerminal()
-             .printf("Total flights to %s is %,d\n", 
-                     destination.getName().trim(), 
-                     count);
+      return builder.addRow(destination.getName().trim(), count).build();
    }
 
    @Override
-   public void reportTotalFlightsFromOriginToDestination(ReportContext context) {
+   public ResultSet reportTotalFlightsFromOriginToDestination(ReportContext context) {
       final int year = context.getYear();
       final Airport origin = context.getOrigin();
       final Airport destination = context.getDestination();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
+                                  .addColumn("Destination", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       long count = context.getRepository()
                           .getFlightStream(year)
@@ -91,19 +95,21 @@ public class StreamFlightReports implements FlightReports {
                                        f.getDestination().equals(destination))
                           .count();
 
-      context.getTerminal()
-             .printf("Total of %,d flights from %s (%s)\nto %s (%s)\n", 
-                     count,
-                     origin.getName().trim(), 
-                     origin.getIATA(), 
-                     destination.getName().trim(), 
-                     destination.getIATA()); 
+      return builder.addRow(origin.getName().trim(), 
+                            origin.getIATA(), 
+                            destination.getName().trim(), 
+                            destination.getIATA(),
+                            count)
+                    .build();
    }
 
    @Override
-   public void reportTopFlightsByOrigin(ReportContext context) {
+   public ResultSet reportTopFlightsByOrigin(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+          new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
+                                .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
@@ -113,17 +119,20 @@ public class StreamFlightReports implements FlightReports {
              .stream()
              .sorted(comparingByValue(reverseOrder()))
              .limit(limit)
-             .forEachOrdered(e -> context.getTerminal()
-                                         .printf("%3s\t\t%,10d\n", 
-                                                 e.getKey().getIATA(), 
+             .forEachOrdered(e -> builder.addRow(e.getKey().getIATA(), 
                                                  e.getValue()));
+
+      return builder.build();
    }
 
    @Override
-   public void reportTopDestinationsFromOrigin(ReportContext context) {
+   public ResultSet reportTopDestinationsFromOrigin(ReportContext context) {
       final int year = context.getYear();
       final Airport origin = context.getOrigin();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+         new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
@@ -133,16 +142,20 @@ public class StreamFlightReports implements FlightReports {
              .stream()
              .sorted(comparingByValue(reverseOrder()))
              .limit(limit)
-             .forEachOrdered(e -> context.getTerminal()
-                                         .printf("%3s\t\t%,10d\n", 
-                                                 e.getKey().getIATA(), 
-                                                 e.getValue()));
+             .forEachOrdered(e -> 
+                builder.addRow(e.getKey().getIATA(), e.getValue())
+             );
+
+      return builder.build();
    }
 
    @Override
-   public void reportMostPopularRoutes(ReportContext context) {
+   public ResultSet reportMostPopularRoutes(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Route", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
@@ -151,56 +164,68 @@ public class StreamFlightReports implements FlightReports {
              .stream()
              .sorted(comparingByValue(reverseOrder()))
              .limit(limit)
-             .forEachOrdered(e -> context.getTerminal()
-                                         .printf("%s\t%,10d\n", 
-                                                 e.getKey(), 
-                                                 e.getValue().intValue()));
+             .forEachOrdered(entry -> 
+                builder.addRow(entry.getKey(), entry.getValue())
+             );
+
+      return builder.build();
    }
 
    @Override
-   public void reportWorstAverageDepartureDelayByOrigin(ReportContext context) {
+   public ResultSet reportWorstAverageDepartureDelayByOrigin(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
+                                  .addColumn("Delay", Types.FLOAT);
 
       context.getRepository()
              .getFlightStream(year)
              .filter(f -> f.notCancelled())
              .collect(groupingBy(Flight::getOrigin, 
-                                 averagingInt(f -> f.getDepartureDelay())))
+                                 averagingDouble(f -> f.getDepartureDelay())))
              .entrySet()
              .stream()
              .sorted(comparingByValue(reverseOrder()))
              .limit(limit)
-             .forEachOrdered(e -> context.getTerminal()
-                                         .printf("%3s\t\t%.0f\n", 
-                                                 e.getKey().getIATA(), 
-                                                 e.getValue()));
+             .forEachOrdered(entry -> 
+                builder.addRow(entry.getKey().getIATA(), entry.getValue())
+             );
+
+      return builder.build();
    }
 
    @Override
-   public void reportWorstAverageArrivalDelayByDestination(ReportContext context) {
+   public ResultSet reportWorstAverageArrivalDelayByDestination(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Destination", Types.VARCHAR)
+                                  .addColumn("Delay", Types.FLOAT);
 
       context.getRepository()
              .getFlightStream(year)
              .filter(f -> f.notCancelled() && f.notDiverted())
              .collect(groupingBy(Flight::getDestination, 
-                                 averagingInt(f -> f.getArrivalDelay())))
+                                 averagingDouble(f -> f.getArrivalDelay())))
              .entrySet()
              .stream()
              .sorted(comparingByValue(reverseOrder()))
              .limit(limit)
-             .forEachOrdered(e -> context.getTerminal()
-                                         .printf("%3s\t\t\t%.0f\n", 
-                                                 e.getKey().getIATA(), 
-                                                 e.getValue()));
+             .forEachOrdered(entry -> 
+                builder.addRow(entry.getKey().getIATA(), entry.getValue())
+             );
+
+      return builder.build();
    }
 
    @Override
-   public void reportMostCancelledFlightsByOrigin(ReportContext context) {
+   public ResultSet reportMostCancelledFlightsByOrigin(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
@@ -210,16 +235,20 @@ public class StreamFlightReports implements FlightReports {
              .stream()
              .sorted(comparingByValue(reverseOrder()))
              .limit(limit)
-             .forEachOrdered(e -> context.getTerminal()
-                                         .printf("%3s\t\t%,8d\n", 
-                                                 e.getKey().getIATA(), 
-                                                 e.getValue()));
+             .forEachOrdered(entry -> 
+                builder.addRow(entry.getKey().getIATA(), entry.getValue())
+             );
+
+      return builder.build();
    }
 
    @Override
-   public void reportTotalFlightsByOriginState(ReportContext context) {
+   public ResultSet reportTotalFlightsByOriginState(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("State", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
@@ -230,16 +259,20 @@ public class StreamFlightReports implements FlightReports {
              .stream()
              .sorted(comparingByValue(reverseOrder()))
              .limit(limit)
-             .forEachOrdered(e -> context.getTerminal()
-                                         .printf("%2s\t%,10d\n", 
-                                                 e.getKey(), 
-                                                 e.getValue()));
+             .forEachOrdered(entry -> 
+                builder.addRow(entry.getKey(), entry.getValue())
+             );
+
+      return builder.build();
    }
 
    @Override
-   public void reportTotalFlightsByDestinationState(ReportContext context) {
+   public ResultSet reportTotalFlightsByDestinationState(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("State", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
@@ -251,44 +284,58 @@ public class StreamFlightReports implements FlightReports {
              .stream()
              .sorted(comparingByValue(reverseOrder()))
              .limit(limit)
-             .forEachOrdered(e -> context.getTerminal()
-                                         .printf("%2s\t%,10d\n", 
-                                                 e.getKey(), 
-                                                 e.getValue()));
+             .forEachOrdered(entry -> 
+                builder.addRow(entry.getKey(), entry.getValue())
+             );
+
+      return builder.build();
    }
 
    @Override
-   public void reportLongestFlights(ReportContext context) {
-      byDistance(context, comparingInt(Flight::getDistance).reversed());
+   public ResultSet reportLongestFlights(ReportContext context) {
+      return byDistance(context, comparingInt(Flight::getDistance).reversed());
    }
 
    @Override
-   public void reportShortestFlights(ReportContext context) {
-      byDistance(context, comparingInt(Flight::getDistance));
+   public ResultSet reportShortestFlights(ReportContext context) {
+      return byDistance(context, comparingInt(Flight::getDistance));
    }
 
-   private void byDistance(ReportContext context, Comparator<Flight> comparator) {
+   private ResultSet byDistance(ReportContext context, Comparator<Flight> comparator) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("FlightNumber", Types.VARCHAR)
+                                  .addColumn("Date", Types.DATE)
+                                  .addColumn("Carrier", Types.VARCHAR)
+                                  .addColumn("Origin", Types.VARCHAR)
+                                  .addColumn("Destination", Types.VARCHAR)
+                                  .addColumn("Distance", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
              .filter(f -> f.notCancelled() && f.notDiverted())
              .sorted(comparator)
              .limit(limit)
-             .forEach(f -> context.getTerminal()
-                                  .printf("%-8s  %10s\t  %2s\t %3s\t    %3s\t\t%6d\n",
-                                          f.getFlightNumber(),
-                                          f.getDate(),
-                                          f.getCarrier().getCode(),
-                                          f.getOrigin().getIATA(),
-                                          f.getDestination().getIATA(),
-                                          f.getDistance()));
+             .forEach(flight -> 
+                builder.addRow(flight.getFlightNumber(),
+                               flight.getDate(),
+                               flight.getCarrier().getCode(),
+                               flight.getOrigin().getIATA(),
+                               flight.getDestination().getIATA(),
+                               flight.getDistance())
+             );
+
+      return builder.build();
    }
 
    @Override
-   public void reportTotalFlightsByDistanceRange(ReportContext context) {
+   public ResultSet reportTotalFlightsByDistanceRange(ReportContext context) {
       final int year = context.getYear();
+      final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Range", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
@@ -299,26 +346,31 @@ public class StreamFlightReports implements FlightReports {
              .entrySet()
              .stream()
              .sorted(comparingByKey())
-             .forEach(e -> context.getTerminal()
-                                  .printf("%-10s\t%,10d\n", 
-                                          e.getKey(), 
-                                          e.getValue()));
+             .limit(limit)
+             .forEach(entry -> 
+                builder.addRow(entry.getKey(), entry.getValue())
+             );
+
+      return builder.build();
    }
 
    @Override
-   public void reportDaysWithLeastCancellations(ReportContext context) {
-      byDaysWithCancellations(context, comparingByValue());
+   public ResultSet reportDaysWithLeastCancellations(ReportContext context) {
+      return byDaysWithCancellations(context, comparingByValue());
    }
 
    @Override
-   public void reportDaysWithMostCancellations(ReportContext context) {
-      byDaysWithCancellations(context, comparingByValue(reverseOrder()));
+   public ResultSet reportDaysWithMostCancellations(ReportContext context) {
+      return byDaysWithCancellations(context, comparingByValue(reverseOrder()));
    }
 
-   private void byDaysWithCancellations(ReportContext context, 
+   private ResultSet byDaysWithCancellations(ReportContext context, 
       Comparator<Entry<LocalDate, Long>> comparator) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Date", Types.DATE)
+                                  .addColumn("TotalCancellations", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
@@ -328,15 +380,20 @@ public class StreamFlightReports implements FlightReports {
              .stream()
              .sorted(comparator)
              .limit(limit)
-             .forEach(e -> context.getTerminal()
-                                  .printf("%-10s       %,3d\n", 
-                                          e.getKey(), 
-                                          e.getValue()));
+             .forEach(entry ->
+                builder.addRow(entry.getKey(), entry.getValue())
+             );
+
+      return builder.build();
    }
 
    @Override
-   public void reportTotalMonthlyFlights(ReportContext context) {
+   public ResultSet reportTotalMonthlyFlights(ReportContext context) {
       final int year = context.getYear();
+      final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("YearMonth", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
@@ -345,14 +402,22 @@ public class StreamFlightReports implements FlightReports {
              .entrySet()
              .stream()
              .sorted(comparingByKey())
-             .forEach(e -> context.getTerminal()
-                                  .printf("%s\t%,10d\n", 
-                                          YEAR_MONTH_FORMAT.format(e.getKey()), 
-                                          e.getValue()));
+             .limit(limit)
+             .forEach(entry ->
+                builder.addRow(YEAR_MONTH_FORMAT.format(entry.getKey()), 
+                               entry.getValue())
+             );
+
+      return builder.build();
    }
+
    @Override
-   public void reportTotalDailyFlights(ReportContext context) {
+   public ResultSet reportTotalDailyFlights(ReportContext context) {
       final int year = context.getYear();
+      final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Date", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
@@ -361,15 +426,21 @@ public class StreamFlightReports implements FlightReports {
              .entrySet()
              .stream()
              .sorted(comparingByKey())
-             .forEach(e -> context.getTerminal()
-                                  .printf("%s\t%,10d\n", 
-                                          e.getKey(), 
-                                          e.getValue()));
+             .limit(limit)
+             .forEach(entry -> 
+                builder.addRow(entry.getKey(), entry.getValue())
+             );
+
+      return builder.build();
    }
 
    @Override
-   public void reportTotalFlightsByDayOfWeek(ReportContext context) {
+   public ResultSet reportTotalFlightsByDayOfWeek(ReportContext context) {
       final int year = context.getYear();
+      final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("DayOfWeek", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
@@ -379,26 +450,31 @@ public class StreamFlightReports implements FlightReports {
              .entrySet()
              .stream()
              .sorted(comparingByKey())
-             .forEach(e -> context.getTerminal()
-                                  .printf("%10s\t%,10d\n", 
-                                          e.getKey(), 
-                                          e.getValue()));
+             .limit(limit)
+             .forEach(entry -> 
+                builder.addRow(entry.getKey(), entry.getValue())
+             );
+
+      return builder.build();
    }
 
    @Override
-   public void reportMostFlightsByDay(ReportContext context) {
-      byDay(context, comparingByValue(reverseOrder()));
+   public ResultSet reportMostFlightsByDay(ReportContext context) {
+      return byDay(context, comparingByValue(reverseOrder()));
    }
 
    @Override
-   public void reportLeastFlightsByDay(ReportContext context) {
-      byDay(context, comparingByValue());
+   public ResultSet reportLeastFlightsByDay(ReportContext context) {
+      return byDay(context, comparingByValue());
    }
 
-   private void byDay(ReportContext context, 
+   private ResultSet byDay(ReportContext context, 
       Comparator<Entry<LocalDate, Long>> comparator) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Date", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
@@ -408,16 +484,21 @@ public class StreamFlightReports implements FlightReports {
              .stream()
              .sorted(comparator)
              .limit(limit)
-             .forEach(e -> context.getTerminal()
-                                  .printf("%s\t%,10d\n", 
-                                          e.getKey(), 
-                                          e.getValue()));
+             .forEach(entry ->
+                builder.addRow(entry.getKey(), entry.getValue())
+             );
+
+      return builder.build();
    }
 
    @Override
-   public void reportMostFlightsByOriginByDay(ReportContext context) {
+   public ResultSet reportMostFlightsByOriginByDay(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
+                                  .addColumn("Date", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
@@ -431,18 +512,22 @@ public class StreamFlightReports implements FlightReports {
              .limit(limit)
              .forEach(entry -> {
                 PairGroup<Airport, LocalDate> key = entry.getKey();
-                context.getTerminal()
-                       .printf("%-30s\t%s\t%,10d\n", 
-                               left(key.getFirst().getName(), 30), 
+                builder.addRow(key.getFirst().getName(), 
                                key.getSecond(), 
                                entry.getValue());
              });
+
+      return builder.build();
    }
 
    @Override
-   public void reportMostFlightsByCarrierByDay(ReportContext context) {
+   public ResultSet reportMostFlightsByCarrierByDay(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Carrier", Types.VARCHAR)
+                                  .addColumn("Date", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
@@ -456,11 +541,11 @@ public class StreamFlightReports implements FlightReports {
              .limit(limit)
              .forEach(entry -> {
                 PairGroup<Carrier, LocalDate> key = entry.getKey();
-                context.getTerminal()
-                       .printf("%-30s\t%s\t%,10d\n", 
-                               left(key.getFirst().getName(), 30), 
+                builder.addRow(key.getFirst().getName(), 
                                key.getSecond(), 
                                entry.getValue());
              });
+
+      return builder.build();
    }
 }
