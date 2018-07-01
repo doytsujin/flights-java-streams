@@ -10,7 +10,7 @@ import airtraffic.Flight.CancellationCode;
 /**
  * Aggregate statistics for an airport. 
  *
- * @author tony@piazzaconsulting.com
+ * @author Tony Piazza <tony@piazzaconsulting.com>
  */
 public class AirportMetrics extends FlightBasedMetrics<Airport> 
    implements Comparable<AirportMetrics> {

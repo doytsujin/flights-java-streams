@@ -19,7 +19,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  *   http://stat-computing.org/dataexpo/2009/the-data.html
  *
- * @author tony@piazzaconsulting.com
+ * @author Tony Piazza <tony@piazzaconsulting.com>
  */
 public class Flight {
    public enum CancellationCode {

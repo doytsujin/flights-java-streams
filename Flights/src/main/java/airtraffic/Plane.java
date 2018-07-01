@@ -18,7 +18,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * 
  * http://registry.faa.gov/aircraftrenewal_reports/CanceledReg_Inquiry.aspx
  *
- * @author tony@piazzaconsulting.com
+ * @author Tony Piazza <tony@piazzaconsulting.com>
  */
 public class Plane implements Comparable<Plane> {
    public enum OwnershipType {

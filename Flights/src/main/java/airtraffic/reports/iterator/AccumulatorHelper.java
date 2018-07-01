@@ -13,7 +13,7 @@ import java.util.Map.Entry;
 /**
  * Contains useful methods for accumulation.
  *
- * @author tony@piazzaconsulting.com
+ * @author Tony Piazza <tony@piazzaconsulting.com>
  */
 public final class AccumulatorHelper {
    public static <T, K extends Comparable<K>, V extends Comparable<V>> void accumulate(

@@ -57,6 +57,14 @@ class ResultSetBuilderTest {
     }
 
     @Test
+    void addWithDuplicateColumn() {
+       builder.addColumn(NAME_1, Types.INTEGER);
+       assertThrows(IllegalArgumentException.class,
+                    () -> builder.addColumn(NAME_1, Types.INTEGER),
+                    "Should not add row");
+    }
+
+    @Test
     void buildWithNoColumnsAndNoRows() {
         assertThrows(IllegalStateException.class,
                      () -> builder.build(),

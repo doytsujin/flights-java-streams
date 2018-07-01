@@ -11,7 +11,7 @@ import airtraffic.Flight;
 /**
  * Common behavior for classes that report flight-based metrics.
  *
- * @author tony@piazzaconsulting.com
+ * @author Tony Piazza <tony@piazzaconsulting.com>
  */
 public abstract class FlightBasedMetrics<T> {
    protected LongAdder totalFlights = new LongAdder();

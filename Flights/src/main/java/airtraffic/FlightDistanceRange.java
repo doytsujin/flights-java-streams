@@ -8,7 +8,7 @@ import org.apache.commons.lang3.Range;
 /**
  * Represents a range of distances.
  *
- * @author tony@piazzaconsulting.com
+ * @author Tony Piazza <tony@piazzaconsulting.com>
  */
 public class FlightDistanceRange implements Comparable<FlightDistanceRange> {
    private Range<Integer> range;

@@ -40,7 +40,7 @@ import airtraffic.Plane.OwnershipType;
 /**
  * Provides access to the data used by the application classes.
  *
- * @author tony@piazzaconsulting.com
+ * @author Tony Piazza <tony@piazzaconsulting.com>
  */
 public final class Repository {
    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("mm/dd/yyyy");

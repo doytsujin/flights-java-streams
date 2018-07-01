@@ -21,7 +21,7 @@ import airtraffic.reports.PlaneReports;
 /**
  * Generate various airplane statistics using Java 8 streams.
  *
- * @author tony@piazzaconsulting.com
+ * @author Tony Piazza <tony@piazzaconsulting.com>
  */
 @StreamStyle
 public class StreamPlaneReports implements PlaneReports {

@@ -7,7 +7,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 /**
  * Immutable domain class that represents a specific model built by plane manufacturer.
  * 
- * @author tony@piazzaconsulting.com
+ * @author Tony Piazza <tony@piazzaconsulting.com>
  */
 public class PlaneModel implements Comparable<PlaneModel> {
    private final String manufacturer;

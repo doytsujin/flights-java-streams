@@ -3,7 +3,7 @@ package airtraffic.reports.iterator;
 /**
  * Implementation of MapAccumulator that counts the number of instances.
  *
- * @author tony@piazzaconsulting.com
+ * @author Tony Piazza <tony@piazzaconsulting.com>
  */
 public abstract class CountingAccumulator<T, K> implements MapAccumulator<T, K, Long> {
    @Override

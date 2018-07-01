@@ -3,7 +3,7 @@ package airtraffic.reports.iterator;
 /**
  * Simple class that stores total and count values to compute average.
  *
- * @author tony@piazzaconsulting.com
+ * @author Tony Piazza <tony@piazzaconsulting.com>
  */
 public class AverageValue implements Comparable<AverageValue> {
    private long total;

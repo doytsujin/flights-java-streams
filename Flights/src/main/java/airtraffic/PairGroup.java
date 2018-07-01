@@ -10,7 +10,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 /**
  * Simple class for grouping flight data by a combination of 2 properties.
  *
- * @author tony@piazzaconsulting.com
+ * @author Tony Piazza <tony@piazzaconsulting.com>
  */
 public class PairGroup<S, T> implements Comparable<PairGroup<S, T>> {
    private final S first;

@@ -7,7 +7,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 /**
  * Represents the configuration loaded from a YAML file.
  *
- * @author tony@piazzaconsulting.com
+ * @author Tony Piazza <tony@piazzaconsulting.com>
  */
 public final class Config {
    private String airportPath;

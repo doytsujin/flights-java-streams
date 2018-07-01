@@ -3,7 +3,7 @@ package airtraffic;
 /**
  * Immutable domain class used to represent the pairing of 2 airports.
  *
- * @author tony@piazzaconsulting.com
+ * @author Tony Piazza <tony@piazzaconsulting.com>
  */
 public class Route implements Comparable<Route> {
    private final String first;

@@ -31,7 +31,7 @@ import airtraffic.reports.FlightReports;
 /**
  * Generate various flight statistics using Java iterators.
  *
- * @author tony@piazzaconsulting.com
+ * @author Tony Piazza <tony@piazzaconsulting.com>
  */
 @IteratorStyle
 public class IteratorFlightReports implements FlightReports {

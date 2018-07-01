@@ -11,7 +11,7 @@ import airtraffic.Flight;
 /**
  * Aggregate statistics for an airline carrier. 
  *
- * @author tony@piazzaconsulting.com
+ * @author Tony Piazza <tony@piazzaconsulting.com>
  */
 public class CarrierMetrics extends FlightBasedMetrics<Carrier> 
    implements Comparable<CarrierMetrics> {

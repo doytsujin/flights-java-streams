@@ -11,7 +11,7 @@ import java.util.Comparator;
 /**
  * GeoLocation helper methods. 
  *
- * @author tony@piazzaconsulting.com
+ * @author Tony Piazza <tony@piazzaconsulting.com>
  */
 public final class GeoHelper {
    public static Comparator<GeoLocation> distanceFromReferenceComparator(GeoLocation refLoc, GeoLocation.Units units) {

@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 /**
  * Specifies behavior needed for accumulation using Maps.
  *
- * @author tony@piazzaconsulting.com
+ * @author Tony Piazza <tony@piazzaconsulting.com>
  */
 public interface MapAccumulator<T, K, V> {
    boolean filter(T source);

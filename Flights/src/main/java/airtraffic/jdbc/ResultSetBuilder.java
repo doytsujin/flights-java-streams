@@ -1,5 +1,6 @@
 package airtraffic.jdbc;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,6 +20,14 @@ public class ResultSetBuilder {
    private List<Pair<String, Integer>> columns = new ArrayList<>();
 
    public ResultSetBuilder addColumn(String name, int type) {
+      if (isBlank(name)) {
+         throw new IllegalArgumentException("Blank column name");
+      }
+      for(Pair<String, Integer> column : columns) {
+         if (name.equalsIgnoreCase(column.getLeft())) {
+            throw new IllegalArgumentException("Duplicate column: " + column);
+         }
+      }
       columns.add(Pair.of(name, type));
       return this;
    }
