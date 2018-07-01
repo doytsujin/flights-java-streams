@@ -44,21 +44,6 @@ public abstract class AbstractReportsApp<T> {
    }
 
    protected Annotation getStyleAnnotation() {
-      String style = readStyleOption();
-      switch(style) {
-         case "iterator":  return IteratorStyle.INSTANCE;
-         case "stream":    return StreamStyle.INSTANCE;
-         default:
-            throw new IllegalArgumentException("Unsupported style: " + style);
-      }
-   }
-
-   protected ReportContext createReportContext() {
-      return new ReportContext().setRepository(repository)
-                                .setTerminal(terminal);
-   }
-
-   protected String readStyleOption() {
       String format = "%2d  %s\n";
       terminal.println("Style options:\n");
       terminal.printf(format, 0, "Exit program");
@@ -70,10 +55,18 @@ public abstract class AbstractReportsApp<T> {
                      .withMinVal(0)
                      .withMaxVal(2)
                      .read("Style");
-      if(option == 0) {
-         System.exit(0);
+      switch(option) {
+         case 0: System.exit(0);
+         case 1: return IteratorStyle.INSTANCE;
+         case 2: return StreamStyle.INSTANCE;
+         default:
+            throw new IllegalArgumentException("Unsupported style: " + option);
       }
-      return option == 1 ? "iterator" : "stream";
+   }
+
+   protected ReportContext createReportContext() {
+      return new ReportContext().setRepository(repository)
+                                .setTerminal(terminal);
    }
 
    protected String readString(String prompt) {
