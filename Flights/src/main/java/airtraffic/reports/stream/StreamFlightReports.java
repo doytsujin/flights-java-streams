@@ -22,6 +22,7 @@ import airtraffic.Flight;
 import airtraffic.FlightDistanceRange;
 import airtraffic.PairGroup;
 import airtraffic.ReportContext;
+import airtraffic.annotations.StreamStyle;
 import airtraffic.jdbc.ResultSetBuilder;
 import airtraffic.reports.FlightReports;
 
@@ -30,6 +31,7 @@ import airtraffic.reports.FlightReports;
  * 
  * @author Tony Piazza <tony@piazzaconsulting.com>
  */
+@StreamStyle
 public class StreamFlightReports implements FlightReports {
    private static final List<FlightDistanceRange> DISTANCE_RANGES =
       Arrays.asList(FlightDistanceRange.between(   0,  100), 

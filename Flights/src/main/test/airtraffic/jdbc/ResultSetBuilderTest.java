@@ -23,8 +23,10 @@ class ResultSetBuilderTest {
         ResultSetMetaData meta = rs.getMetaData();
         assertEquals(meta.getColumnCount(), 1, "Wrong column count");
         assertEquals(meta.getColumnName(1), NAME_1, "Wrong column name");
+        assertEquals(meta.getColumnLabel(1), NAME_1, "Wrong column label");
         assertTrue(rs.next(), "Should be on first row");
         assertEquals(rs.getInt(1), 1, "Wrong column value");
+        assertEquals(rs.getInt(NAME_1), 1, "Wrong column value");
         assertFalse(rs.next(), "Should be after first row");        
     }
 
@@ -35,6 +37,7 @@ class ResultSetBuilderTest {
         ResultSetMetaData meta = rs.getMetaData();
         assertEquals(meta.getColumnCount(), 1, "Wrong column count");
         assertEquals(meta.getColumnName(1), NAME_1, "Wrong column name");
+        assertEquals(meta.getColumnLabel(1), NAME_1, "Wrong column label");
         assertFalse(rs.next(), "Should be no data");
     }
 

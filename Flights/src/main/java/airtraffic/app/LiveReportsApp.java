@@ -1,21 +1,21 @@
 package airtraffic.app;
 
 import static org.apache.commons.lang3.StringUtils.repeat;
-
 import org.beryx.textio.TextTerminal;
 import airtraffic.ReportContext;
 import airtraffic.reports.LiveReports;
-import airtraffic.reports.iterator.IteratorLiveReports;
-import airtraffic.reports.stream.StreamLiveReports;
 
-public class LiveReportsApp extends AbstractReportsApp implements LiveReports {
+public class LiveReportsApp extends AbstractReportsApp<LiveReports> {
    public static void main(String[] args) throws Exception {
       new LiveReportsApp().executeSelectedReport();
    }
 
    @Override
+   protected LiveReports impl() {
+      return getBean(LiveReports.class);
+   }
+
    public void reportAirportMetrics(ReportContext context) {
-      final String style = readStyleOption();
       context.setYear(readYear())
              .setAirport(readAirport("Airport"));
 
@@ -24,12 +24,10 @@ public class LiveReportsApp extends AbstractReportsApp implements LiveReports {
       terminal.println("     Total\t Cancelled\t  Diverted\t   Origins\tDestinations");
       terminal.println(repeat("-", 77));
 
-      getImpl(style).reportAirportMetrics(context);
+      impl().reportAirportMetrics(context);
    }
 
-   @Override
    public void reportCarrierMetrics(ReportContext context) {
-      final String style = readStyleOption();
       context.setYear(readYear())
              .setCarrier(readCarrier());
 
@@ -38,12 +36,6 @@ public class LiveReportsApp extends AbstractReportsApp implements LiveReports {
       terminal.println("     Total\t Cancelled\t  Diverted\t  Airports");
       terminal.println(repeat("-", 59));
 
-      getImpl(style).reportCarrierMetrics(context);
-   }
-
-   private LiveReports getImpl(String style) {
-      return "iterator".equals(style) ? 
-               new IteratorLiveReports() : 
-               new StreamLiveReports();
+      impl().reportCarrierMetrics(context);
    }
 }

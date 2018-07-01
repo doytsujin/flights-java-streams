@@ -14,6 +14,7 @@ import airtraffic.Plane;
 import airtraffic.PlaneAgeRange;
 import airtraffic.PlaneModel;
 import airtraffic.ReportContext;
+import airtraffic.annotations.StreamStyle;
 import airtraffic.jdbc.ResultSetBuilder;
 import airtraffic.reports.PlaneReports;
 
@@ -22,6 +23,7 @@ import airtraffic.reports.PlaneReports;
  *
  * @author tony@piazzaconsulting.com
  */
+@StreamStyle
 public class StreamPlaneReports implements PlaneReports {
    private static final List<PlaneAgeRange> AGE_RANGES =
       Arrays.asList(PlaneAgeRange.between(   0,  5),

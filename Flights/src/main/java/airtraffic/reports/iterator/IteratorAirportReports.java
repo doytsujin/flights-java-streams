@@ -18,11 +18,13 @@ import airtraffic.Airport;
 import airtraffic.Flight;
 import airtraffic.GeoLocation;
 import airtraffic.ReportContext;
+import airtraffic.annotations.IteratorStyle;
 import airtraffic.jdbc.ResultSetBuilder;
 import airtraffic.metrics.AirportMetrics;
 import airtraffic.reports.AirportReports;
 
 
+@IteratorStyle
 public class IteratorAirportReports implements AirportReports {
    @Override
    public ResultSet reportAirportsForState(ReportContext context) {
@@ -87,7 +89,7 @@ public class IteratorAirportReports implements AirportReports {
       final ResultSetBuilder builder = 
          new ResultSetBuilder().addColumn("IATA", Types.VARCHAR)
                                .addColumn("Name", Types.VARCHAR)
-                               .addColumn("Total", Types.INTEGER)
+                               .addColumn("TotalFlights", Types.INTEGER)
                                .addColumn("CancellationRate", Types.DOUBLE)
                                .addColumn("DiversionRate", Types.DOUBLE);
 

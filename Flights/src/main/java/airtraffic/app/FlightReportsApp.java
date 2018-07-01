@@ -8,21 +8,22 @@ import org.beryx.textio.TextTerminal;
 import airtraffic.ReportContext;
 import airtraffic.reports.FlightReports;
 import airtraffic.reports.ReportException;
-import airtraffic.reports.iterator.IteratorFlightReports;
-import airtraffic.reports.stream.StreamFlightReports;
 
-public class FlightReportsApp extends AbstractReportsApp implements FlightReports {
+public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    public static void main(String[] args) throws Exception {
       new FlightReportsApp().executeSelectedReport();
    }
 
    @Override
-   public ResultSet reportTotalFlightsFromOrigin(ReportContext context) {
-      final String style = readStyleOption();
+   protected FlightReports impl() {
+      return getBean(FlightReports.class);
+   }
+
+   public void reportTotalFlightsFromOrigin(ReportContext context) {
       context.setYear(readYear())
              .setOrigin(readAirport("Origin"));
 
-      ResultSet rs = getImpl(style).reportTotalFlightsFromOrigin(context);
+      ResultSet rs = impl().reportTotalFlightsFromOrigin(context);
       try {
          if (rs.next()) {
             context.getTerminal().printf("Total flights from %s is %,d\n", 
@@ -32,16 +33,12 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportTotalFlightsToDestination(ReportContext context) {
+   public void reportTotalFlightsToDestination(ReportContext context) {
       context.setYear(readYear())
              .setDestination(readAirport("Destination"));
-      ResultSet rs = getImpl(readStyleOption()).reportTotalFlightsToDestination(context);
-
+      ResultSet rs = impl().reportTotalFlightsToDestination(context);
       try {
          if (rs.next()) {
             context.getTerminal().printf("Total flights to %s is %,d\n",
@@ -51,18 +48,14 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportTotalFlightsFromOriginToDestination(ReportContext context) {
+   public void reportTotalFlightsFromOriginToDestination(ReportContext context) {
       context.setYear(readYear())
              .setOrigin(readAirport("Origin"))
              .setDestination(readAirport("Destination"));
 
-      ResultSet rs = getImpl(readStyleOption()).reportTotalFlightsFromOrigin(context);
-
+      ResultSet rs = impl().reportTotalFlightsFromOrigin(context);
       try {
          if (rs.next()) {
             context.getTerminal().printf("Total of %,d flights from %s (%s)\nto %s (%s)\n", 
@@ -75,13 +68,9 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportTopFlightsByOrigin(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportTopFlightsByOrigin(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -89,7 +78,7 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       terminal.println("\nOrigin\t\tCount");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = getImpl(style).reportTopFlightsByOrigin(context);
+      ResultSet rs = impl().reportTopFlightsByOrigin(context);
       try {
          while (rs.next()) {
             terminal.printf("%3s\t\t%,10d\n", 
@@ -99,13 +88,9 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportTopDestinationsFromOrigin(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportTopDestinationsFromOrigin(ReportContext context) {
       context.setYear(readYear())
              .setOrigin(readAirport("Origin"))
              .setLimit(readLimit(10, 1, 100));
@@ -115,7 +100,7 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       terminal.println("Destination\t   Count");
       terminal.println(repeat("-", 30));
 
-      ResultSet rs = getImpl(style).reportTopDestinationsFromOrigin(context);
+      ResultSet rs = impl().reportTopDestinationsFromOrigin(context);
       try {
          while(rs.next()) {
             terminal.printf("%3s\t\t%,10d\n", 
@@ -125,13 +110,9 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportMostPopularRoutes(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportMostPopularRoutes(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -139,7 +120,7 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       terminal.println("Route\t\t    Count");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = getImpl(style).reportMostPopularRoutes(context);
+      ResultSet rs = impl().reportMostPopularRoutes(context);
       try {
          while(rs.next()) {
             terminal.printf("%s\t%,10d\n", 
@@ -149,13 +130,9 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportWorstAverageDepartureDelayByOrigin(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportWorstAverageDepartureDelayByOrigin(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -163,7 +140,7 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       terminal.println("Origin\tDelay (min)");
       terminal.println(repeat("-", 22));
 
-      ResultSet rs = getImpl(style).reportWorstAverageDepartureDelayByOrigin(context);
+      ResultSet rs = impl().reportWorstAverageDepartureDelayByOrigin(context);
       try {
          while(rs.next()) {
             terminal.printf("%3s\t\t%.0f\n", 
@@ -173,13 +150,9 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportWorstAverageArrivalDelayByDestination(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportWorstAverageArrivalDelayByDestination(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -187,7 +160,7 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       terminal.println("Destination\tDelay (min)");
       terminal.println(repeat("-", 28));
 
-      ResultSet rs = getImpl(style).reportWorstAverageArrivalDelayByDestination(context);
+      ResultSet rs = impl().reportWorstAverageArrivalDelayByDestination(context);
       try {
          while(rs.next()) {
             terminal.printf("%3s\t\t%.0f\n",  
@@ -197,13 +170,9 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportMostCancelledFlightsByOrigin(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportMostCancelledFlightsByOrigin(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -211,7 +180,7 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       terminal.println("Origin\t\t  Count");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = getImpl(style).reportMostCancelledFlightsByOrigin(context);
+      ResultSet rs = impl().reportMostCancelledFlightsByOrigin(context);
       try {
          while(rs.next()) {
             terminal.printf("%3s\t\t%,8d\n", 
@@ -221,13 +190,9 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportTotalFlightsByOriginState(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportTotalFlightsByOriginState(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -235,7 +200,7 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       terminal.println("State\t  Count");
       terminal.println(repeat("-", 19));
 
-      ResultSet rs = getImpl(style).reportTotalFlightsByOriginState(context);
+      ResultSet rs = impl().reportTotalFlightsByOriginState(context);
       try {
          while(rs.next()) {
             terminal.printf("%2s\t%,10d\n",
@@ -245,13 +210,9 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportTotalFlightsByDestinationState(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportTotalFlightsByDestinationState(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -259,7 +220,7 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       terminal.println("State\tCount");
       terminal.println(repeat("-", 19));
 
-      ResultSet rs = getImpl(style).reportTotalFlightsByDestinationState(context);
+      ResultSet rs = impl().reportTotalFlightsByDestinationState(context);
       try {
          while(rs.next()) {
             terminal.printf("%2s\t%,10d\n",
@@ -269,8 +230,6 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
    private void printFlights(TextTerminal<?> terminal, ResultSet rs) {
@@ -289,9 +248,7 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       }
    }
 
-   @Override
-   public ResultSet reportLongestFlights(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportLongestFlights(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -299,15 +256,11 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       terminal.println("Flight #     Date\tCarrier\tOrigin\tDestination\tDistance");
       terminal.println(repeat("-", 65));
 
-      ResultSet rs = getImpl(style).reportLongestFlights(context);
+      ResultSet rs = impl().reportLongestFlights(context);
       printFlights(terminal, rs);
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportShortestFlights(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportShortestFlights(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -315,22 +268,18 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       terminal.println("Flight #     Date\tCarrier\tOrigin\tDestination\tDistance");
       terminal.println(repeat("-", 65));
 
-      ResultSet rs = getImpl(style).reportShortestFlights(context);
+      ResultSet rs = impl().reportShortestFlights(context);
       printFlights(terminal, rs);
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportTotalFlightsByDistanceRange(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportTotalFlightsByDistanceRange(ReportContext context) {
       context.setYear(readYear());
 
       TextTerminal<?> terminal = context.getTerminal();
       terminal.println("Range\t\tCount");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = getImpl(style).reportTotalFlightsByDistanceRange(context);
+      ResultSet rs = impl().reportTotalFlightsByDistanceRange(context);
       try {
          while(rs.next()) {
             terminal.printf("%-10s\t%,10d\n", 
@@ -340,13 +289,9 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportDaysWithLeastCancellations(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportDaysWithLeastCancellations(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -354,7 +299,7 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       terminal.println("Date\t\tCount");
       terminal.println(repeat("-", 24));
 
-      ResultSet rs = getImpl(style).reportDaysWithLeastCancellations(context);
+      ResultSet rs = impl().reportDaysWithLeastCancellations(context);
       try {
          while(rs.next()) {
             terminal.printf("%-10s       %,3d\n", 
@@ -364,13 +309,9 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportDaysWithMostCancellations(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportDaysWithMostCancellations(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -378,7 +319,7 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       terminal.println("Date\t\tCount");
       terminal.println(repeat("-", 24));
 
-      ResultSet rs = getImpl(style).reportDaysWithMostCancellations(context);
+      ResultSet rs = impl().reportDaysWithMostCancellations(context);
       try {
          while(rs.next()) {
             terminal.printf("%-10s       %,3d\n", 
@@ -388,13 +329,9 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportTotalMonthlyFlights(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportTotalMonthlyFlights(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -402,7 +339,7 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       terminal.println("Month\t\tCount");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs= getImpl(style).reportTotalMonthlyFlights(context);
+      ResultSet rs= impl().reportTotalMonthlyFlights(context);
       try {
          while(rs.next()) {
             terminal.printf("%s\t%,10d\n", 
@@ -412,13 +349,9 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportTotalDailyFlights(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportTotalDailyFlights(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -426,7 +359,7 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       terminal.println("Day\t\t   Count");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = getImpl(style).reportTotalDailyFlights(context);
+      ResultSet rs = impl().reportTotalDailyFlights(context);
       try {
          while(rs.next()) {
             terminal.printf("%s\t%,10d\n",
@@ -436,20 +369,16 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportTotalFlightsByDayOfWeek(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportTotalFlightsByDayOfWeek(ReportContext context) {
       context.setYear(readYear());
 
       TextTerminal<?> terminal = context.getTerminal();
       terminal.println("Day of Week\t   Count");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = getImpl(style).reportTotalFlightsByDayOfWeek(context);
+      ResultSet rs = impl().reportTotalFlightsByDayOfWeek(context);
       try {
          while(rs.next()) {
             terminal.printf("%10s\t%,10d\n",
@@ -459,13 +388,9 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportMostFlightsByDay(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportMostFlightsByDay(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -473,7 +398,7 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       terminal.println("Day\t\t   Count");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = getImpl(style).reportMostFlightsByDay(context);
+      ResultSet rs = impl().reportMostFlightsByDay(context);
       try {
          while(rs.next()) {
             terminal.printf("%s\t%,10d\n",
@@ -483,13 +408,9 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportLeastFlightsByDay(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportLeastFlightsByDay(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -497,7 +418,7 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       terminal.println("Day\t\t   Count");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = getImpl(style).reportLeastFlightsByDay(context);
+      ResultSet rs = impl().reportLeastFlightsByDay(context);
       try {
          while(rs.next()) {
             terminal.printf("%s\t%,10d\n",
@@ -507,13 +428,9 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportMostFlightsByOriginByDay(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportMostFlightsByOriginByDay(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -521,7 +438,7 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       terminal.println("Origin\t\t\t\tDate\t\t     Count");
       terminal.println(repeat("-", 59));
 
-      ResultSet rs = getImpl(style).reportMostFlightsByOriginByDay(context);
+      ResultSet rs = impl().reportMostFlightsByOriginByDay(context);
       try {
          while(rs.next()) {
             terminal.printf("%-30s\t%s\t%,10d\n",
@@ -532,13 +449,9 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportMostFlightsByCarrierByDay(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportMostFlightsByCarrierByDay(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -546,7 +459,7 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
       terminal.println("Carrier\t\t\t\tDate\t\t     Count");
       terminal.println(repeat("-", 59));
 
-      ResultSet rs = getImpl(style).reportMostFlightsByCarrierByDay(context);
+      ResultSet rs = impl().reportMostFlightsByCarrierByDay(context);
       try {
          while(rs.next()) {
             terminal.printf("%-30s\t%s\t%,10d\n",
@@ -556,19 +469,6 @@ public class FlightReportsApp extends AbstractReportsApp implements FlightReport
          }
       } catch (SQLException e) {
          throw new ReportException(e);
-      }
-
-      return rs;
-   }
-
-   private FlightReports getImpl(String style) {
-      switch(style) {
-         case "iterator":
-            return new IteratorFlightReports();
-         case "stream":
-            return new StreamFlightReports();
-         default:
-            throw new IllegalArgumentException("Unsupported style: " + style);
       }
    }
 }

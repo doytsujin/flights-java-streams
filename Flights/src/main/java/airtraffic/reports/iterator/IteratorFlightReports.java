@@ -24,6 +24,7 @@ import airtraffic.FlightDistanceRange;
 import airtraffic.PairGroup;
 import airtraffic.ReportContext;
 import airtraffic.Route;
+import airtraffic.annotations.IteratorStyle;
 import airtraffic.jdbc.ResultSetBuilder;
 import airtraffic.reports.FlightReports;
 
@@ -32,6 +33,7 @@ import airtraffic.reports.FlightReports;
  *
  * @author tony@piazzaconsulting.com
  */
+@IteratorStyle
 public class IteratorFlightReports implements FlightReports {
    private static final Comparator<Flight> FLIGHT_DISTANCE_COMPARATOR = 
       new Comparator<Flight>() {

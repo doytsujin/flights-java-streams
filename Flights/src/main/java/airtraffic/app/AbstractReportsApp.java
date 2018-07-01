@@ -3,27 +3,29 @@ package airtraffic.app;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.splitByCharacterTypeCamelCase;
-
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
+import javax.enterprise.inject.se.SeContainer;
+import javax.enterprise.inject.se.SeContainerInitializer;
 import org.beryx.textio.TextIO;
 import org.beryx.textio.TextIoFactory;
 import org.beryx.textio.TextTerminal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import airtraffic.Airport;
 import airtraffic.Carrier;
 import airtraffic.GeoLocation;
 import airtraffic.ReportContext;
 import airtraffic.Repository;
+import airtraffic.annotations.IteratorStyle;
+import airtraffic.annotations.StreamStyle;
 
-public abstract class AbstractReportsApp {
+public abstract class AbstractReportsApp<T> {
    private static final String METHOD_NAME_PREFIX = "report";
    private static final int METHOD_PARAMETER_COUNT = 1;
    private static final Class<?> METHOD_RETURN_TYPE = Void.TYPE;
@@ -32,6 +34,24 @@ public abstract class AbstractReportsApp {
    private final TextIO io = TextIoFactory.getTextIO();
    private final TextTerminal<?> terminal = io.getTextTerminal();
    private final Repository repository = new Repository();
+   private final SeContainer container = SeContainerInitializer.newInstance()
+                                                               .initialize();
+
+   protected abstract T impl();
+
+   protected T getBean(Class<T> klass) {
+      return container.select(klass, getStyleAnnotation()).get();
+   }
+
+   protected Annotation getStyleAnnotation() {
+      String style = readStyleOption();
+      switch(style) {
+         case "iterator":  return IteratorStyle.INSTANCE;
+         case "stream":    return StreamStyle.INSTANCE;
+         default:
+            throw new IllegalArgumentException("Unsupported style: " + style);
+      }
+   }
 
    protected ReportContext createReportContext() {
       return new ReportContext().setRepository(repository)

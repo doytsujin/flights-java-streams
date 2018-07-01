@@ -11,6 +11,7 @@ import java.util.HashMap;
 import airtraffic.Airport;
 import airtraffic.GeoLocation;
 import airtraffic.ReportContext;
+import airtraffic.annotations.StreamStyle;
 import airtraffic.jdbc.ResultSetBuilder;
 import airtraffic.metrics.AirportMetrics;
 import airtraffic.reports.AirportReports;
@@ -21,6 +22,7 @@ import airtraffic.reports.AirportReports;
  * 
  * @author tony@piazzaconsulting.com
  */
+@StreamStyle
 public class StreamAirportReports implements AirportReports {
    @Override
    public ResultSet reportAirportsForState(ReportContext context) {

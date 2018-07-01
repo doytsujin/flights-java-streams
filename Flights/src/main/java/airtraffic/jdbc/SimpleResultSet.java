@@ -226,12 +226,12 @@ class SimpleResultSet implements ResultSet {
 
     @Override
     public int findColumn(String columnLabel) throws SQLException {
-        for (int i = 0; i < meta.getColumnCount(); i++) {
+        for (int i = 1; i <= meta.getColumnCount(); i++) {
             if (meta.getColumnLabel(i).equals(columnLabel)) {
                 return i;
             }
         }
-        throw new IllegalArgumentException("Invalid column label");
+        throw new IllegalArgumentException("Invalid column label: " + columnLabel);
     }
 
     @Override

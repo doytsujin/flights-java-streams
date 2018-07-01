@@ -8,23 +8,23 @@ import org.beryx.textio.TextTerminal;
 import airtraffic.ReportContext;
 import airtraffic.reports.PlaneReports;
 import airtraffic.reports.ReportException;
-import airtraffic.reports.iterator.IteratorPlaneReports;
-import airtraffic.reports.stream.StreamPlaneReports;
 
-public class PlaneReportsApp extends AbstractReportsApp implements PlaneReports {
+public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
    public static void main(String[] args) throws Exception {
       new PlaneReportsApp().executeSelectedReport();
    }
 
    @Override
-   public ResultSet reportTotalPlanesByManfacturer(ReportContext context) {
-      final String style = readStyleOption();
+   protected PlaneReports impl() {
+      return getBean(PlaneReports.class);
+   }
 
+   public void reportTotalPlanesByManfacturer(ReportContext context) {
       TextTerminal<?> terminal = context.getTerminal();
       terminal.println("Manufacturer\t\t\tCount");
       terminal.println("---------------------------------------");
 
-      ResultSet rs = getImpl(style).reportTotalPlanesByManfacturer(context);
+      ResultSet rs = impl().reportTotalPlanesByManfacturer(context);
       try {
          while(rs.next()) {
             terminal.printf("%-25s\t%5d\n", 
@@ -34,19 +34,14 @@ public class PlaneReportsApp extends AbstractReportsApp implements PlaneReports 
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportTotalPlanesByYear(ReportContext context) {
-      final String style = readStyleOption();
-
+   public void reportTotalPlanesByYear(ReportContext context) {
       TextTerminal<?> terminal = context.getTerminal();
       terminal.println("Year\tCount");
       terminal.println("------------------");
 
-      ResultSet rs = getImpl(style).reportTotalPlanesByYear(context);
+      ResultSet rs = impl().reportTotalPlanesByYear(context);
       try {
          while(rs.next()) {
             terminal.printf("%4d\t%5d\n", 
@@ -56,19 +51,14 @@ public class PlaneReportsApp extends AbstractReportsApp implements PlaneReports 
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportTotalPlanesByAircraftType(ReportContext context) {
-      final String style = readStyleOption();
-
+   public void reportTotalPlanesByAircraftType(ReportContext context) {
       TextTerminal<?> terminal = context.getTerminal();
       terminal.println("Aircraft Type\t\t\tCount");
       terminal.println("---------------------------------------");
 
-      ResultSet rs = getImpl(style).reportTotalPlanesByAircraftType(context);
+      ResultSet rs = impl().reportTotalPlanesByAircraftType(context);
       try {
          while(rs.next()) {
             terminal.printf("%-25s\t%5d\n", 
@@ -78,19 +68,14 @@ public class PlaneReportsApp extends AbstractReportsApp implements PlaneReports 
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportTotalPlanesByEngineType(ReportContext context) {
-      final String style = readStyleOption();
-
+   public void reportTotalPlanesByEngineType(ReportContext context) {
       TextTerminal<?> terminal = context.getTerminal();
       terminal.println("Engine Type\t\t\tCount");
       terminal.println("---------------------------------------");
 
-      ResultSet rs = getImpl(style).reportTotalPlanesByEngineType(context);
+      ResultSet rs = impl().reportTotalPlanesByEngineType(context);
       try {
          while(rs.next()) {
             terminal.printf("%-25s\t%5d\n", 
@@ -100,14 +85,9 @@ public class PlaneReportsApp extends AbstractReportsApp implements PlaneReports 
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportPlanesWithMostCancellations(ReportContext context) {
-      final String style = readStyleOption();
-
+   public void reportPlanesWithMostCancellations(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -115,7 +95,7 @@ public class PlaneReportsApp extends AbstractReportsApp implements PlaneReports 
       terminal.println("Tail #\t\tCount");
       terminal.println("-----------------------");
 
-      ResultSet rs = getImpl(style).reportPlanesWithMostCancellations(context);
+      ResultSet rs = impl().reportPlanesWithMostCancellations(context);
       try {
          while(rs.next()) {
             terminal.printf("%-8s\t%,6d\n",
@@ -125,14 +105,9 @@ public class PlaneReportsApp extends AbstractReportsApp implements PlaneReports 
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportMostFlightsByPlane(ReportContext context) {
-      final String style = readStyleOption();
-
+   public void reportMostFlightsByPlane(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -140,7 +115,7 @@ public class PlaneReportsApp extends AbstractReportsApp implements PlaneReports 
       terminal.println("Tail #\t  Manufacturer\t\tModel #\t\tCount");
       terminal.println(repeat("-", 67));
 
-      ResultSet rs = getImpl(style).reportMostFlightsByPlane(context);
+      ResultSet rs = impl().reportMostFlightsByPlane(context);
       try {
          while(rs.next()) {
             terminal.printf("%-8s  %-20s  %-10s  %,10d\n",
@@ -152,13 +127,9 @@ public class PlaneReportsApp extends AbstractReportsApp implements PlaneReports 
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportMostFlightsByPlaneModel(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportMostFlightsByPlaneModel(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -166,7 +137,7 @@ public class PlaneReportsApp extends AbstractReportsApp implements PlaneReports 
       terminal.println("Manufacturer\t\t\tModel #\t\t\t  Count\t\tDaily Avg");
       terminal.println(repeat("-", 82));
 
-      ResultSet rs = getImpl(style).reportMostFlightsByPlaneModel(context);
+      ResultSet rs = impl().reportMostFlightsByPlaneModel(context);
       try {
          while(rs.next()) {
             terminal.printf("%-25s\t%-20s\t%,10d\t%8.1f",
@@ -178,20 +149,16 @@ public class PlaneReportsApp extends AbstractReportsApp implements PlaneReports 
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportTotalFlightsByPlaneManufacturer(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportTotalFlightsByPlaneManufacturer(ReportContext context) {
       context.setYear(readYear());
 
       TextTerminal<?> terminal = context.getTerminal();
       terminal.println("Manufacturer\t\t\t Count");
       terminal.println("-------------------------------------------");
 
-      ResultSet rs = getImpl(style).reportTotalFlightsByPlaneManufacturer(context);
+      ResultSet rs = impl().reportTotalFlightsByPlaneManufacturer(context);
       try {
          while(rs.next()) {
             terminal.printf("%-25s\t%,10d\n",
@@ -201,20 +168,16 @@ public class PlaneReportsApp extends AbstractReportsApp implements PlaneReports 
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportTotalFlightsByPlaneAgeRange(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportTotalFlightsByPlaneAgeRange(ReportContext context) {
       context.setYear(readYear());
 
       TextTerminal<?> terminal = context.getTerminal();
       terminal.println("Age Range\tCount");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = getImpl(style).reportTotalFlightsByPlaneAgeRange(context);
+      ResultSet rs = impl().reportTotalFlightsByPlaneAgeRange(context);
       try {
          while(rs.next()) {
             terminal.printf("%-10s\t%,10d\n",
@@ -224,20 +187,16 @@ public class PlaneReportsApp extends AbstractReportsApp implements PlaneReports 
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportTotalFlightsByAircraftType(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportTotalFlightsByAircraftType(ReportContext context) {
       context.setYear(readYear());
 
       TextTerminal<?> terminal = context.getTerminal();
       terminal.println("Aircraft Type\t\t\tCount");
       terminal.println("-------------------------------------------");
 
-      ResultSet rs = getImpl(style).reportTotalFlightsByAircraftType(context);
+      ResultSet rs = impl().reportTotalFlightsByAircraftType(context);
       try {
          while(rs.next()) {
             terminal.printf("%-25s\t%,10d\n",
@@ -247,20 +206,16 @@ public class PlaneReportsApp extends AbstractReportsApp implements PlaneReports 
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportTotalFlightsByEngineType(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportTotalFlightsByEngineType(ReportContext context) {
       context.setYear(readYear());
 
       TextTerminal<?> terminal = context.getTerminal();
       terminal.println("Engine Type\t\t\tCount");
       terminal.println("-------------------------------------------");
 
-      ResultSet rs = getImpl(style).reportTotalFlightsByEngineType(context);
+      ResultSet rs = impl().reportTotalFlightsByEngineType(context);
       try {
          while(rs.next()) {
             terminal.printf("%-25s\t%,10d\n",
@@ -270,13 +225,5 @@ public class PlaneReportsApp extends AbstractReportsApp implements PlaneReports 
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
-   }
-
-   private PlaneReports getImpl(String style) {
-      return "iterator".equals(style) ? 
-         new IteratorPlaneReports() : 
-         new StreamPlaneReports();
    }
 }

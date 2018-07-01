@@ -12,11 +12,13 @@ import java.util.Map.Entry;
 import airtraffic.Carrier;
 import airtraffic.Flight;
 import airtraffic.ReportContext;
+import airtraffic.annotations.IteratorStyle;
 import airtraffic.jdbc.ResultSetBuilder;
 import airtraffic.metrics.CarrierMetrics;
 import airtraffic.reports.CarrierReports;
 
 
+@IteratorStyle
 public class IteratorCarrierReports implements CarrierReports {
    @Override
    public ResultSet reportMostCancelledFlightsByCarrier(ReportContext context) {

@@ -5,12 +5,14 @@ import org.beryx.textio.TextTerminal;
 import airtraffic.Airport;
 import airtraffic.Carrier;
 import airtraffic.ReportContext;
+import airtraffic.annotations.StreamStyle;
 import airtraffic.metrics.AirportMetrics;
 import airtraffic.metrics.CarrierMetrics;
 import airtraffic.reports.LiveReports;
 
-public class StreamLiveReports implements LiveReports {
 
+@StreamStyle
+public class StreamLiveReports implements LiveReports {
    @Override
    public void reportAirportMetrics(ReportContext context) {
       final int year = context.getYear();

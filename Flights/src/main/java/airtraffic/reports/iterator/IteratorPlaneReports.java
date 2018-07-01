@@ -14,6 +14,7 @@ import airtraffic.Flight;
 import airtraffic.Plane;
 import airtraffic.Plane.AircraftType;
 import airtraffic.Plane.EngineType;
+import airtraffic.annotations.IteratorStyle;
 import airtraffic.PlaneAgeRange;
 import airtraffic.PlaneModel;
 import airtraffic.ReportContext;
@@ -25,6 +26,7 @@ import airtraffic.reports.PlaneReports;
  *
  * @author tony@piazzaconsulting.com
  */
+@IteratorStyle
 public class IteratorPlaneReports implements PlaneReports {
    private static final List<PlaneAgeRange> AGE_RANGES =
       Arrays.asList(PlaneAgeRange.between( 0,  5),

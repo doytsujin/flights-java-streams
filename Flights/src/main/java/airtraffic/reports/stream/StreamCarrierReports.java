@@ -11,12 +11,14 @@ import java.sql.Types;
 import java.util.HashMap;
 import airtraffic.Flight;
 import airtraffic.ReportContext;
+import airtraffic.annotations.StreamStyle;
 import airtraffic.jdbc.ResultSetBuilder;
 import airtraffic.metrics.CarrierMetrics;
 import airtraffic.reports.CarrierReports;
 
-public class StreamCarrierReports implements CarrierReports {
 
+@StreamStyle
+public class StreamCarrierReports implements CarrierReports {
    @Override
    public ResultSet reportMostCancelledFlightsByCarrier(ReportContext context) {
       final int year = context.getYear();

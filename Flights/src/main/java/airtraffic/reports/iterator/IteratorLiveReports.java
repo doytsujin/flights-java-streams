@@ -8,10 +8,13 @@ import airtraffic.Airport;
 import airtraffic.Carrier;
 import airtraffic.Flight;
 import airtraffic.ReportContext;
+import airtraffic.annotations.IteratorStyle;
 import airtraffic.metrics.AirportMetrics;
 import airtraffic.metrics.CarrierMetrics;
 import airtraffic.reports.LiveReports;
 
+
+@IteratorStyle
 public class IteratorLiveReports implements LiveReports {
 
    @Override

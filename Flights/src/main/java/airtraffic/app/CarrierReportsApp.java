@@ -8,17 +8,18 @@ import org.beryx.textio.TextTerminal;
 import airtraffic.ReportContext;
 import airtraffic.reports.CarrierReports;
 import airtraffic.reports.ReportException;
-import airtraffic.reports.iterator.IteratorCarrierReports;
-import airtraffic.reports.stream.StreamCarrierReports;
 
-public class CarrierReportsApp extends AbstractReportsApp implements CarrierReports {
+public class CarrierReportsApp extends AbstractReportsApp<CarrierReports> {
    public static void main(String[] args) throws Exception {
       new CarrierReportsApp().executeSelectedReport();
    }
 
    @Override
-   public ResultSet reportMostCancelledFlightsByCarrier(ReportContext context) {
-      final String style = readStyleOption();
+   protected CarrierReports impl() {
+      return getBean(CarrierReports.class);
+   }
+
+   public void reportMostCancelledFlightsByCarrier(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -26,7 +27,7 @@ public class CarrierReportsApp extends AbstractReportsApp implements CarrierRepo
       terminal.println("Carrier\t\t\t\t Count");
       terminal.println("-----------------------------------------");
 
-      ResultSet rs = getImpl(style).reportMostCancelledFlightsByCarrier(context);
+      ResultSet rs = impl().reportMostCancelledFlightsByCarrier(context);
       try {
          while(rs.next()) {
             terminal.printf("%-24s\t%,8d\n", 
@@ -36,13 +37,9 @@ public class CarrierReportsApp extends AbstractReportsApp implements CarrierRepo
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportCarrierMetrics(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportCarrierMetrics(ReportContext context) {
       context.setYear(readYear());
 
       TextTerminal<?> terminal = context.getTerminal();
@@ -50,7 +47,7 @@ public class CarrierReportsApp extends AbstractReportsApp implements CarrierRepo
       terminal.println("Total        Cancelled %   Diverted %    Airports");
       terminal.println(repeat("-", 94));
 
-      ResultSet rs = getImpl(style).reportCarrierMetrics(context);
+      ResultSet rs = impl().reportCarrierMetrics(context);
       try {
          while(rs.next()) {
             terminal.printf(" %2s     %-30s     %,9d    %6.1f        %6.1f         %,5d\n",
@@ -64,13 +61,9 @@ public class CarrierReportsApp extends AbstractReportsApp implements CarrierRepo
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
    }
 
-   @Override
-   public ResultSet reportCarriersWithHighestCancellationRate(ReportContext context) {
-      final String style = readStyleOption();
+   public void reportCarriersWithHighestCancellationRate(ReportContext context) {
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -78,7 +71,7 @@ public class CarrierReportsApp extends AbstractReportsApp implements CarrierRepo
       terminal.println("Carrier                           Rate");
       terminal.println("---------------------------------------");
 
-      ResultSet rs = getImpl(style).reportCarriersWithHighestCancellationRate(context);
+      ResultSet rs = impl().reportCarriersWithHighestCancellationRate(context);
       try {
          while(rs.next()) {
             terminal.printf("%-30s\t%6.1f\n", 
@@ -88,13 +81,5 @@ public class CarrierReportsApp extends AbstractReportsApp implements CarrierRepo
       } catch (SQLException e) {
          throw new ReportException(e);
       }
-
-      return rs;
-   }
-
-   private CarrierReports getImpl(String style) {
-      return "iterator".equals(style) ? 
-         new IteratorCarrierReports() : 
-         new StreamCarrierReports();
    }
 }
