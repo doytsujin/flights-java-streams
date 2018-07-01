@@ -1,7 +1,5 @@
 package airtraffic.reports.stream;
 
-import static airtraffic.PairGroup.pairAirportDay;
-import static airtraffic.PairGroup.pairCarrierDay;
 import static java.util.Comparator.comparingInt;
 import static java.util.Comparator.reverseOrder;
 import static java.util.Map.Entry.comparingByKey;
@@ -16,11 +14,11 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
+import org.apache.commons.lang3.tuple.Pair;
 import airtraffic.Airport;
 import airtraffic.Carrier;
 import airtraffic.Flight;
 import airtraffic.FlightDistanceRange;
-import airtraffic.PairGroup;
 import airtraffic.ReportContext;
 import airtraffic.annotations.StreamStyle;
 import airtraffic.jdbc.ResultSetBuilder;
@@ -505,17 +503,16 @@ public class StreamFlightReports implements FlightReports {
       context.getRepository()
              .getFlightStream(year)
              .filter(f -> f.notCancelled())
-             .collect(groupingBy(f -> pairAirportDay(f.getOrigin(), 
-                                                     f.getDate()), 
+             .collect(groupingBy(f -> Pair.of(f.getOrigin(), f.getDate()), 
                                  counting()))
              .entrySet()
              .stream()
              .sorted(comparingByValue(reverseOrder()))
              .limit(limit)
              .forEach(entry -> {
-                PairGroup<Airport, LocalDate> key = entry.getKey();
-                builder.addRow(key.getFirst().getName(), 
-                               key.getSecond(), 
+                Pair<Airport, LocalDate> key = entry.getKey();
+                builder.addRow(key.getLeft().getName(), 
+                               key.getRight(), 
                                entry.getValue());
              });
 
@@ -534,17 +531,16 @@ public class StreamFlightReports implements FlightReports {
       context.getRepository()
              .getFlightStream(year)
              .filter(f -> f.notCancelled())
-             .collect(groupingBy(f -> pairCarrierDay(f.getCarrier(), 
-                                                     f.getDate()),
+             .collect(groupingBy(f -> Pair.of(f.getCarrier(), f.getDate()),
                                  counting()))
              .entrySet()
              .stream()
              .sorted(comparingByValue(reverseOrder()))
              .limit(limit)
              .forEach(entry -> {
-                PairGroup<Carrier, LocalDate> key = entry.getKey();
-                builder.addRow(key.getFirst().getName(), 
-                               key.getSecond(), 
+                Pair<Carrier, LocalDate> key = entry.getKey();
+                builder.addRow(key.getLeft().getName(), 
+                               key.getRight(), 
                                entry.getValue());
              });
 

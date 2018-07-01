@@ -17,11 +17,11 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import org.apache.commons.lang3.tuple.Pair;
 import airtraffic.Airport;
 import airtraffic.Carrier;
 import airtraffic.Flight;
 import airtraffic.FlightDistanceRange;
-import airtraffic.PairGroup;
 import airtraffic.ReportContext;
 import airtraffic.Route;
 import airtraffic.annotations.IteratorStyle;
@@ -568,18 +568,17 @@ public class IteratorFlightReports implements FlightReports {
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
-         new CountingAccumulator<Flight, PairGroup<Airport, LocalDate>>() {
+         new CountingAccumulator<Flight, Pair<Airport, LocalDate>>() {
             @Override public boolean filter(Flight flight) {
                return flight.notCancelled();
             }
-            @Override public PairGroup<Airport, LocalDate> getKey(Flight flight) {
-               return new PairGroup<Airport, LocalDate>(flight.getOrigin(), 
-                                                        flight.getDate());
+            @Override public Pair<Airport, LocalDate> getKey(Flight flight) {
+               return Pair.of(flight.getOrigin(), flight.getDate());
             }
-            @Override public void forEach(Entry<PairGroup<Airport, LocalDate>, Long> entry) {
-               PairGroup<Airport, LocalDate> key = entry.getKey();
-               builder.addRow(key.getFirst().getName(), 
-                              key.getSecond(), 
+            @Override public void forEach(Entry<Pair<Airport, LocalDate>, Long> entry) {
+               Pair<Airport, LocalDate> key = entry.getKey();
+               builder.addRow(key.getLeft().getName(), 
+                              key.getRight(), 
                               entry.getValue());
             }
          }
@@ -598,18 +597,17 @@ public class IteratorFlightReports implements FlightReports {
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
-         new CountingAccumulator<Flight, PairGroup<Carrier, LocalDate>>() {
+         new CountingAccumulator<Flight, Pair<Carrier, LocalDate>>() {
             @Override public boolean filter(Flight flight) {
                return flight.notCancelled();
             }
-            @Override public PairGroup<Carrier, LocalDate> getKey(Flight flight) {
-               return new PairGroup<Carrier, LocalDate>(flight.getCarrier(), 
-                                                        flight.getDate());
+            @Override public Pair<Carrier, LocalDate> getKey(Flight flight) {
+               return Pair.of(flight.getCarrier(), flight.getDate());
             }
-            @Override public void forEach(Entry<PairGroup<Carrier, LocalDate>, Long> entry) {
-               PairGroup<Carrier, LocalDate> key = entry.getKey();
-               builder.addRow(key.getFirst().getName(), 
-                              key.getSecond(), 
+            @Override public void forEach(Entry<Pair<Carrier, LocalDate>, Long> entry) {
+               Pair<Carrier, LocalDate> key = entry.getKey();
+               builder.addRow(key.getLeft().getName(), 
+                              key.getRight(), 
                               entry.getValue());
             }
          }
