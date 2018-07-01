@@ -63,6 +63,7 @@ public class StreamCarrierReports implements CarrierReports {
              .sorted(comparing(CarrierMetrics::getSubject))
              .forEach(metrics -> {
                 builder.addRow(metrics.getSubject().getCode(),
+                               metrics.getSubject().getName(),
                                metrics.getTotalFlights(),
                                metrics.getCancellationRate(),
                                metrics.getDiversionRate(),

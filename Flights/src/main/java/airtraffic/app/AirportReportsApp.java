@@ -15,12 +15,8 @@ public class AirportReportsApp extends AbstractReportsApp<AirportReports> {
       new AirportReportsApp().executeSelectedReport();
    }
 
-   @Override
-   protected AirportReports impl() {
-      return getBean(AirportReports.class);
-   }
-
    public void reportAirportMetrics(ReportContext context) {
+      AirportReports impl = getBean(AirportReports.class, getStyleAnnotation());
       context.setYear(readYear());
 
       TextTerminal<?> terminal = context.getTerminal();
@@ -28,7 +24,7 @@ public class AirportReportsApp extends AbstractReportsApp<AirportReports> {
       terminal.println("Total        Cancelled %   Diverted %");
       terminal.println(repeat("-", 82));
 
-      ResultSet rs = impl().reportAirportMetrics(context);
+      ResultSet rs = impl.reportAirportMetrics(context);
       try {
          while (rs.next()) {
             terminal.printf("%3s     %-30s     %,9d    %6.1f        %6.1f\n", 
@@ -44,13 +40,14 @@ public class AirportReportsApp extends AbstractReportsApp<AirportReports> {
    }
 
    public void reportAirportsForState(ReportContext context) throws ReportException {
+      AirportReports impl = getBean(AirportReports.class, getStyleAnnotation());
       context.setState(readState());
 
       TextTerminal<?> terminal = context.getTerminal();
       terminal.println("\nIATA\tAirport Name\t\t\t\t\tCity");
       terminal.println(repeat("-", 77));
 
-      ResultSet rs = impl().reportAirportsForState(context);
+      ResultSet rs = impl.reportAirportsForState(context);
       try {
          while (rs.next()) {
             terminal.printf("%3s\t%-40s\t%-20s\n", 
@@ -64,13 +61,14 @@ public class AirportReportsApp extends AbstractReportsApp<AirportReports> {
    }
 
    public void reportAirportsNearLocation(ReportContext context) throws ReportException {
+      AirportReports impl = getBean(AirportReports.class, getStyleAnnotation());
       context.setLocation(readGeoLocation()).setDistance(readDistanceInMiles());
 
       TextTerminal<?> terminal = context.getTerminal();
       terminal.println("\nIATA\tAirport Name\t\t\t\t\tState\tCity\t\tDistance");
       terminal.println(repeat("-", 89));
 
-      ResultSet rs = impl().reportAirportsNearLocation(context);
+      ResultSet rs = impl.reportAirportsNearLocation(context);
       try {
          while (rs.next()) {
             terminal.printf("%3s\t%-40s\t %2s\t%-15s    %,4.0f\n", 
@@ -87,13 +85,14 @@ public class AirportReportsApp extends AbstractReportsApp<AirportReports> {
 
    public void reportAirportsWithHighestCancellationRate(ReportContext context)
          throws ReportException {
+      AirportReports impl = getBean(AirportReports.class, getStyleAnnotation());
       context.setYear(readYear()).setLimit(readLimit(10, 1, 100));
 
       TextTerminal<?> terminal = context.getTerminal();
       terminal.println("\nIATA\tName\t\t\t\tRate");
       terminal.println(repeat("-", 47));
 
-      ResultSet rs = impl().reportAirportsWithHighestCancellationRate(context);
+      ResultSet rs = impl.reportAirportsWithHighestCancellationRate(context);
       try {
          while (rs.next()) {
             terminal.printf("%3s\t%-30s\t%6.1f\n", 

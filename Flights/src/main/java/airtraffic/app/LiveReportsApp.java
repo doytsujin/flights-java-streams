@@ -10,12 +10,8 @@ public class LiveReportsApp extends AbstractReportsApp<LiveReports> {
       new LiveReportsApp().executeSelectedReport();
    }
 
-   @Override
-   protected LiveReports impl() {
-      return getBean(LiveReports.class);
-   }
-
    public void reportAirportMetrics(ReportContext context) {
+      LiveReports impl = getBean(LiveReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setAirport(readAirport("Airport"));
 
@@ -24,10 +20,11 @@ public class LiveReportsApp extends AbstractReportsApp<LiveReports> {
       terminal.println("     Total\t Cancelled\t  Diverted\t   Origins\tDestinations");
       terminal.println(repeat("-", 77));
 
-      impl().reportAirportMetrics(context);
+      impl.reportAirportMetrics(context);
    }
 
    public void reportCarrierMetrics(ReportContext context) {
+      LiveReports impl = getBean(LiveReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setCarrier(readCarrier());
 
@@ -36,6 +33,6 @@ public class LiveReportsApp extends AbstractReportsApp<LiveReports> {
       terminal.println("     Total\t Cancelled\t  Diverted\t  Airports");
       terminal.println(repeat("-", 59));
 
-      impl().reportCarrierMetrics(context);
+      impl.reportCarrierMetrics(context);
    }
 }

@@ -14,16 +14,12 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       new FlightReportsApp().executeSelectedReport();
    }
 
-   @Override
-   protected FlightReports impl() {
-      return getBean(FlightReports.class);
-   }
-
    public void reportTotalFlightsFromOrigin(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setOrigin(readAirport("Origin"));
 
-      ResultSet rs = impl().reportTotalFlightsFromOrigin(context);
+      ResultSet rs = impl.reportTotalFlightsFromOrigin(context);
       try {
          if (rs.next()) {
             context.getTerminal().printf("Total flights from %s is %,d\n", 
@@ -36,9 +32,10 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportTotalFlightsToDestination(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setDestination(readAirport("Destination"));
-      ResultSet rs = impl().reportTotalFlightsToDestination(context);
+      ResultSet rs = impl.reportTotalFlightsToDestination(context);
       try {
          if (rs.next()) {
             context.getTerminal().printf("Total flights to %s is %,d\n",
@@ -51,11 +48,12 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportTotalFlightsFromOriginToDestination(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setOrigin(readAirport("Origin"))
              .setDestination(readAirport("Destination"));
 
-      ResultSet rs = impl().reportTotalFlightsFromOrigin(context);
+      ResultSet rs = impl.reportTotalFlightsFromOrigin(context);
       try {
          if (rs.next()) {
             context.getTerminal().printf("Total of %,d flights from %s (%s)\nto %s (%s)\n", 
@@ -71,6 +69,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportTopFlightsByOrigin(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -78,7 +77,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("\nOrigin\t\tCount");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = impl().reportTopFlightsByOrigin(context);
+      ResultSet rs = impl.reportTopFlightsByOrigin(context);
       try {
          while (rs.next()) {
             terminal.printf("%3s\t\t%,10d\n", 
@@ -91,6 +90,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportTopDestinationsFromOrigin(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setOrigin(readAirport("Origin"))
              .setLimit(readLimit(10, 1, 100));
@@ -100,7 +100,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Destination\t   Count");
       terminal.println(repeat("-", 30));
 
-      ResultSet rs = impl().reportTopDestinationsFromOrigin(context);
+      ResultSet rs = impl.reportTopDestinationsFromOrigin(context);
       try {
          while(rs.next()) {
             terminal.printf("%3s\t\t%,10d\n", 
@@ -113,6 +113,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportMostPopularRoutes(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -120,7 +121,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Route\t\t    Count");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = impl().reportMostPopularRoutes(context);
+      ResultSet rs = impl.reportMostPopularRoutes(context);
       try {
          while(rs.next()) {
             terminal.printf("%s\t%,10d\n", 
@@ -133,6 +134,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportWorstAverageDepartureDelayByOrigin(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -140,7 +142,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Origin\tDelay (min)");
       terminal.println(repeat("-", 22));
 
-      ResultSet rs = impl().reportWorstAverageDepartureDelayByOrigin(context);
+      ResultSet rs = impl.reportWorstAverageDepartureDelayByOrigin(context);
       try {
          while(rs.next()) {
             terminal.printf("%3s\t\t%.0f\n", 
@@ -153,6 +155,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportWorstAverageArrivalDelayByDestination(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -160,7 +163,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Destination\tDelay (min)");
       terminal.println(repeat("-", 28));
 
-      ResultSet rs = impl().reportWorstAverageArrivalDelayByDestination(context);
+      ResultSet rs = impl.reportWorstAverageArrivalDelayByDestination(context);
       try {
          while(rs.next()) {
             terminal.printf("%3s\t\t%.0f\n",  
@@ -173,6 +176,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportMostCancelledFlightsByOrigin(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -180,7 +184,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Origin\t\t  Count");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = impl().reportMostCancelledFlightsByOrigin(context);
+      ResultSet rs = impl.reportMostCancelledFlightsByOrigin(context);
       try {
          while(rs.next()) {
             terminal.printf("%3s\t\t%,8d\n", 
@@ -193,6 +197,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportTotalFlightsByOriginState(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -200,7 +205,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("State\t  Count");
       terminal.println(repeat("-", 19));
 
-      ResultSet rs = impl().reportTotalFlightsByOriginState(context);
+      ResultSet rs = impl.reportTotalFlightsByOriginState(context);
       try {
          while(rs.next()) {
             terminal.printf("%2s\t%,10d\n",
@@ -213,6 +218,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportTotalFlightsByDestinationState(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -220,7 +226,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("State\tCount");
       terminal.println(repeat("-", 19));
 
-      ResultSet rs = impl().reportTotalFlightsByDestinationState(context);
+      ResultSet rs = impl.reportTotalFlightsByDestinationState(context);
       try {
          while(rs.next()) {
             terminal.printf("%2s\t%,10d\n",
@@ -249,6 +255,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportLongestFlights(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -256,11 +263,12 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Flight #     Date\tCarrier\tOrigin\tDestination\tDistance");
       terminal.println(repeat("-", 65));
 
-      ResultSet rs = impl().reportLongestFlights(context);
+      ResultSet rs = impl.reportLongestFlights(context);
       printFlights(terminal, rs);
    }
 
    public void reportShortestFlights(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -268,18 +276,19 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Flight #     Date\tCarrier\tOrigin\tDestination\tDistance");
       terminal.println(repeat("-", 65));
 
-      ResultSet rs = impl().reportShortestFlights(context);
+      ResultSet rs = impl.reportShortestFlights(context);
       printFlights(terminal, rs);
    }
 
    public void reportTotalFlightsByDistanceRange(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear());
 
       TextTerminal<?> terminal = context.getTerminal();
       terminal.println("Range\t\tCount");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = impl().reportTotalFlightsByDistanceRange(context);
+      ResultSet rs = impl.reportTotalFlightsByDistanceRange(context);
       try {
          while(rs.next()) {
             terminal.printf("%-10s\t%,10d\n", 
@@ -292,6 +301,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportDaysWithLeastCancellations(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -299,7 +309,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Date\t\tCount");
       terminal.println(repeat("-", 24));
 
-      ResultSet rs = impl().reportDaysWithLeastCancellations(context);
+      ResultSet rs = impl.reportDaysWithLeastCancellations(context);
       try {
          while(rs.next()) {
             terminal.printf("%-10s       %,3d\n", 
@@ -312,6 +322,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportDaysWithMostCancellations(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -319,7 +330,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Date\t\tCount");
       terminal.println(repeat("-", 24));
 
-      ResultSet rs = impl().reportDaysWithMostCancellations(context);
+      ResultSet rs = impl.reportDaysWithMostCancellations(context);
       try {
          while(rs.next()) {
             terminal.printf("%-10s       %,3d\n", 
@@ -332,6 +343,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportTotalMonthlyFlights(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -339,7 +351,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Month\t\tCount");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs= impl().reportTotalMonthlyFlights(context);
+      ResultSet rs= impl.reportTotalMonthlyFlights(context);
       try {
          while(rs.next()) {
             terminal.printf("%s\t%,10d\n", 
@@ -352,6 +364,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportTotalDailyFlights(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -359,7 +372,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Day\t\t   Count");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = impl().reportTotalDailyFlights(context);
+      ResultSet rs = impl.reportTotalDailyFlights(context);
       try {
          while(rs.next()) {
             terminal.printf("%s\t%,10d\n",
@@ -372,13 +385,14 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportTotalFlightsByDayOfWeek(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear());
 
       TextTerminal<?> terminal = context.getTerminal();
       terminal.println("Day of Week\t   Count");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = impl().reportTotalFlightsByDayOfWeek(context);
+      ResultSet rs = impl.reportTotalFlightsByDayOfWeek(context);
       try {
          while(rs.next()) {
             terminal.printf("%10s\t%,10d\n",
@@ -391,6 +405,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportMostFlightsByDay(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -398,7 +413,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Day\t\t   Count");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = impl().reportMostFlightsByDay(context);
+      ResultSet rs = impl.reportMostFlightsByDay(context);
       try {
          while(rs.next()) {
             terminal.printf("%s\t%,10d\n",
@@ -411,6 +426,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportLeastFlightsByDay(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -418,7 +434,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Day\t\t   Count");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = impl().reportLeastFlightsByDay(context);
+      ResultSet rs = impl.reportLeastFlightsByDay(context);
       try {
          while(rs.next()) {
             terminal.printf("%s\t%,10d\n",
@@ -431,6 +447,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportMostFlightsByOriginByDay(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -438,7 +455,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Origin\t\t\t\tDate\t\t     Count");
       terminal.println(repeat("-", 59));
 
-      ResultSet rs = impl().reportMostFlightsByOriginByDay(context);
+      ResultSet rs = impl.reportMostFlightsByOriginByDay(context);
       try {
          while(rs.next()) {
             terminal.printf("%-30s\t%s\t%,10d\n",
@@ -452,6 +469,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportMostFlightsByCarrierByDay(ReportContext context) {
+      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -459,7 +477,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Carrier\t\t\t\tDate\t\t     Count");
       terminal.println(repeat("-", 59));
 
-      ResultSet rs = impl().reportMostFlightsByCarrierByDay(context);
+      ResultSet rs = impl.reportMostFlightsByCarrierByDay(context);
       try {
          while(rs.next()) {
             terminal.printf("%-30s\t%s\t%,10d\n",

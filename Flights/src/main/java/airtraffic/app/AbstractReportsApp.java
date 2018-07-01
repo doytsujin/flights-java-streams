@@ -37,10 +37,8 @@ public abstract class AbstractReportsApp<T> {
    private final SeContainer container = SeContainerInitializer.newInstance()
                                                                .initialize();
 
-   protected abstract T impl();
-
-   protected T getBean(Class<T> klass) {
-      return container.select(klass, getStyleAnnotation()).get();
+   protected T getBean(Class<T> klass, Annotation annotation) {
+      return container.select(klass, annotation).get();
    }
 
    protected Annotation getStyleAnnotation() {
@@ -132,7 +130,10 @@ public abstract class AbstractReportsApp<T> {
          terminal.println(years.toString());
          year = readYear(min, year);
       } else {
-         terminal.println("There is flight data for the year " + year);
+         terminal.printf("There is flight data for the year %d%s", 
+                         year, 
+                         System.lineSeparator());
+         terminal.println();
       }
       return year;
    }

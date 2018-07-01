@@ -14,12 +14,8 @@ public class CarrierReportsApp extends AbstractReportsApp<CarrierReports> {
       new CarrierReportsApp().executeSelectedReport();
    }
 
-   @Override
-   protected CarrierReports impl() {
-      return getBean(CarrierReports.class);
-   }
-
    public void reportMostCancelledFlightsByCarrier(ReportContext context) {
+      CarrierReports impl = getBean(CarrierReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -27,7 +23,7 @@ public class CarrierReportsApp extends AbstractReportsApp<CarrierReports> {
       terminal.println("Carrier\t\t\t\t Count");
       terminal.println("-----------------------------------------");
 
-      ResultSet rs = impl().reportMostCancelledFlightsByCarrier(context);
+      ResultSet rs = impl.reportMostCancelledFlightsByCarrier(context);
       try {
          while(rs.next()) {
             terminal.printf("%-24s\t%,8d\n", 
@@ -40,6 +36,7 @@ public class CarrierReportsApp extends AbstractReportsApp<CarrierReports> {
    }
 
    public void reportCarrierMetrics(ReportContext context) {
+      CarrierReports impl = getBean(CarrierReports.class, getStyleAnnotation());
       context.setYear(readYear());
 
       TextTerminal<?> terminal = context.getTerminal();
@@ -47,7 +44,7 @@ public class CarrierReportsApp extends AbstractReportsApp<CarrierReports> {
       terminal.println("Total        Cancelled %   Diverted %    Airports");
       terminal.println(repeat("-", 94));
 
-      ResultSet rs = impl().reportCarrierMetrics(context);
+      ResultSet rs = impl.reportCarrierMetrics(context);
       try {
          while(rs.next()) {
             terminal.printf(" %2s     %-30s     %,9d    %6.1f        %6.1f         %,5d\n",
@@ -56,7 +53,7 @@ public class CarrierReportsApp extends AbstractReportsApp<CarrierReports> {
                             rs.getInt("TotalFlights"),
                             rs.getDouble("CancellationRate") * 100.0,
                             rs.getDouble("DiversionRate") * 100.0,
-                            rs.getDouble("TotalAirports"));
+                            rs.getInt("TotalAirports"));
          }
       } catch (SQLException e) {
          throw new ReportException(e);
@@ -64,6 +61,7 @@ public class CarrierReportsApp extends AbstractReportsApp<CarrierReports> {
    }
 
    public void reportCarriersWithHighestCancellationRate(ReportContext context) {
+      CarrierReports impl = getBean(CarrierReports.class, getStyleAnnotation());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -71,7 +69,7 @@ public class CarrierReportsApp extends AbstractReportsApp<CarrierReports> {
       terminal.println("Carrier                           Rate");
       terminal.println("---------------------------------------");
 
-      ResultSet rs = impl().reportCarriersWithHighestCancellationRate(context);
+      ResultSet rs = impl.reportCarriersWithHighestCancellationRate(context);
       try {
          while(rs.next()) {
             terminal.printf("%-30s\t%6.1f\n", 
