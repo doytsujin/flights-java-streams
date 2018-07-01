@@ -1,17 +1,18 @@
 package airtraffic.reports;
 
+import java.sql.ResultSet;
 import airtraffic.ReportContext;
 
 public interface PlaneReports {
-   void reportTotalPlanesByManfacturer(ReportContext context);
-   void reportTotalPlanesByYear(ReportContext context);
-   void reportTotalPlanesByAircraftType(ReportContext context);
-   void reportTotalPlanesByEngineType(ReportContext context);
-   void reportPlanesWithMostCancellations(ReportContext context);
-   void reportMostFlightsByPlane(ReportContext context);
-   void reportMostFlightsByPlaneModel(ReportContext context);
-   void reportTotalFlightsByPlaneManufacturer(ReportContext context);
-   void reportTotalFlightsByPlaneAgeRange(ReportContext context);
-   void reportTotalFlightsByAircraftType(ReportContext context);
-   void reportTotalFlightsByEngineType(ReportContext context);
+   ResultSet reportTotalPlanesByManfacturer(ReportContext context);
+   ResultSet reportTotalPlanesByYear(ReportContext context);
+   ResultSet reportTotalPlanesByAircraftType(ReportContext context);
+   ResultSet reportTotalPlanesByEngineType(ReportContext context);
+   ResultSet reportPlanesWithMostCancellations(ReportContext context);
+   ResultSet reportMostFlightsByPlane(ReportContext context);
+   ResultSet reportMostFlightsByPlaneModel(ReportContext context);
+   ResultSet reportTotalFlightsByPlaneManufacturer(ReportContext context);
+   ResultSet reportTotalFlightsByPlaneAgeRange(ReportContext context);
+   ResultSet reportTotalFlightsByAircraftType(ReportContext context);
+   ResultSet reportTotalFlightsByEngineType(ReportContext context);
 }

@@ -4,21 +4,21 @@ import static airtraffic.reports.iterator.AccumulatorHelper.accumulate;
 import static java.util.Comparator.reverseOrder;
 import static java.util.Map.Entry.comparingByKey;
 import static java.util.Map.Entry.comparingByValue;
-import static org.apache.commons.lang3.StringUtils.left;
-
+import java.sql.ResultSet;
+import java.sql.Types;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
-
 import airtraffic.Flight;
 import airtraffic.Plane;
 import airtraffic.Plane.AircraftType;
 import airtraffic.Plane.EngineType;
-import airtraffic.reports.PlaneReports;
 import airtraffic.PlaneAgeRange;
 import airtraffic.PlaneModel;
 import airtraffic.ReportContext;
+import airtraffic.jdbc.ResultSetBuilder;
+import airtraffic.reports.PlaneReports;
 
 /**
  * Generate various airplane statistics using Java iterators.
@@ -35,8 +35,11 @@ public class IteratorPlaneReports implements PlaneReports {
                     PlaneAgeRange.between(41,  50),
                     PlaneAgeRange.between(51, 100));
 
-   public void reportTotalPlanesByManfacturer(ReportContext context) {
+   public ResultSet reportTotalPlanesByManfacturer(ReportContext context) {
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Manufacturer", Types.VARCHAR)
+                                  .addColumn("TotalPlanes", Types.INTEGER);
 
       Iterator<Plane> iterator = context.getRepository().getPlaneIterator();
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
@@ -48,15 +51,19 @@ public class IteratorPlaneReports implements PlaneReports {
                return plane.getManufacturer();
             }
             @Override public void forEach(Entry<String, Long> entry) {
-               context.getTerminal()
-                      .printf("%-25s\t%5d\n", entry.getKey(), entry.getValue());
+               builder.addRow(entry.getKey(), entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportTotalPlanesByYear(ReportContext context) {
+   public ResultSet reportTotalPlanesByYear(ReportContext context) {
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Year", Types.INTEGER)
+                                  .addColumn("TotalPlanes", Types.INTEGER);
 
       Iterator<Plane> iterator = context.getRepository().getPlaneIterator();
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
@@ -68,15 +75,19 @@ public class IteratorPlaneReports implements PlaneReports {
                return plane.getYear();
             }
             @Override public void forEach(Entry<Integer, Long> entry) {
-               context.getTerminal()
-                      .printf("%4d\t%5d\n", entry.getKey(), entry.getValue());
+               builder.addRow(entry.getKey(), entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportTotalPlanesByAircraftType(ReportContext context) {
+   public ResultSet reportTotalPlanesByAircraftType(ReportContext context) {
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Type", Types.JAVA_OBJECT)
+                                  .addColumn("TotalPlanes", Types.INTEGER);
 
       Iterator<Plane> iterator = context.getRepository().getPlaneIterator();
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
@@ -88,15 +99,19 @@ public class IteratorPlaneReports implements PlaneReports {
                return plane.getAircraftType();
             }
             @Override public void forEach(Entry<AircraftType, Long> entry) {
-               context.getTerminal()
-                      .printf("%-25s\t%5d\n", entry.getKey(), entry.getValue());
+               builder.addRow(entry.getKey(), entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportTotalPlanesByEngineType(ReportContext context) {
+   public ResultSet reportTotalPlanesByEngineType(ReportContext context) {
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Type", Types.JAVA_OBJECT)
+                                  .addColumn("TotalPlanes", Types.INTEGER);
 
       Iterator<Plane> iterator = context.getRepository().getPlaneIterator();
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
@@ -108,16 +123,20 @@ public class IteratorPlaneReports implements PlaneReports {
                return plane.getEngineType();
             }
             @Override public void forEach(Entry<EngineType, Long> entry) {
-               context.getTerminal()
-                      .printf("%-25s\t%5d\n", entry.getKey(), entry.getValue());
+               builder.addRow(entry.getKey(), entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportPlanesWithMostCancellations(ReportContext context) {
+   public ResultSet reportPlanesWithMostCancellations(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+         new ResultSetBuilder().addColumn("TailNumber", Types.VARCHAR)
+                               .addColumn("TotalCancellations", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
@@ -129,16 +148,22 @@ public class IteratorPlaneReports implements PlaneReports {
                return flight.getTailNumber();
             }
             @Override public void forEach(Entry<String, Long> entry) {
-               context.getTerminal()
-                      .printf("%-8s\t%,6d\n", entry.getKey(), entry.getValue());
+               builder.addRow(entry.getKey(), entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportMostFlightsByPlane(ReportContext context) {
+   public ResultSet reportMostFlightsByPlane(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+         new ResultSetBuilder().addColumn("TailNumber", Types.VARCHAR)
+                               .addColumn("Manufacturer", Types.VARCHAR)
+                               .addColumn("ModelNumber", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
@@ -151,20 +176,25 @@ public class IteratorPlaneReports implements PlaneReports {
             }
             @Override public void forEach(Entry<Plane, Long> entry) {
                Plane plane = entry.getKey();
-               context.getTerminal()
-                      .printf("%-8s  %-20s  %-10s  %,10d\n", 
-                              plane.getTailNumber(), 
-                              left(plane.getManufacturer(), 20),
-                              left(plane.getModel().getModelNumber(), 10),
+               builder.addRow(plane.getTailNumber(), 
+                              plane.getManufacturer(),
+                              plane.getModel().getModelNumber(),
                               entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportMostFlightsByPlaneModel(ReportContext context) {
+   public ResultSet reportMostFlightsByPlaneModel(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+         new ResultSetBuilder().addColumn("Manufacturer", Types.VARCHAR)
+                               .addColumn("ModelNumber", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER)
+                               .addColumn("DailyAverage", Types.FLOAT);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
@@ -179,20 +209,23 @@ public class IteratorPlaneReports implements PlaneReports {
             @Override public void forEach(Entry<PlaneModel, Long> entry) {
                PlaneModel model = entry.getKey();
                Long count = entry.getValue();
-               context.getTerminal()
-                      .printf("%-25s\t%-20s\t%,10d\t%8.1f",
-                              model.getManufacturer(),
+               builder.addRow(model.getManufacturer(),
                               model.getModelNumber(),
                               count,
                               count.floatValue() / 365);
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportTotalFlightsByPlaneManufacturer(ReportContext context) {
+   public ResultSet reportTotalFlightsByPlaneManufacturer(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+         new ResultSetBuilder().addColumn("Manufacturer", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
@@ -204,18 +237,20 @@ public class IteratorPlaneReports implements PlaneReports {
                return flight.getPlane().getManufacturer();
             }
             @Override public void forEach(Entry<String, Long> entry) {
-               context.getTerminal()
-                      .printf("%-25s\t%,10d\n", 
-                              entry.getKey(), 
-                              entry.getValue());
+               builder.addRow(entry.getKey(), entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportTotalFlightsByPlaneAgeRange(ReportContext context) {
+   public ResultSet reportTotalFlightsByPlaneAgeRange(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Range", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByKey(), limit, 
@@ -233,18 +268,20 @@ public class IteratorPlaneReports implements PlaneReports {
                throw new IllegalStateException("No range for age of " + age);
             }
             @Override public void forEach(Entry<PlaneAgeRange, Long> entry) {
-               context.getTerminal()
-                      .printf("%-10s\t%,10d\n", 
-                              entry.getKey(), 
-                              entry.getValue());
+               builder.addRow(entry.getKey(), entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportTotalFlightsByAircraftType(ReportContext context) {
+   public ResultSet reportTotalFlightsByAircraftType(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Type", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
@@ -256,18 +293,20 @@ public class IteratorPlaneReports implements PlaneReports {
                return flight.getPlane().getAircraftType().name();
             }
             @Override public void forEach(Entry<String, Long> entry) {
-               context.getTerminal()
-                      .printf("%-25s\t%,10d\n", 
-                              entry.getKey(), 
-                              entry.getValue());
+               builder.addRow(entry.getKey(), entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 
-   public void reportTotalFlightsByEngineType(ReportContext context) {
+   public ResultSet reportTotalFlightsByEngineType(ReportContext context) {
       final int year = context.getYear();
       final int limit = context.getLimit();
+      final ResultSetBuilder builder = 
+            new ResultSetBuilder().addColumn("Type", Types.VARCHAR)
+                                  .addColumn("TotalFlights", Types.INTEGER);
 
       Iterator<Flight> iterator = context.getRepository().getFlightIterator(year);
       accumulate(iterator, comparingByValue(reverseOrder()), limit, 
@@ -279,12 +318,11 @@ public class IteratorPlaneReports implements PlaneReports {
                return flight.getPlane().getEngineType().name();
             }
             @Override public void forEach(Entry<String, Long> entry) {
-               context.getTerminal()
-                      .printf("%-25s\t%,10d\n", 
-                              entry.getKey(), 
-                              entry.getValue());
+               builder.addRow(entry.getKey(), entry.getValue());
             }
          }
       );
+
+      return builder.build();
    }
 }
