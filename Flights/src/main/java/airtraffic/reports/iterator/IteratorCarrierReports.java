@@ -18,6 +18,12 @@ import airtraffic.metrics.CarrierMetrics;
 import airtraffic.reports.CarrierReports;
 
 
+/**
+ * Implementation of carrier reports using iterator style that was common in
+ * Java 7 and earlier versions.
+ *
+ * @author Tony Piazza <tony@piazzaconsulting.com>
+ */
 @IteratorStyle
 public class IteratorCarrierReports implements CarrierReports {
    @Override

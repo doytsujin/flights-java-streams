@@ -9,6 +9,12 @@ import airtraffic.ReportContext;
 import airtraffic.reports.FlightReports;
 import airtraffic.reports.ReportException;
 
+
+/**
+ * Provides methods for executing each of the flight reports.
+ *
+ * @author Tony Piazza <tony@piazzaconsulting.com>
+ */
 public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    public static void main(String[] args) throws Exception {
       new FlightReportsApp().executeSelectedReport();

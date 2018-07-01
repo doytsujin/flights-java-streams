@@ -25,6 +25,13 @@ import airtraffic.Repository;
 import airtraffic.annotations.IteratorStyle;
 import airtraffic.annotations.StreamStyle;
 
+
+/**
+ * Base class for report apps that provides a bunch of useful methods needed
+ * by implementations.
+ *
+ * @author Tony Piazza <tony@piazzaconsulting.com>
+ */
 public abstract class AbstractReportsApp<T> {
    private static final String METHOD_NAME_PREFIX = "report";
    private static final int METHOD_PARAMETER_COUNT = 1;

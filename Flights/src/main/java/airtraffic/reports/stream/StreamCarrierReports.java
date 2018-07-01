@@ -17,6 +17,12 @@ import airtraffic.metrics.CarrierMetrics;
 import airtraffic.reports.CarrierReports;
 
 
+/**
+ * Implementation of carrier reports using streams style that was introduced
+ * in Java 8.
+ *
+ * @author Tony Piazza <tony@piazzaconsulting.com>
+ */
 @StreamStyle
 public class StreamCarrierReports implements CarrierReports {
    @Override

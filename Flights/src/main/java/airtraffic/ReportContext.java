@@ -2,6 +2,13 @@ package airtraffic;
 
 import org.beryx.textio.TextTerminal;
 
+
+/**
+ * Provides a convenient way to pass around settings used by most report
+ * implementations.
+ *
+ * @author Tony Piazza <tony@piazzaconsulting.com>
+ */
 public final class ReportContext {
    private String state;
    private Airport airport;

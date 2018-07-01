@@ -9,6 +9,12 @@ import airtraffic.ReportContext;
 import airtraffic.reports.PlaneReports;
 import airtraffic.reports.ReportException;
 
+
+/**
+ * Provides methods for executing each of the plane reports.
+ *
+ * @author Tony Piazza <tony@piazzaconsulting.com>
+ */
 public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
    public static void main(String[] args) throws Exception {
       new PlaneReportsApp().executeSelectedReport();

@@ -22,7 +22,8 @@ import airtraffic.jdbc.ResultSetBuilder;
 import airtraffic.reports.PlaneReports;
 
 /**
- * Generate various airplane statistics using Java iterators.
+ * Implementation of plane reports using iterator style that was common in
+ * Java 7 and earlier versions.
  *
  * @author Tony Piazza <tony@piazzaconsulting.com>
  */

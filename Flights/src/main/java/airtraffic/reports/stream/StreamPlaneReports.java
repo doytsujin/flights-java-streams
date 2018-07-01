@@ -19,7 +19,8 @@ import airtraffic.jdbc.ResultSetBuilder;
 import airtraffic.reports.PlaneReports;
 
 /**
- * Generate various airplane statistics using Java 8 streams.
+ * Implementation of plane reports using streams style that was introduced
+ * in Java 8.
  *
  * @author Tony Piazza <tony@piazzaconsulting.com>
  */

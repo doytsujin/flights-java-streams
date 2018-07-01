@@ -14,6 +14,12 @@ import airtraffic.metrics.CarrierMetrics;
 import airtraffic.reports.LiveReports;
 
 
+/**
+ * Implementation of live reports using iterator style that was common in
+ * Java 7 and earlier versions.
+ *
+ * @author Tony Piazza <tony@piazzaconsulting.com>
+ */
 @IteratorStyle
 public class IteratorLiveReports implements LiveReports {
 

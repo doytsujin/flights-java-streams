@@ -24,6 +24,12 @@ import airtraffic.metrics.AirportMetrics;
 import airtraffic.reports.AirportReports;
 
 
+/**
+ * Implementation of airport reports using iterator style that was common in
+ * Java 7 and earlier versions.
+ *
+ * @author Tony Piazza <tony@piazzaconsulting.com>
+ */
 @IteratorStyle
 public class IteratorAirportReports implements AirportReports {
    @Override

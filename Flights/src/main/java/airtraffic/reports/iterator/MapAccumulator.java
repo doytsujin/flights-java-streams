@@ -3,7 +3,8 @@ package airtraffic.reports.iterator;
 import java.util.Map.Entry;
 
 /**
- * Specifies behavior needed for accumulation using Maps.
+ * Interface that describes methods needed to support an accumulator based
+ * on a Map.
  *
  * @author Tony Piazza <tony@piazzaconsulting.com>
  */

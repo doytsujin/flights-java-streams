@@ -19,6 +19,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.reflect.ClassPath;
 
+
+/**
+ * Class that discovers and makes available all report apps.
+ *
+ * @author Tony Piazza <tony@piazzaconsulting.com>
+ */
 public final class ReportsApp {
    private final Logger logger = LoggerFactory.getLogger(ReportsApp.class);
    private final TextIO io = TextIoFactory.getTextIO();

@@ -9,6 +9,12 @@ import airtraffic.ReportContext;
 import airtraffic.reports.CarrierReports;
 import airtraffic.reports.ReportException;
 
+
+/**
+ * Provides methods for executing each of the carrier reports.
+ *
+ * @author Tony Piazza <tony@piazzaconsulting.com>
+ */
 public class CarrierReportsApp extends AbstractReportsApp<CarrierReports> {
    public static void main(String[] args) throws Exception {
       new CarrierReportsApp().executeSelectedReport();

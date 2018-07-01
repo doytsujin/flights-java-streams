@@ -5,6 +5,12 @@ import java.util.function.Function;
 
 import org.apache.commons.lang3.Range;
 
+
+/**
+ * Represents a range of plane ages.
+ *
+ * @author Tony Piazza <tony@piazzaconsulting.com>
+ */
 public class PlaneAgeRange implements Comparable<PlaneAgeRange> {
    private Range<Integer> range;
 

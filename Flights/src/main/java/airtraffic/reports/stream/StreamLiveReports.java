@@ -11,6 +11,12 @@ import airtraffic.metrics.CarrierMetrics;
 import airtraffic.reports.LiveReports;
 
 
+/**
+ * Implementation of live reports using streams style that was introduced
+ * in Java 8.
+ *
+ * @author Tony Piazza <tony@piazzaconsulting.com>
+ */
 @StreamStyle
 public class StreamLiveReports implements LiveReports {
    @Override

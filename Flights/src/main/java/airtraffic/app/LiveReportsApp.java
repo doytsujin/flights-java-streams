@@ -5,6 +5,12 @@ import org.beryx.textio.TextTerminal;
 import airtraffic.ReportContext;
 import airtraffic.reports.LiveReports;
 
+
+/**
+ * Provides methods for executing each of the live reports.
+ *
+ * @author Tony Piazza <tony@piazzaconsulting.com>
+ */
 public class LiveReportsApp extends AbstractReportsApp<LiveReports> {
    public static void main(String[] args) throws Exception {
       new LiveReportsApp().executeSelectedReport();

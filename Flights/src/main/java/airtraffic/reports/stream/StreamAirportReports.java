@@ -18,8 +18,9 @@ import airtraffic.reports.AirportReports;
 
 
 /**
- * Generate various airport statistics using Java 8 streams.
- * 
+ * Implementation of airport reports using streams style that was introduced
+ * in Java 8.
+ *
  * @author Tony Piazza <tony@piazzaconsulting.com>
  */
 @StreamStyle

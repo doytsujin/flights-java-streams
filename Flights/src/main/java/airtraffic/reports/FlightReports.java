@@ -4,6 +4,12 @@ import java.sql.ResultSet;
 import java.time.format.DateTimeFormatter;
 import airtraffic.ReportContext;
 
+
+/**
+ * Interface that describes all of the flight reports.
+ *
+ * @author Tony Piazza <tony@piazzaconsulting.com>
+ */
 public interface FlightReports {
    DateTimeFormatter YEAR_MONTH_FORMAT = 
          DateTimeFormatter.ofPattern("MMM yyyy");

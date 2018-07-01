@@ -10,6 +10,11 @@ import airtraffic.reports.AirportReports;
 import airtraffic.reports.ReportException;
 
 
+/**
+ * Provides methods for executing each of the airport reports.
+ *
+ * @author Tony Piazza <tony@piazzaconsulting.com>
+ */
 public class AirportReportsApp extends AbstractReportsApp<AirportReports> {
    public static void main(String[] args) throws Exception {
       new AirportReportsApp().executeSelectedReport();

@@ -25,8 +25,9 @@ import airtraffic.jdbc.ResultSetBuilder;
 import airtraffic.reports.FlightReports;
 
 /**
- * Generate various flight statistics using Java 8 streams.
- * 
+ * Implementation of flight reports using streams style that was introduced
+ * in Java 8.
+ *
  * @author Tony Piazza <tony@piazzaconsulting.com>
  */
 @StreamStyle
