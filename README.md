@@ -17,7 +17,7 @@ obviously limits what you can do with the data in those cases.
 
 The structure of the project can be seen in the following picture.
 
-![Eclipse Project File Structure](https://i.imgur.com/yGJhebX.gif)
+![Eclipse Project File Structure](https://i.imgur.com/sZmVGwR.gif)
 
 The project makes extensive using of the following domain classes:
 
