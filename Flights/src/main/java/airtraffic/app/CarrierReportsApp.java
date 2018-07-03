@@ -29,8 +29,7 @@ public class CarrierReportsApp extends AbstractReportsApp<CarrierReports> {
       terminal.println("Carrier\t\t\t\t Count");
       terminal.println("-----------------------------------------");
 
-      ResultSet rs = impl.reportMostCancelledFlightsByCarrier(context);
-      try {
+      try (ResultSet rs = impl.reportMostCancelledFlightsByCarrier(context)) {
          while(rs.next()) {
             terminal.printf("%-24s\t%,8d\n", 
                             left(rs.getString("Name"), 24), 
@@ -50,8 +49,7 @@ public class CarrierReportsApp extends AbstractReportsApp<CarrierReports> {
       terminal.println("Total        Cancelled %   Diverted %    Airports");
       terminal.println(repeat("-", 94));
 
-      ResultSet rs = impl.reportCarrierMetrics(context);
-      try {
+      try (ResultSet rs = impl.reportCarrierMetrics(context)) {
          while(rs.next()) {
             terminal.printf(" %2s     %-30s     %,9d    %6.1f        %6.1f         %,5d\n",
                             rs.getString("Code"),
@@ -75,8 +73,7 @@ public class CarrierReportsApp extends AbstractReportsApp<CarrierReports> {
       terminal.println("Carrier                           Rate");
       terminal.println("---------------------------------------");
 
-      ResultSet rs = impl.reportCarriersWithHighestCancellationRate(context);
-      try {
+      try (ResultSet rs = impl.reportCarriersWithHighestCancellationRate(context)) {
          while(rs.next()) {
             terminal.printf("%-30s\t%6.1f\n", 
                             left(rs.getString("Name"), 30), 

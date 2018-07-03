@@ -29,8 +29,7 @@ public class AirportReportsApp extends AbstractReportsApp<AirportReports> {
       terminal.println("Total        Cancelled %   Diverted %");
       terminal.println(repeat("-", 82));
 
-      ResultSet rs = impl.reportAirportMetrics(context);
-      try {
+      try (ResultSet rs = impl.reportAirportMetrics(context)) {
          while (rs.next()) {
             terminal.printf("%3s     %-30s     %,9d    %6.1f        %6.1f\n", 
                             rs.getString("IATA"),
@@ -52,8 +51,7 @@ public class AirportReportsApp extends AbstractReportsApp<AirportReports> {
       terminal.println("\nIATA\tAirport Name\t\t\t\t\tCity");
       terminal.println(repeat("-", 77));
 
-      ResultSet rs = impl.reportAirportsForState(context);
-      try {
+      try (ResultSet rs = impl.reportAirportsForState(context)) {
          while (rs.next()) {
             terminal.printf("%3s\t%-40s\t%-20s\n", 
                             rs.getString("IATA"), 
@@ -73,8 +71,7 @@ public class AirportReportsApp extends AbstractReportsApp<AirportReports> {
       terminal.println("\nIATA\tAirport Name\t\t\t\t\tState\tCity\t\tDistance");
       terminal.println(repeat("-", 89));
 
-      ResultSet rs = impl.reportAirportsNearLocation(context);
-      try {
+      try (ResultSet rs = impl.reportAirportsNearLocation(context)) {
          while (rs.next()) {
             terminal.printf("%3s\t%-40s\t %2s\t%-15s    %,4.0f\n", 
                             rs.getString("IATA"),
@@ -97,8 +94,7 @@ public class AirportReportsApp extends AbstractReportsApp<AirportReports> {
       terminal.println("\nIATA\tName\t\t\t\tRate");
       terminal.println(repeat("-", 47));
 
-      ResultSet rs = impl.reportAirportsWithHighestCancellationRate(context);
-      try {
+      try (ResultSet rs = impl.reportAirportsWithHighestCancellationRate(context)) {
          while (rs.next()) {
             terminal.printf("%3s\t%-30s\t%6.1f\n", 
                             rs.getString("IATA"), 

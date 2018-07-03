@@ -26,8 +26,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
       terminal.println("Manufacturer\t\t\tCount");
       terminal.println("---------------------------------------");
 
-      ResultSet rs = impl.reportTotalPlanesByManfacturer(context);
-      try {
+      try (ResultSet rs = impl.reportTotalPlanesByManfacturer(context)) {
          while(rs.next()) {
             terminal.printf("%-25s\t%5d\n", 
                             rs.getString("Manufacturer"), 
@@ -44,8 +43,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
       terminal.println("Year\tCount");
       terminal.println("------------------");
 
-      ResultSet rs = impl.reportTotalPlanesByYear(context);
-      try {
+      try (ResultSet rs = impl.reportTotalPlanesByYear(context)) {
          while(rs.next()) {
             terminal.printf("%4d\t%5d\n", 
                             rs.getInt("Year"), 
@@ -62,8 +60,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
       terminal.println("Aircraft Type\t\t\tCount");
       terminal.println("---------------------------------------");
 
-      ResultSet rs = impl.reportTotalPlanesByAircraftType(context);
-      try {
+      try (ResultSet rs = impl.reportTotalPlanesByAircraftType(context)) {
          while(rs.next()) {
             terminal.printf("%-25s\t%5d\n", 
                             rs.getInt("Type"), 
@@ -80,8 +77,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
       terminal.println("Engine Type\t\t\tCount");
       terminal.println("---------------------------------------");
 
-      ResultSet rs = impl.reportTotalPlanesByEngineType(context);
-      try {
+      try (ResultSet rs = impl.reportTotalPlanesByEngineType(context)) {
          while(rs.next()) {
             terminal.printf("%-25s\t%5d\n", 
                             rs.getInt("Type"), 
@@ -101,8 +97,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
       terminal.println("Tail #\t\tCount");
       terminal.println("-----------------------");
 
-      ResultSet rs = impl.reportPlanesWithMostCancellations(context);
-      try {
+      try (ResultSet rs = impl.reportPlanesWithMostCancellations(context)) {
          while(rs.next()) {
             terminal.printf("%-8s\t%,6d\n",
                             rs.getInt("TailNumber"), 
@@ -122,8 +117,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
       terminal.println("Tail #\t  Manufacturer\t\tModel #\t\tCount");
       terminal.println(repeat("-", 67));
 
-      ResultSet rs = impl.reportMostFlightsByPlane(context);
-      try {
+      try (ResultSet rs = impl.reportMostFlightsByPlane(context)) {
          while(rs.next()) {
             terminal.printf("%-8s  %-20s  %-10s  %,10d\n",
                             rs.getString("TailNumber"),
@@ -145,8 +139,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
       terminal.println("Manufacturer\t\t\tModel #\t\t\t  Count\t\tDaily Avg");
       terminal.println(repeat("-", 82));
 
-      ResultSet rs = impl.reportMostFlightsByPlaneModel(context);
-      try {
+      try (ResultSet rs = impl.reportMostFlightsByPlaneModel(context)) {
          while(rs.next()) {
             terminal.printf("%-25s\t%-20s\t%,10d\t%8.1f",
                             left(rs.getString("Manufacturer"), 25),
@@ -167,8 +160,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
       terminal.println("Manufacturer\t\t\t Count");
       terminal.println("-------------------------------------------");
 
-      ResultSet rs = impl.reportTotalFlightsByPlaneManufacturer(context);
-      try {
+      try (ResultSet rs = impl.reportTotalFlightsByPlaneManufacturer(context)) {
          while(rs.next()) {
             terminal.printf("%-25s\t%,10d\n",
                             left(rs.getString("Manufacturer"), 25),
@@ -187,8 +179,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
       terminal.println("Age Range\tCount");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = impl.reportTotalFlightsByPlaneAgeRange(context);
-      try {
+      try (ResultSet rs = impl.reportTotalFlightsByPlaneAgeRange(context)) {
          while(rs.next()) {
             terminal.printf("%-10s\t%,10d\n",
                             rs.getString("Range"),
@@ -207,8 +198,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
       terminal.println("Aircraft Type\t\t\tCount");
       terminal.println("-------------------------------------------");
 
-      ResultSet rs = impl.reportTotalFlightsByAircraftType(context);
-      try {
+      try (ResultSet rs = impl.reportTotalFlightsByAircraftType(context)) {
          while(rs.next()) {
             terminal.printf("%-25s\t%,10d\n",
                             rs.getString("Type"),
@@ -227,8 +217,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
       terminal.println("Engine Type\t\t\tCount");
       terminal.println("-------------------------------------------");
 
-      ResultSet rs = impl.reportTotalFlightsByEngineType(context);
-      try {
+      try (ResultSet rs = impl.reportTotalFlightsByEngineType(context)) {
          while(rs.next()) {
             terminal.printf("%-25s\t%,10d\n",
                             rs.getString("Type"),

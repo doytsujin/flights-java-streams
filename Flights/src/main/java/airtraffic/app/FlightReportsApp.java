@@ -25,12 +25,12 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       context.setYear(readYear())
              .setOrigin(readAirport("Origin"));
 
-      ResultSet rs = impl.reportTotalFlightsFromOrigin(context);
-      try {
+      try (ResultSet rs = impl.reportTotalFlightsFromOrigin(context)) {
          if (rs.next()) {
-            context.getTerminal().printf("Total flights from %s is %,d\n", 
-                                         rs.getString("Origin"),
-                                         rs.getInt("TotalFlights"));
+            context.getTerminal()
+                   .printf("Total flights from %s is %,d\n", 
+                           rs.getString("Origin"),
+                           rs.getInt("TotalFlights"));
          }
       } catch (SQLException e) {
          throw new ReportException(e);
@@ -41,12 +41,12 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setDestination(readAirport("Destination"));
-      ResultSet rs = impl.reportTotalFlightsToDestination(context);
-      try {
+      try (ResultSet rs = impl.reportTotalFlightsToDestination(context)) {
          if (rs.next()) {
-            context.getTerminal().printf("Total flights to %s is %,d\n",
-                                         rs.getString("Destination"), 
-                                         rs.getInt("TotalFlights"));
+            context.getTerminal()
+                   .printf("Total flights to %s is %,d\n",
+                           rs.getString("Destination"), 
+                           rs.getInt("TotalFlights"));
          }
       } catch (SQLException e) {
          throw new ReportException(e);
@@ -59,15 +59,15 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
              .setOrigin(readAirport("Origin"))
              .setDestination(readAirport("Destination"));
 
-      ResultSet rs = impl.reportTotalFlightsFromOrigin(context);
-      try {
+      try (ResultSet rs = impl.reportTotalFlightsFromOriginToDestination(context)) {
          if (rs.next()) {
-            context.getTerminal().printf("Total of %,d flights from %s (%s)\nto %s (%s)\n", 
-                                         rs.getInt("TotalFlights"),
-                                         rs.getString("OriginName"), 
-                                         rs.getString("OriginIATA"), 
-                                         rs.getString("DestinationName"), 
-                                         rs.getString("DestinationIATA"));
+            context.getTerminal()
+                   .printf("Total of %,d flights from %s (%s)\nto %s (%s)\n", 
+                           rs.getInt("TotalFlights"),
+                           rs.getString("OriginName"), 
+                           rs.getString("OriginIATA"), 
+                           rs.getString("DestinationName"), 
+                           rs.getString("DestinationIATA"));
          }
       } catch (SQLException e) {
          throw new ReportException(e);
@@ -83,8 +83,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("\nOrigin\t\tCount");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = impl.reportTopFlightsByOrigin(context);
-      try {
+      try (ResultSet rs = impl.reportTopFlightsByOrigin(context)) {
          while (rs.next()) {
             terminal.printf("%3s\t\t%,10d\n", 
                             rs.getString("Origin"), 
@@ -106,8 +105,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Destination\t   Count");
       terminal.println(repeat("-", 30));
 
-      ResultSet rs = impl.reportTopDestinationsFromOrigin(context);
-      try {
+      try (ResultSet rs = impl.reportTopDestinationsFromOrigin(context)) {
          while(rs.next()) {
             terminal.printf("%3s\t\t%,10d\n", 
                             rs.getString("Origin"),
@@ -127,8 +125,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Route\t\t    Count");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = impl.reportMostPopularRoutes(context);
-      try {
+      try (ResultSet rs = impl.reportMostPopularRoutes(context)) {
          while(rs.next()) {
             terminal.printf("%s\t%,10d\n", 
                             rs.getString("Route"), 
@@ -148,8 +145,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Origin\tDelay (min)");
       terminal.println(repeat("-", 22));
 
-      ResultSet rs = impl.reportWorstAverageDepartureDelayByOrigin(context);
-      try {
+      try (ResultSet rs = impl.reportWorstAverageDepartureDelayByOrigin(context)) {
          while(rs.next()) {
             terminal.printf("%3s\t\t%.0f\n", 
                             rs.getString("Origin"), 
@@ -169,8 +165,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Destination\tDelay (min)");
       terminal.println(repeat("-", 28));
 
-      ResultSet rs = impl.reportWorstAverageArrivalDelayByDestination(context);
-      try {
+      try (ResultSet rs = impl.reportWorstAverageArrivalDelayByDestination(context)) {
          while(rs.next()) {
             terminal.printf("%3s\t\t%.0f\n",  
                             rs.getString("Destination"), 
@@ -190,8 +185,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Origin\t\t  Count");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = impl.reportMostCancelledFlightsByOrigin(context);
-      try {
+      try (ResultSet rs = impl.reportMostCancelledFlightsByOrigin(context)) {
          while(rs.next()) {
             terminal.printf("%3s\t\t%,8d\n", 
                             rs.getString("Origin"), 
@@ -211,8 +205,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("State\t  Count");
       terminal.println(repeat("-", 19));
 
-      ResultSet rs = impl.reportTotalFlightsByOriginState(context);
-      try {
+      try (ResultSet rs = impl.reportTotalFlightsByOriginState(context)) {
          while(rs.next()) {
             terminal.printf("%2s\t%,10d\n",
                             rs.getString("State"),
@@ -232,8 +225,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("State\tCount");
       terminal.println(repeat("-", 19));
 
-      ResultSet rs = impl.reportTotalFlightsByDestinationState(context);
-      try {
+      try (ResultSet rs = impl.reportTotalFlightsByDestinationState(context)) {
          while(rs.next()) {
             terminal.printf("%2s\t%,10d\n",
                             rs.getString("State"),
@@ -244,19 +236,16 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       }
    }
 
-   private void printFlights(TextTerminal<?> terminal, ResultSet rs) {
-      try {
-         if (rs.next()) {
-            terminal.printf("%-8s  %10s\t  %2s\t %3s\t    %3s\t\t%6d\n",
-                            rs.getString("FlightNumber"),
-                            rs.getDate("Date"),
-                            rs.getString("Carrier"),
-                            rs.getString("Origin"),
-                            rs.getString("Destination"),
-                            rs.getInt("Distance"));
-         }
-      } catch (SQLException e) {
-         throw new ReportException(e);
+   private void printFlights(TextTerminal<?> terminal, ResultSet rs) 
+      throws SQLException {
+      if (rs.next()) {
+         terminal.printf("%-8s  %10s\t  %2s\t %3s\t    %3s\t\t%6d\n",
+                         rs.getString("FlightNumber"),
+                         rs.getDate("Date"),
+                         rs.getString("Carrier"),
+                         rs.getString("Origin"),
+                         rs.getString("Destination"),
+                         rs.getInt("Distance"));
       }
    }
 
@@ -269,8 +258,11 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Flight #     Date\tCarrier\tOrigin\tDestination\tDistance");
       terminal.println(repeat("-", 65));
 
-      ResultSet rs = impl.reportLongestFlights(context);
-      printFlights(terminal, rs);
+      try (ResultSet rs = impl.reportLongestFlights(context)) {
+         printFlights(terminal, rs);
+      } catch (SQLException e) {
+         throw new ReportException(e);
+      }
    }
 
    public void reportShortestFlights(ReportContext context) {
@@ -282,8 +274,11 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Flight #     Date\tCarrier\tOrigin\tDestination\tDistance");
       terminal.println(repeat("-", 65));
 
-      ResultSet rs = impl.reportShortestFlights(context);
-      printFlights(terminal, rs);
+      try (ResultSet rs = impl.reportShortestFlights(context)) {
+         printFlights(terminal, rs);
+      } catch (SQLException e) {
+         throw new ReportException(e);
+      }
    }
 
    public void reportTotalFlightsByDistanceRange(ReportContext context) {
@@ -294,8 +289,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Range\t\tCount");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = impl.reportTotalFlightsByDistanceRange(context);
-      try {
+      try (ResultSet rs = impl.reportTotalFlightsByDistanceRange(context)) {
          while(rs.next()) {
             terminal.printf("%-10s\t%,10d\n", 
                             rs.getString("Range"), 
@@ -315,8 +309,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Date\t\tCount");
       terminal.println(repeat("-", 24));
 
-      ResultSet rs = impl.reportDaysWithLeastCancellations(context);
-      try {
+      try (ResultSet rs = impl.reportDaysWithLeastCancellations(context)) {
          while(rs.next()) {
             terminal.printf("%-10s       %,3d\n", 
                             rs.getDate("Date"),
@@ -336,8 +329,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Date\t\tCount");
       terminal.println(repeat("-", 24));
 
-      ResultSet rs = impl.reportDaysWithMostCancellations(context);
-      try {
+      try (ResultSet rs = impl.reportDaysWithMostCancellations(context)) {
          while(rs.next()) {
             terminal.printf("%-10s       %,3d\n", 
                             rs.getDate("Date"),
@@ -357,8 +349,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Month\t\tCount");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs= impl.reportTotalMonthlyFlights(context);
-      try {
+      try (ResultSet rs= impl.reportTotalMonthlyFlights(context)) {
          while(rs.next()) {
             terminal.printf("%s\t%,10d\n", 
                             rs.getString("YearMonth"),
@@ -378,8 +369,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Day\t\t   Count");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = impl.reportTotalDailyFlights(context);
-      try {
+      try (ResultSet rs = impl.reportTotalDailyFlights(context)) {
          while(rs.next()) {
             terminal.printf("%s\t%,10d\n",
                             rs.getString("Date"),
@@ -398,8 +388,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Day of Week\t   Count");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = impl.reportTotalFlightsByDayOfWeek(context);
-      try {
+      try (ResultSet rs = impl.reportTotalFlightsByDayOfWeek(context)) {
          while(rs.next()) {
             terminal.printf("%10s\t%,10d\n",
                             rs.getString("DayOfWeek"),
@@ -419,8 +408,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Day\t\t   Count");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = impl.reportMostFlightsByDay(context);
-      try {
+      try (ResultSet rs = impl.reportMostFlightsByDay(context)) {
          while(rs.next()) {
             terminal.printf("%s\t%,10d\n",
                             rs.getString("Date"),
@@ -440,8 +428,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Day\t\t   Count");
       terminal.println(repeat("-", 27));
 
-      ResultSet rs = impl.reportLeastFlightsByDay(context);
-      try {
+      try (ResultSet rs = impl.reportLeastFlightsByDay(context)) {
          while(rs.next()) {
             terminal.printf("%s\t%,10d\n",
                             rs.getString("Date"),
@@ -461,8 +448,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Origin\t\t\t\tDate\t\t     Count");
       terminal.println(repeat("-", 59));
 
-      ResultSet rs = impl.reportMostFlightsByOriginByDay(context);
-      try {
+      try (ResultSet rs = impl.reportMostFlightsByOriginByDay(context)) {
          while(rs.next()) {
             terminal.printf("%-30s\t%s\t%,10d\n",
                             left(rs.getString("Origin"), 30),
@@ -483,8 +469,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
       terminal.println("Carrier\t\t\t\tDate\t\t     Count");
       terminal.println(repeat("-", 59));
 
-      ResultSet rs = impl.reportMostFlightsByCarrierByDay(context);
-      try {
+      try (ResultSet rs = impl.reportMostFlightsByCarrierByDay(context)) {
          while(rs.next()) {
             terminal.printf("%-30s\t%s\t%,10d\n",
                             left(rs.getString("Carrier"), 30),
