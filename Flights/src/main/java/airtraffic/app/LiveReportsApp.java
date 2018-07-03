@@ -17,7 +17,7 @@ public class LiveReportsApp extends AbstractReportsApp<LiveReports> {
    }
 
    public void reportAirportMetrics(ReportContext context) {
-      LiveReports impl = getBean(LiveReports.class, getStyleAnnotation());
+      LiveReports impl = getBean(LiveReports.class, readStyle());
       context.setYear(readYear())
              .setAirport(readAirport("Airport"));
 
@@ -30,7 +30,7 @@ public class LiveReportsApp extends AbstractReportsApp<LiveReports> {
    }
 
    public void reportCarrierMetrics(ReportContext context) {
-      LiveReports impl = getBean(LiveReports.class, getStyleAnnotation());
+      LiveReports impl = getBean(LiveReports.class, readStyle());
       context.setYear(readYear())
              .setCarrier(readCarrier());
 

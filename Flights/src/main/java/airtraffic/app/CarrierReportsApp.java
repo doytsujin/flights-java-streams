@@ -21,7 +21,7 @@ public class CarrierReportsApp extends AbstractReportsApp<CarrierReports> {
    }
 
    public void reportMostCancelledFlightsByCarrier(ReportContext context) {
-      CarrierReports impl = getBean(CarrierReports.class, getStyleAnnotation());
+      CarrierReports impl = getBean(CarrierReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -42,7 +42,7 @@ public class CarrierReportsApp extends AbstractReportsApp<CarrierReports> {
    }
 
    public void reportCarrierMetrics(ReportContext context) {
-      CarrierReports impl = getBean(CarrierReports.class, getStyleAnnotation());
+      CarrierReports impl = getBean(CarrierReports.class, readStyle());
       context.setYear(readYear());
 
       TextTerminal<?> terminal = context.getTerminal();
@@ -67,7 +67,7 @@ public class CarrierReportsApp extends AbstractReportsApp<CarrierReports> {
    }
 
    public void reportCarriersWithHighestCancellationRate(ReportContext context) {
-      CarrierReports impl = getBean(CarrierReports.class, getStyleAnnotation());
+      CarrierReports impl = getBean(CarrierReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 

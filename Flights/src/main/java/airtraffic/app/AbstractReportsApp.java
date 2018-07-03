@@ -48,7 +48,7 @@ public abstract class AbstractReportsApp<T> {
       return container.select(klass, annotation).get();
    }
 
-   protected Annotation getStyleAnnotation() {
+   protected Annotation readStyle() {
       String format = "%2d  %s\n";
       terminal.println("Style options:\n");
       terminal.printf(format, 0, "Exit program");
@@ -110,20 +110,18 @@ public abstract class AbstractReportsApp<T> {
 
    protected Airport readAirport(String prompt) {
       String iata = io.newStringInputReader()
-                      .withValueChecker((val, item) -> 
-                         repository.validAirport(val) ? 
-                               Collections.emptyList() : 
-                            Arrays.asList("Unknown airport specified") 
+                      .withValueChecker((val, item) -> repository.validAirport(val) 
+                          ? Collections.emptyList() 
+                          : Arrays.asList("Unknown airport specified") 
                       ).read(prompt);
       return repository.getAirport(iata);
    }
 
    protected Carrier readCarrier() {
       String code = io.newStringInputReader()
-                      .withValueChecker((val, item) -> 
-                         repository.validCarrier(val) ? 
-                            Collections.emptyList() : 
-                            Arrays.asList("Unknown carrier specified")
+                      .withValueChecker((val, item) -> repository.validCarrier(val) 
+                          ? Collections.emptyList() 
+                          : Arrays.asList("Unknown carrier specified")
                       ).read("Carrier");
       return repository.getCarrier(code);
    }

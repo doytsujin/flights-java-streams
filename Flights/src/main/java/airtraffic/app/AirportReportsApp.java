@@ -21,7 +21,7 @@ public class AirportReportsApp extends AbstractReportsApp<AirportReports> {
    }
 
    public void reportAirportMetrics(ReportContext context) {
-      AirportReports impl = getBean(AirportReports.class, getStyleAnnotation());
+      AirportReports impl = getBean(AirportReports.class, readStyle());
       context.setYear(readYear());
 
       TextTerminal<?> terminal = context.getTerminal();
@@ -45,7 +45,7 @@ public class AirportReportsApp extends AbstractReportsApp<AirportReports> {
    }
 
    public void reportAirportsForState(ReportContext context) throws ReportException {
-      AirportReports impl = getBean(AirportReports.class, getStyleAnnotation());
+      AirportReports impl = getBean(AirportReports.class, readStyle());
       context.setState(readState());
 
       TextTerminal<?> terminal = context.getTerminal();
@@ -66,7 +66,7 @@ public class AirportReportsApp extends AbstractReportsApp<AirportReports> {
    }
 
    public void reportAirportsNearLocation(ReportContext context) throws ReportException {
-      AirportReports impl = getBean(AirportReports.class, getStyleAnnotation());
+      AirportReports impl = getBean(AirportReports.class, readStyle());
       context.setLocation(readGeoLocation()).setDistance(readDistanceInMiles());
 
       TextTerminal<?> terminal = context.getTerminal();
@@ -90,7 +90,7 @@ public class AirportReportsApp extends AbstractReportsApp<AirportReports> {
 
    public void reportAirportsWithHighestCancellationRate(ReportContext context)
          throws ReportException {
-      AirportReports impl = getBean(AirportReports.class, getStyleAnnotation());
+      AirportReports impl = getBean(AirportReports.class, readStyle());
       context.setYear(readYear()).setLimit(readLimit(10, 1, 100));
 
       TextTerminal<?> terminal = context.getTerminal();

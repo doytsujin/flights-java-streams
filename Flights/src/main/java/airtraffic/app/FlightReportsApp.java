@@ -21,7 +21,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportTotalFlightsFromOrigin(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setOrigin(readAirport("Origin"));
 
@@ -38,7 +38,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportTotalFlightsToDestination(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setDestination(readAirport("Destination"));
       ResultSet rs = impl.reportTotalFlightsToDestination(context);
@@ -54,7 +54,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportTotalFlightsFromOriginToDestination(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setOrigin(readAirport("Origin"))
              .setDestination(readAirport("Destination"));
@@ -75,7 +75,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportTopFlightsByOrigin(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -96,7 +96,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportTopDestinationsFromOrigin(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setOrigin(readAirport("Origin"))
              .setLimit(readLimit(10, 1, 100));
@@ -119,7 +119,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportMostPopularRoutes(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -140,7 +140,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportWorstAverageDepartureDelayByOrigin(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -161,7 +161,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportWorstAverageArrivalDelayByDestination(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -182,7 +182,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportMostCancelledFlightsByOrigin(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -203,7 +203,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportTotalFlightsByOriginState(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -224,7 +224,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportTotalFlightsByDestinationState(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -261,7 +261,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportLongestFlights(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -274,7 +274,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportShortestFlights(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -287,7 +287,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportTotalFlightsByDistanceRange(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear());
 
       TextTerminal<?> terminal = context.getTerminal();
@@ -307,7 +307,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportDaysWithLeastCancellations(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -328,7 +328,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportDaysWithMostCancellations(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -349,7 +349,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportTotalMonthlyFlights(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -370,7 +370,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportTotalDailyFlights(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -391,7 +391,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportTotalFlightsByDayOfWeek(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear());
 
       TextTerminal<?> terminal = context.getTerminal();
@@ -411,7 +411,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportMostFlightsByDay(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -432,7 +432,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportLeastFlightsByDay(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -453,7 +453,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportMostFlightsByOriginByDay(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -475,7 +475,7 @@ public class FlightReportsApp extends AbstractReportsApp<FlightReports> {
    }
 
    public void reportMostFlightsByCarrierByDay(ReportContext context) {
-      FlightReports impl = getBean(FlightReports.class, getStyleAnnotation());
+      FlightReports impl = getBean(FlightReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 

@@ -21,7 +21,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
    }
 
    public void reportTotalPlanesByManfacturer(ReportContext context) {
-      PlaneReports impl = getBean(PlaneReports.class, getStyleAnnotation());
+      PlaneReports impl = getBean(PlaneReports.class, readStyle());
       TextTerminal<?> terminal = context.getTerminal();
       terminal.println("Manufacturer\t\t\tCount");
       terminal.println("---------------------------------------");
@@ -39,7 +39,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
    }
 
    public void reportTotalPlanesByYear(ReportContext context) {
-      PlaneReports impl = getBean(PlaneReports.class, getStyleAnnotation());
+      PlaneReports impl = getBean(PlaneReports.class, readStyle());
       TextTerminal<?> terminal = context.getTerminal();
       terminal.println("Year\tCount");
       terminal.println("------------------");
@@ -57,7 +57,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
    }
 
    public void reportTotalPlanesByAircraftType(ReportContext context) {
-      PlaneReports impl = getBean(PlaneReports.class, getStyleAnnotation());
+      PlaneReports impl = getBean(PlaneReports.class, readStyle());
       TextTerminal<?> terminal = context.getTerminal();
       terminal.println("Aircraft Type\t\t\tCount");
       terminal.println("---------------------------------------");
@@ -75,7 +75,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
    }
 
    public void reportTotalPlanesByEngineType(ReportContext context) {
-      PlaneReports impl = getBean(PlaneReports.class, getStyleAnnotation());
+      PlaneReports impl = getBean(PlaneReports.class, readStyle());
       TextTerminal<?> terminal = context.getTerminal();
       terminal.println("Engine Type\t\t\tCount");
       terminal.println("---------------------------------------");
@@ -93,7 +93,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
    }
 
    public void reportPlanesWithMostCancellations(ReportContext context) {
-      PlaneReports impl = getBean(PlaneReports.class, getStyleAnnotation());
+      PlaneReports impl = getBean(PlaneReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -114,7 +114,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
    }
 
    public void reportMostFlightsByPlane(ReportContext context) {
-      PlaneReports impl = getBean(PlaneReports.class, getStyleAnnotation());
+      PlaneReports impl = getBean(PlaneReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -137,7 +137,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
    }
 
    public void reportMostFlightsByPlaneModel(ReportContext context) {
-      PlaneReports impl = getBean(PlaneReports.class, getStyleAnnotation());
+      PlaneReports impl = getBean(PlaneReports.class, readStyle());
       context.setYear(readYear())
              .setLimit(readLimit(10, 1, 100));
 
@@ -160,7 +160,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
    }
 
    public void reportTotalFlightsByPlaneManufacturer(ReportContext context) {
-      PlaneReports impl = getBean(PlaneReports.class, getStyleAnnotation());
+      PlaneReports impl = getBean(PlaneReports.class, readStyle());
       context.setYear(readYear());
 
       TextTerminal<?> terminal = context.getTerminal();
@@ -180,7 +180,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
    }
 
    public void reportTotalFlightsByPlaneAgeRange(ReportContext context) {
-      PlaneReports impl = getBean(PlaneReports.class, getStyleAnnotation());
+      PlaneReports impl = getBean(PlaneReports.class, readStyle());
       context.setYear(readYear());
 
       TextTerminal<?> terminal = context.getTerminal();
@@ -200,7 +200,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
    }
 
    public void reportTotalFlightsByAircraftType(ReportContext context) {
-      PlaneReports impl = getBean(PlaneReports.class, getStyleAnnotation());
+      PlaneReports impl = getBean(PlaneReports.class, readStyle());
       context.setYear(readYear());
 
       TextTerminal<?> terminal = context.getTerminal();
@@ -220,7 +220,7 @@ public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
    }
 
    public void reportTotalFlightsByEngineType(ReportContext context) {
-      PlaneReports impl = getBean(PlaneReports.class, getStyleAnnotation());
+      PlaneReports impl = getBean(PlaneReports.class, readStyle());
       context.setYear(readYear());
 
       TextTerminal<?> terminal = context.getTerminal();
