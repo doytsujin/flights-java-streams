@@ -46,14 +46,14 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final Airport origin = context.getOrigin();
       final ResultSetBuilder builder = 
-          new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
-                                .addColumn("TotalFlights", Types.INTEGER);
+         new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       long count = context.getRepository()
                           .getFlightStream(year)
                           .parallel()
-                          .filter(f -> f.notCancelled() && 
-                                       f.getOrigin().equals(origin))
+                          .filter(flight -> flight.notCancelled() && 
+                                            flight.getOrigin().equals(origin))
                           .count();
 
       return builder.addRow(origin.getName().trim(), count).build();
@@ -64,15 +64,16 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final Airport destination = context.getDestination();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("Destination", Types.VARCHAR)
-                                  .addColumn("TotalFlights", Types.INTEGER);
+         new ResultSetBuilder().addColumn("Destination", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       long count = context.getRepository()
                           .getFlightStream(year)
                           .parallel()
-                          .filter(f -> f.notCancelled() && 
-                                       f.notDiverted() && 
-                                       f.getDestination().equals(destination))
+                          .filter(flight -> flight.notCancelled() && 
+                                            flight.notDiverted() && 
+                                            flight.getDestination()
+                                                  .equals(destination))
                           .count();
 
       return builder.addRow(destination.getName().trim(), count).build();
@@ -84,16 +85,18 @@ public class StreamFlightReports implements FlightReports {
       final Airport origin = context.getOrigin();
       final Airport destination = context.getDestination();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
-                                  .addColumn("Destination", Types.VARCHAR)
-                                  .addColumn("TotalFlights", Types.INTEGER);
+         new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
+                               .addColumn("Destination", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       long count = context.getRepository()
                           .getFlightStream(year)
-                          .filter(f -> f.notCancelled() && 
-                                       f.notDiverted() &&
-                                       f.getOrigin().equals(origin) &&
-                                       f.getDestination().equals(destination))
+                          .filter(flight -> flight.notCancelled() && 
+                                            flight.notDiverted() &&
+                                            flight.getOrigin()
+                                                  .equals(origin) &&
+                                            flight.getDestination()
+                                                  .equals(destination))
                           .count();
 
       return builder.addRow(origin.getName().trim(), 
@@ -109,19 +112,19 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-          new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
-                                .addColumn("TotalFlights", Types.INTEGER);
+         new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
-             .filter(f -> f.notCancelled())
+             .filter(flight -> flight.notCancelled())
              .collect(groupingBy(Flight::getOrigin, counting()))
              .entrySet()
              .stream()
              .sorted(comparingByValue(reverseOrder()))
              .limit(limit)
-             .forEachOrdered(e -> builder.addRow(e.getKey().getIATA(), 
-                                                 e.getValue()));
+             .forEachOrdered(entry -> builder.addRow(entry.getKey().getIATA(), 
+                                                     entry.getValue()));
 
       return builder.build();
    }
@@ -155,8 +158,8 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("Route", Types.VARCHAR)
-                                  .addColumn("TotalFlights", Types.INTEGER);
+         new ResultSetBuilder().addColumn("Route", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
@@ -177,8 +180,8 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
-                                  .addColumn("Delay", Types.FLOAT);
+         new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
+                               .addColumn("Delay", Types.FLOAT);
 
       context.getRepository()
              .getFlightStream(year)
@@ -201,8 +204,8 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("Destination", Types.VARCHAR)
-                                  .addColumn("Delay", Types.FLOAT);
+         new ResultSetBuilder().addColumn("Destination", Types.VARCHAR)
+                               .addColumn("Delay", Types.FLOAT);
 
       context.getRepository()
              .getFlightStream(year)
@@ -225,8 +228,8 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
-                                  .addColumn("TotalFlights", Types.INTEGER);
+         new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
@@ -248,13 +251,13 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("State", Types.VARCHAR)
-                                  .addColumn("TotalFlights", Types.INTEGER);
+         new ResultSetBuilder().addColumn("State", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
-             .filter(f -> f.notCancelled())
-             .map(f -> f.getOrigin())
+             .filter(flight -> flight.notCancelled())
+             .map(flight -> flight.getOrigin())
              .collect(groupingBy(Airport::getState, counting()))
              .entrySet()
              .stream()
@@ -272,14 +275,14 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("State", Types.VARCHAR)
-                                  .addColumn("TotalFlights", Types.INTEGER);
+         new ResultSetBuilder().addColumn("State", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
              .parallel()
-             .filter(f -> f.notCancelled() && f.notDiverted())
-             .map(f -> f.getDestination())
+             .filter(flight -> flight.notCancelled() && flight.notDiverted())
+             .map(flight -> flight.getDestination())
              .collect(groupingBy(Airport::getState, counting()))
              .entrySet()
              .stream()
@@ -306,16 +309,16 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("FlightNumber", Types.VARCHAR)
-                                  .addColumn("Date", Types.DATE)
-                                  .addColumn("Carrier", Types.VARCHAR)
-                                  .addColumn("Origin", Types.VARCHAR)
-                                  .addColumn("Destination", Types.VARCHAR)
-                                  .addColumn("Distance", Types.INTEGER);
+         new ResultSetBuilder().addColumn("FlightNumber", Types.VARCHAR)
+                               .addColumn("Date", Types.DATE)
+                               .addColumn("Carrier", Types.VARCHAR)
+                               .addColumn("Origin", Types.VARCHAR)
+                               .addColumn("Destination", Types.VARCHAR)
+                               .addColumn("Distance", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
-             .filter(f -> f.notCancelled() && f.notDiverted())
+             .filter(flight -> flight.notCancelled() && flight.notDiverted())
              .sorted(comparator)
              .limit(limit)
              .forEach(flight -> 
@@ -335,13 +338,13 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("Range", Types.VARCHAR)
-                                  .addColumn("TotalFlights", Types.INTEGER);
+         new ResultSetBuilder().addColumn("Range", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
              .parallel()
-             .filter(f -> f.notCancelled() && f.notDiverted())
+             .filter(flight -> flight.notCancelled() && flight.notDiverted())
              .collect(groupingBy(FlightDistanceRange.classifier(DISTANCE_RANGES),
                                  counting()))
              .entrySet()
@@ -370,12 +373,12 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("Date", Types.DATE)
-                                  .addColumn("TotalCancellations", Types.INTEGER);
+         new ResultSetBuilder().addColumn("Date", Types.DATE)
+                               .addColumn("TotalCancellations", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
-             .filter(f -> f.cancelled())
+             .filter(flight -> flight.cancelled())
              .collect(groupingBy(Flight::getDate, counting()))
              .entrySet()
              .stream()
@@ -393,12 +396,12 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("YearMonth", Types.VARCHAR)
-                                  .addColumn("TotalFlights", Types.INTEGER);
+         new ResultSetBuilder().addColumn("YearMonth", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
-             .filter(f -> f.notCancelled())
+             .filter(flight -> flight.notCancelled())
              .collect(groupingBy(Flight::getYearMonth, counting()))
              .entrySet()
              .stream()
@@ -417,12 +420,12 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("Date", Types.VARCHAR)
-                                  .addColumn("TotalFlights", Types.INTEGER);
+         new ResultSetBuilder().addColumn("Date", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
-             .filter(f -> f.notCancelled())
+             .filter(flight -> flight.notCancelled())
              .collect(groupingBy(Flight::getDate, counting()))
              .entrySet()
              .stream()
@@ -440,13 +443,13 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("DayOfWeek", Types.VARCHAR)
-                                  .addColumn("TotalFlights", Types.INTEGER);
+         new ResultSetBuilder().addColumn("DayOfWeek", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
-             .filter(f -> f.notCancelled())
-             .map(f -> f.getDate())
+             .filter(flight -> flight.notCancelled())
+             .map(flight -> flight.getDate())
              .collect(groupingBy(LocalDate::getDayOfWeek, counting()))
              .entrySet()
              .stream()
@@ -474,12 +477,12 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("Date", Types.VARCHAR)
-                                  .addColumn("TotalFlights", Types.INTEGER);
+         new ResultSetBuilder().addColumn("Date", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
-             .filter(f -> f.notCancelled())
+             .filter(flight -> flight.notCancelled())
              .collect(groupingBy(Flight::getDate, counting()))
              .entrySet()
              .stream()
@@ -497,15 +500,16 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
-                                  .addColumn("Date", Types.VARCHAR)
-                                  .addColumn("TotalFlights", Types.INTEGER);
+         new ResultSetBuilder().addColumn("Origin", Types.VARCHAR)
+                               .addColumn("Date", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
-             .filter(f -> f.notCancelled())
-             .collect(groupingBy(f -> Pair.of(f.getOrigin(), f.getDate()), 
-                                 counting()))
+             .filter(flight -> flight.notCancelled())
+             .collect(groupingBy(flight -> 
+                Pair.of(flight.getOrigin(), flight.getDate()), counting())
+             )
              .entrySet()
              .stream()
              .sorted(comparingByValue(reverseOrder()))
@@ -525,15 +529,16 @@ public class StreamFlightReports implements FlightReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("Carrier", Types.VARCHAR)
-                                  .addColumn("Date", Types.VARCHAR)
-                                  .addColumn("TotalFlights", Types.INTEGER);
+         new ResultSetBuilder().addColumn("Carrier", Types.VARCHAR)
+                               .addColumn("Date", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
-             .filter(f -> f.notCancelled())
-             .collect(groupingBy(f -> Pair.of(f.getCarrier(), f.getDate()),
-                                 counting()))
+             .filter(flight -> flight.notCancelled())
+             .collect(groupingBy(flight -> 
+                Pair.of(flight.getCarrier(), flight.getDate()), counting())
+             )
              .entrySet()
              .stream()
              .sorted(comparingByValue(reverseOrder()))

@@ -39,8 +39,8 @@ public class StreamPlaneReports implements PlaneReports {
    public ResultSet reportTotalPlanesByManfacturer(ReportContext context) {
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("Manufacturer", Types.VARCHAR)
-                                  .addColumn("TotalPlanes", Types.INTEGER);
+         new ResultSetBuilder().addColumn("Manufacturer", Types.VARCHAR)
+                               .addColumn("TotalPlanes", Types.INTEGER);
 
       context.getRepository()
              .getPlaneStream()
@@ -60,12 +60,12 @@ public class StreamPlaneReports implements PlaneReports {
    public ResultSet reportTotalPlanesByYear(ReportContext context) {
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("Year", Types.INTEGER)
-                                  .addColumn("TotalPlanes", Types.INTEGER);
+         new ResultSetBuilder().addColumn("Year", Types.INTEGER)
+                               .addColumn("TotalPlanes", Types.INTEGER);
 
       context.getRepository()
              .getPlaneStream()
-             .filter(p -> p.getYear() > 0)
+             .filter(plane -> plane.getYear() > 0)
              .collect(groupingBy(Plane::getYear, counting()))
              .entrySet()
              .stream()
@@ -82,8 +82,8 @@ public class StreamPlaneReports implements PlaneReports {
    public ResultSet reportTotalPlanesByAircraftType(ReportContext context) {
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("Type", Types.JAVA_OBJECT)
-                                  .addColumn("TotalPlanes", Types.INTEGER);
+         new ResultSetBuilder().addColumn("Type", Types.JAVA_OBJECT)
+                               .addColumn("TotalPlanes", Types.INTEGER);
 
       context.getRepository()
              .getPlaneStream()
@@ -103,8 +103,8 @@ public class StreamPlaneReports implements PlaneReports {
    public ResultSet reportTotalPlanesByEngineType(ReportContext context) {
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("Type", Types.JAVA_OBJECT)
-                                  .addColumn("TotalPlanes", Types.INTEGER);
+         new ResultSetBuilder().addColumn("Type", Types.JAVA_OBJECT)
+                               .addColumn("TotalPlanes", Types.INTEGER);
 
       context.getRepository()
              .getPlaneStream()
@@ -130,7 +130,7 @@ public class StreamPlaneReports implements PlaneReports {
 
       context.getRepository()
              .getFlightStream(year)
-             .filter(f -> f.cancelled() && f.validTailNumber())
+             .filter(flight -> flight.cancelled() && flight.validTailNumber())
              .collect(groupingBy(Flight::getTailNumber, counting()))
              .entrySet()
              .stream()
@@ -156,7 +156,8 @@ public class StreamPlaneReports implements PlaneReports {
       context.getRepository()
              .getFlightStream(year)
              .parallel()
-             .filter(f -> f.notCancelled() && f.validTailNumber())
+             .filter(flight -> flight.notCancelled() && 
+                               flight.validTailNumber())
              .collect(groupingBy(Flight::getPlane, counting()))
              .entrySet()
              .stream()
@@ -186,9 +187,11 @@ public class StreamPlaneReports implements PlaneReports {
       context.getRepository()
              .getFlightStream(year)
              .parallel()
-             .filter(f -> f.notCancelled() && 
-                          ! "UNKNOWN".equals(f.getPlane().getManufacturer()))
-             .map(f -> f.getPlane())
+             .filter(flight -> 
+                flight.notCancelled() && 
+                ! "UNKNOWN".equals(flight.getPlane().getManufacturer())
+             )
+             .map(flight -> flight.getPlane())
              .collect(groupingBy(Plane::getModel, counting()))
              .entrySet()
              .stream()
@@ -216,8 +219,8 @@ public class StreamPlaneReports implements PlaneReports {
 
       context.getRepository()
              .getFlightStream(year)
-             .filter(f -> f.notCancelled())
-             .map(f -> f.getPlane())
+             .filter(flight -> flight.notCancelled())
+             .map(flight -> flight.getPlane())
              .collect(groupingBy(Plane::getManufacturer, counting()))
              .entrySet()
              .stream()
@@ -235,14 +238,14 @@ public class StreamPlaneReports implements PlaneReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("Range", Types.JAVA_OBJECT)
-                                  .addColumn("TotalFlights", Types.INTEGER);
+         new ResultSetBuilder().addColumn("Range", Types.JAVA_OBJECT)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
              .parallel()
-             .filter(f -> f.notCancelled() && 
-                          f.getPlane().getYear() > 0)
+             .filter(flight -> flight.notCancelled() && 
+                               flight.getPlane().getYear() > 0)
              .collect(groupingBy(PlaneAgeRange.classifier(AGE_RANGES), 
                                  counting()))
              .entrySet()
@@ -261,13 +264,13 @@ public class StreamPlaneReports implements PlaneReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("Type", Types.VARCHAR)
-                                  .addColumn("TotalFlights", Types.INTEGER);
+         new ResultSetBuilder().addColumn("Type", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
-             .filter(f -> f.notCancelled())
-             .map(f -> f.getPlane())
+             .filter(flight -> flight.notCancelled())
+             .map(flight -> flight.getPlane())
              .collect(groupingBy(Plane::getAircraftType, counting()))
              .entrySet()
              .stream()
@@ -285,13 +288,13 @@ public class StreamPlaneReports implements PlaneReports {
       final int year = context.getYear();
       final int limit = context.getLimit();
       final ResultSetBuilder builder = 
-            new ResultSetBuilder().addColumn("Type", Types.VARCHAR)
-                                  .addColumn("TotalFlights", Types.INTEGER);
+         new ResultSetBuilder().addColumn("Type", Types.VARCHAR)
+                               .addColumn("TotalFlights", Types.INTEGER);
 
       context.getRepository()
              .getFlightStream(year)
-             .filter(f -> f.notCancelled())
-             .map(f -> f.getPlane())
+             .filter(flight -> flight.notCancelled())
+             .map(flight -> flight.getPlane())
              .collect(groupingBy(Plane::getEngineType, counting()))
              .entrySet()
              .stream()

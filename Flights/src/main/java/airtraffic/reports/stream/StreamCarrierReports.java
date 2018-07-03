@@ -35,7 +35,7 @@ public class StreamCarrierReports implements CarrierReports {
 
       context.getRepository()
              .getFlightStream(year)
-             .filter(f -> f.cancelled())
+             .filter(flight -> flight.cancelled())
              .collect(groupingBy(Flight::getCarrier, counting()))
              .entrySet()
              .stream()
