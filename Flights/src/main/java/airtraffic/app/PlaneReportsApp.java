@@ -15,7 +15,7 @@ import airtraffic.reports.ReportException;
  *
  * @author Tony Piazza <tony@piazzaconsulting.com>
  */
-public class PlaneReportsApp extends AbstractReportsApp<PlaneReports> {
+public class PlaneReportsApp extends AbstractReportsApp {
    public static void main(String[] args) throws Exception {
       new PlaneReportsApp().executeSelectedReport();
    }

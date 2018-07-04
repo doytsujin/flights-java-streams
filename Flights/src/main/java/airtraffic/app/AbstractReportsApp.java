@@ -32,7 +32,7 @@ import airtraffic.annotations.StreamStyle;
  *
  * @author Tony Piazza <tony@piazzaconsulting.com>
  */
-public abstract class AbstractReportsApp<T> {
+public abstract class AbstractReportsApp {
    private static final String METHOD_NAME_PREFIX = "report";
    private static final int METHOD_PARAMETER_COUNT = 1;
    private static final Class<?> METHOD_RETURN_TYPE = Void.TYPE;
@@ -44,7 +44,7 @@ public abstract class AbstractReportsApp<T> {
    private final SeContainer container = SeContainerInitializer.newInstance()
                                                                .initialize();
 
-   protected T getBean(Class<T> klass, Annotation annotation) {
+   protected <T> T getBean(Class<T> klass, Annotation annotation) {
       return container.select(klass, annotation).get();
    }
 

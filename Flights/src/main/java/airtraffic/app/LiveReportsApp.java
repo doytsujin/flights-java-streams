@@ -11,7 +11,7 @@ import airtraffic.reports.LiveReports;
  *
  * @author Tony Piazza <tony@piazzaconsulting.com>
  */
-public class LiveReportsApp extends AbstractReportsApp<LiveReports> {
+public class LiveReportsApp extends AbstractReportsApp {
    public static void main(String[] args) throws Exception {
       new LiveReportsApp().executeSelectedReport();
    }
