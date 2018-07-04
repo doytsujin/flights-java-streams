@@ -3,6 +3,8 @@ package airtraffic.reports.stream;
 import static airtraffic.GeoHelper.distanceFromReferenceComparator;
 import static airtraffic.GeoHelper.getDistance;
 import static airtraffic.GeoLocation.Units.MILES;
+import static airtraffic.metrics.AirportMetrics.accumulator;
+import static airtraffic.metrics.AirportMetrics.combiner;
 import static airtraffic.metrics.FlightBasedMetrics.highestCancellationRateComparator;
 import static java.util.Comparator.comparing;
 import java.sql.ResultSet;
@@ -82,9 +84,7 @@ public class StreamAirportReports implements AirportReports {
 
       context.getRepository()
              .getFlightStream(year)
-             .collect(HashMap::new, 
-                      AirportMetrics.accumulator(), 
-                      AirportMetrics.combiner())
+             .collect(HashMap::new, accumulator(), combiner())
              .values()
              .stream()
              .sorted(comparing(AirportMetrics::getSubject))
@@ -111,9 +111,7 @@ public class StreamAirportReports implements AirportReports {
 
       context.getRepository()
              .getFlightStream(year)
-             .collect(HashMap::new, 
-                      AirportMetrics.accumulator(), 
-                      AirportMetrics.combiner())
+             .collect(HashMap::new, accumulator(), combiner())
              .values()
              .stream()
              .filter(metrics -> metrics.getTotalCancelled() > 0)

@@ -1,5 +1,7 @@
 package airtraffic.reports.stream;
 
+import static airtraffic.metrics.CarrierMetrics.accumulator;
+import static airtraffic.metrics.CarrierMetrics.combiner;
 import static airtraffic.metrics.FlightBasedMetrics.highestCancellationRateComparator;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.reverseOrder;
@@ -61,9 +63,7 @@ public class StreamCarrierReports implements CarrierReports {
 
       context.getRepository()
              .getFlightStream(year)
-             .collect(HashMap::new, 
-                      CarrierMetrics.accumulator(), 
-                      CarrierMetrics.combiner())
+             .collect(HashMap::new, accumulator(), combiner())
              .values()
              .stream()
              .sorted(comparing(CarrierMetrics::getSubject))
@@ -89,9 +89,7 @@ public class StreamCarrierReports implements CarrierReports {
 
       context.getRepository()
              .getFlightStream(year)
-             .collect(HashMap::new, 
-                      CarrierMetrics.accumulator(), 
-                      CarrierMetrics.combiner())
+             .collect(HashMap::new, accumulator(), combiner())
              .values()
              .stream()
              .filter(metrics -> metrics.getTotalCancelled() > 0)
