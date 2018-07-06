@@ -507,8 +507,9 @@ public class StreamFlightReports implements FlightReports {
       context.getRepository()
              .getFlightStream(year)
              .filter(flight -> flight.notCancelled())
-             .collect(groupingBy(flight -> 
-                Pair.of(flight.getOrigin(), flight.getDate()), counting())
+             .collect(groupingBy(flight -> Pair.of(flight.getOrigin(), 
+                                                   flight.getDate()), 
+                                 counting())
              )
              .entrySet()
              .stream()
@@ -536,8 +537,9 @@ public class StreamFlightReports implements FlightReports {
       context.getRepository()
              .getFlightStream(year)
              .filter(flight -> flight.notCancelled())
-             .collect(groupingBy(flight -> 
-                Pair.of(flight.getCarrier(), flight.getDate()), counting())
+             .collect(groupingBy(flight -> Pair.of(flight.getCarrier(), 
+                                                   flight.getDate()), 
+                                 counting())
              )
              .entrySet()
              .stream()
