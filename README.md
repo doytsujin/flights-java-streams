@@ -39,9 +39,10 @@ mvn install
 Once the data files have been downloaded and extracted, you can execute the
 ReportsApp class to select and launch available reports.
 
-The classes in the airtraffic.iterator and airtraffic.stream packages implement
-the same functionality using iterators and streams respectively. This provides
-a convenient way to compare an iterator-based solution and a stream-based one.
+The classes in the airtraffic.reports.iterator and airtraffic.reports.stream 
+packages implement the same functionality using iterators and streams 
+respectively. This provides a convenient way to compare iterator-based and
+stream-based solutions.
 
 I have also included classes in the airtraffic.benchmark package that perform
 micro benchmarks using [JMH](http://openjdk.java.net/projects/code-tools/jmh/).
